@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Company;
+
+use App\Http\Controllers\Controller;
+use App\Models\JobApplication;
+use App\Models\JobPost;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class JobApplicationController extends Controller
+{
+    public function index()
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return redirect()->route('company.dashboard')->with('status', '会社情報が登録されていません。');
+        }
+
+        // この会社の求人に対する応募を全て取得
+        $applications = JobApplication::whereHas('jobPost', function ($query) use ($company) {
+            $query->where('company_id', $company->id);
+        })
+        ->where('delete_flg', 0)
+        ->with(['jobPost', 'user'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        return view('company.applications.index', compact('company', 'applications'));
+    }
+
+    public function show(JobApplication $application)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company || $application->jobPost->company_id !== $company->id) {
+            abort(403);
+        }
+
+        return view('company.applications.show', compact('company', 'application'));
+    }
+
+    public function updateStatus(Request $request, JobApplication $application)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company || $application->jobPost->company_id !== $company->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', 'integer'],
+        ]);
+
+        $application->status = $validated['status'];
+        $application->save();
+
+        return redirect()->route('company.applications.show', $application)->with('status', 'ステータスを更新しました。');
+    }
+}
+

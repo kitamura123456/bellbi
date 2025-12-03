@@ -1,0 +1,61 @@
+# Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+
+# Composer
+composer.phar
+composer.lock
+
+# Laravel specific
+/src/bootstrap/cache/*
+!/src/bootstrap/cache/.gitkeep
+/src/storage/framework/cache/*
+!/src/storage/framework/cache/.gitkeep
+/src/storage/framework/sessions/*
+!/src/storage/framework/sessions/.gitkeep
+/src/storage/framework/testing/*
+!/src/storage/framework/testing/.gitkeep
+/src/storage/framework/views/*
+!/src/storage/framework/views/.gitkeep
+/src/storage/logs/*
+!/src/storage/logs/.gitkeep
+
+# Database
+*.sqlite
+*.sqlite-journal
+/src/database/database.sqlite
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# MAMP specific
+.htaccess
+error_log
+
+# Build files
+/public/build
+/public/css/app.css
+/public/js/app.js
+/public/mix-manifest.json
+
