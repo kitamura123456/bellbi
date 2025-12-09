@@ -187,6 +187,15 @@
             @enderror
         </div>
 
+        <div class="form-group">
+            <label for="max_concurrent_reservations">同時対応可能予約数</label>
+            <input type="number" id="max_concurrent_reservations" name="max_concurrent_reservations" value="{{ old('max_concurrent_reservations', $store->max_concurrent_reservations ?? 3) }}" min="1" max="20" placeholder="例：3">
+            <small>同じ時間帯に同時に対応できる予約の最大数（例：スタッフ3人なら3）</small>
+            @error('max_concurrent_reservations')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn-primary">更新する</button>
             <a href="{{ route('company.stores.index') }}" class="btn-secondary">キャンセル</a>

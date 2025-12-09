@@ -3,6 +3,11 @@
 @section('title', '予約日時選択 | Bellbi')
 
 @section('content')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/material_pink.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ja.js"></script>
+
     <div class="page-header">
         <h1 class="page-title">予約日時選択</h1>
         <p class="page-lead">{{ $store->name }}</p>
@@ -42,12 +47,7 @@
             @else
                 <div class="form-group">
                     <label for="reservation_date">予約日</label>
-                    <select id="reservation_date" name="reservation_date" required>
-                        <option value="">選択してください</option>
-                        @foreach($availableDates as $date => $slots)
-                            <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->isoFormat('M月D日(ddd)') }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" id="reservation_date" name="reservation_date" placeholder="カレンダーから日付を選択してください" required readonly style="cursor: pointer; background-color: white;">
                     @error('reservation_date')
                         <span class="error">{{ $message }}</span>
                     @enderror
@@ -55,39 +55,99 @@
 
                 <div class="form-group" id="time-slot-wrapper" style="display: none;">
                     <label for="start_time">予約時間</label>
-                    <select id="start_time" name="start_time" required>
-                        <option value="">先に日付を選択してください</option>
-                    </select>
+                    <div id="time-slots-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <!-- 時間枠ボタンがここに動的に追加されます -->
+                    </div>
+                    <input type="hidden" id="start_time" name="start_time" required>
                     @error('start_time')
                         <span class="error">{{ $message }}</span>
                     @enderror
                 </div>
 
+                <style>
+                .time-slot-btn {
+                    padding: 12px 8px;
+                    border: 2px solid #fb7185;
+                    background-color: white;
+                    color: #fb7185;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-size: 13px;
+                    text-align: center;
+                }
+                .time-slot-btn:hover {
+                    background-color: #fce7f3;
+                }
+                .time-slot-btn.selected {
+                    background-color: #fb7185;
+                    color: white;
+                }
+                </style>
+
                 <script>
                 const availableDates = @json($availableDates);
+                const availableDatesList = Object.keys(availableDates);
                 
-                document.getElementById('reservation_date').addEventListener('change', function() {
-                    const selectedDate = this.value;
-                    const timeSlotWrapper = document.getElementById('time-slot-wrapper');
-                    const startTimeSelect = document.getElementById('start_time');
-                    
-                    if (selectedDate && availableDates[selectedDate]) {
-                        const slots = availableDates[selectedDate];
-                        startTimeSelect.innerHTML = '<option value="">時間を選択してください</option>';
-                        
-                        slots.forEach(function(slot) {
-                            const option = document.createElement('option');
-                            option.value = slot.start_time;
-                            option.textContent = slot.start_time + ' - ' + slot.end_time;
-                            startTimeSelect.appendChild(option);
-                        });
-                        
-                        timeSlotWrapper.style.display = 'block';
-                    } else {
-                        timeSlotWrapper.style.display = 'none';
-                        startTimeSelect.innerHTML = '<option value="">先に日付を選択してください</option>';
+                // Flatpickrの初期化
+                const datePicker = flatpickr("#reservation_date", {
+                    locale: "ja",
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    maxDate: new Date().fp_incr(60), // 60日先まで
+                    enable: availableDatesList,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        if (dateStr && availableDates[dateStr]) {
+                            showTimeSlots(dateStr);
+                        } else {
+                            hideTimeSlots();
+                        }
                     }
                 });
+                
+                function showTimeSlots(selectedDate) {
+                    const timeSlotWrapper = document.getElementById('time-slot-wrapper');
+                    const timeSlotsGrid = document.getElementById('time-slots-grid');
+                    const startTimeInput = document.getElementById('start_time');
+                    
+                    const slots = availableDates[selectedDate];
+                    timeSlotsGrid.innerHTML = '';
+                    startTimeInput.value = '';
+                    
+                    slots.forEach(function(slot) {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'time-slot-btn';
+                        button.textContent = slot.start_time + '\n〜\n' + slot.end_time;
+                        button.style.whiteSpace = 'pre-line';
+                        button.dataset.time = slot.start_time;
+                        
+                        button.addEventListener('click', function() {
+                            // 他のボタンの選択を解除
+                            document.querySelectorAll('.time-slot-btn').forEach(function(btn) {
+                                btn.classList.remove('selected');
+                            });
+                            
+                            // このボタンを選択
+                            this.classList.add('selected');
+                            startTimeInput.value = this.dataset.time;
+                        });
+                        
+                        timeSlotsGrid.appendChild(button);
+                    });
+                    
+                    timeSlotWrapper.style.display = 'block';
+                }
+                
+                function hideTimeSlots() {
+                    const timeSlotWrapper = document.getElementById('time-slot-wrapper');
+                    const timeSlotsGrid = document.getElementById('time-slots-grid');
+                    const startTimeInput = document.getElementById('start_time');
+                    
+                    timeSlotWrapper.style.display = 'none';
+                    timeSlotsGrid.innerHTML = '';
+                    startTimeInput.value = '';
+                }
                 </script>
             @endif
         </div>

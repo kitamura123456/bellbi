@@ -9,7 +9,7 @@
 </div>
 
 <div class="company-card">
-    <form action="{{ route('company.staffs.update', $staff) }}" method="POST" class="company-form">
+    <form action="{{ route('company.staffs.update', $staff) }}" method="POST" enctype="multipart/form-data" class="company-form">
         @csrf
         @method('PUT')
 
@@ -32,6 +32,24 @@
             <label for="name">スタッフ名 <span class="required">必須</span></label>
             <input type="text" id="name" name="name" value="{{ old('name', $staff->name) }}" required>
             @error('name')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="image_path">プロフィール写真</label>
+            @if($staff->image_path)
+                <div style="margin-bottom: 12px;">
+                    <img src="{{ asset('storage/' . $staff->image_path) }}" alt="{{ $staff->name }}" style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 8px;">
+                    <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" name="clear_image" value="1">
+                        <span style="font-size: 14px;">画像を削除する</span>
+                    </label>
+                </div>
+            @endif
+            <input type="file" id="image_path" name="image_path" accept="image/jpeg,image/png,image/jpg">
+            <small>JPEG, PNG形式、最大2MBまで</small>
+            @error('image_path')
                 <span class="error">{{ $message }}</span>
             @enderror
         </div>

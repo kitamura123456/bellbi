@@ -20,6 +20,7 @@ class Store extends Model
         'thumbnail_image',
         'accepts_reservations',
         'cancel_deadline_hours',
+        'max_concurrent_reservations',
         'delete_flg',
     ];
 
@@ -28,6 +29,7 @@ class Store extends Model
         'store_type' => 'integer',
         'accepts_reservations' => 'integer',
         'cancel_deadline_hours' => 'integer',
+        'max_concurrent_reservations' => 'integer',
         'delete_flg' => 'integer',
     ];
 

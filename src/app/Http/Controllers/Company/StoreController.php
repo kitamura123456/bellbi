@@ -56,6 +56,7 @@ class StoreController extends Controller
             'template_image' => ['nullable', 'string'],
             'accepts_reservations' => ['nullable', 'integer', 'in:0,1'],
             'cancel_deadline_hours' => ['nullable', 'integer', 'min:0'],
+            'max_concurrent_reservations' => ['nullable', 'integer', 'min:1', 'max:20'],
         ]);
 
         $data = [
@@ -66,7 +67,8 @@ class StoreController extends Controller
             'tel' => $validated['tel'],
             'description' => $validated['description'] ?? null,
             'accepts_reservations' => $validated['accepts_reservations'] ?? 0,
-            'cancel_deadline_hours' => $validated['cancel_deadline_hours'] ?? null,
+            'cancel_deadline_hours' => $validated['cancel_deadline_hours'] ?? 24,
+            'max_concurrent_reservations' => $validated['max_concurrent_reservations'] ?? 3,
             'delete_flg' => 0,
         ];
 
@@ -116,6 +118,7 @@ class StoreController extends Controller
             'template_image' => ['nullable', 'string'],
             'accepts_reservations' => ['nullable', 'integer', 'in:0,1'],
             'cancel_deadline_hours' => ['nullable', 'integer', 'min:0'],
+            'max_concurrent_reservations' => ['nullable', 'integer', 'min:1', 'max:20'],
         ]);
 
         $data = [
@@ -127,6 +130,7 @@ class StoreController extends Controller
             'description' => $validated['description'] ?? null,
             'accepts_reservations' => $validated['accepts_reservations'] ?? $store->accepts_reservations,
             'cancel_deadline_hours' => $validated['cancel_deadline_hours'] ?? $store->cancel_deadline_hours,
+            'max_concurrent_reservations' => $validated['max_concurrent_reservations'] ?? $store->max_concurrent_reservations ?? 3,
         ];
 
         // 画像アップロード処理

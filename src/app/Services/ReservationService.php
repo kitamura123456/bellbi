@@ -31,17 +31,17 @@ class ReservationService
         $openTime = Carbon::parse($date . ' ' . $schedule->open_time);
         $closeTime = Carbon::parse($date . ' ' . $schedule->close_time);
 
-        // 既存予約を取得
-        $reservations = Reservation::where('store_id', $store->id)
+        // その日のすべての確定予約を取得（店舗全体）
+        $allReservations = Reservation::where('store_id', $store->id)
             ->where('reservation_date', $date)
             ->whereIn('status', [Reservation::STATUS_CONFIRMED])
-            ->where('delete_flg', 0);
+            ->where('delete_flg', 0)
+            ->get();
 
-        if ($staffId) {
-            $reservations->where('staff_id', $staffId);
-        }
-
-        $reservations = $reservations->get();
+        // スタッフ指定がある場合は、そのスタッフの予約のみ
+        $staffReservations = $staffId 
+            ? $allReservations->where('staff_id', $staffId)
+            : collect();
 
         // ブロック情報を取得
         $blocks = ReservationBlock::where('store_id', $store->id)
@@ -65,7 +65,41 @@ class ReservationService
             $slotEnd = $currentTime->copy()->addMinutes($durationMinutes);
 
             // この枠が予約可能かチェック
-            if ($this->isSlotAvailable($slotStart, $slotEnd, $reservations, $blocks)) {
+            $isAvailable = true;
+
+            // 1. スタッフ指定がある場合：そのスタッフが空いているかチェック
+            if ($staffId) {
+                if (!$this->isSlotAvailable($slotStart, $slotEnd, $staffReservations, $blocks)) {
+                    $isAvailable = false;
+                }
+            }
+
+            // 2. 店舗の同時対応可能人数チェック
+            if ($isAvailable) {
+                $concurrentCount = $this->getConcurrentReservationCount($slotStart, $slotEnd, $allReservations);
+                $maxConcurrent = $store->max_concurrent_reservations ?? 3;
+                
+                if ($concurrentCount >= $maxConcurrent) {
+                    $isAvailable = false;
+                }
+            }
+
+            // 3. ブロック時間チェック（スタッフ指定なしの場合）
+            if ($isAvailable && !$staffId) {
+                foreach ($blocks as $block) {
+                    if ($block->staff_id === null) { // 店舗全体のブロック
+                        $blockStart = Carbon::parse($block->block_date . ' ' . $block->start_time);
+                        $blockEnd = Carbon::parse($block->block_date . ' ' . $block->end_time);
+                        
+                        if ($this->isOverlapping($slotStart, $slotEnd, $blockStart, $blockEnd)) {
+                            $isAvailable = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($isAvailable) {
                 $slots[] = [
                     'start_time' => $slotStart->format('H:i'),
                     'end_time' => $slotEnd->format('H:i'),
@@ -79,14 +113,53 @@ class ReservationService
     }
 
     /**
+     * 指定時間帯の同時予約数を取得
+     */
+    private function getConcurrentReservationCount(Carbon $slotStart, Carbon $slotEnd, $reservations): int
+    {
+        $count = 0;
+        
+        foreach ($reservations as $reservation) {
+            $date = substr($reservation->reservation_date, 0, 10); // YYYY-MM-DD
+            $startTime = substr($reservation->start_time, 11, 8); // HH:MM:SS (datetime形式の場合)
+            $endTime = substr($reservation->end_time, 11, 8);
+            
+            // time形式の場合は11文字目が存在しないので、そのまま使う
+            if (strlen($reservation->start_time) <= 8) {
+                $startTime = $reservation->start_time;
+                $endTime = $reservation->end_time;
+            }
+            
+            $resStart = Carbon::parse($date . ' ' . $startTime);
+            $resEnd = Carbon::parse($date . ' ' . $endTime);
+
+            if ($this->isOverlapping($slotStart, $slotEnd, $resStart, $resEnd)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
      * 指定時間枠が予約可能かチェック
      */
     private function isSlotAvailable(Carbon $slotStart, Carbon $slotEnd, $reservations, $blocks): bool
     {
         // 既存予約との重複チェック
         foreach ($reservations as $reservation) {
-            $resStart = Carbon::parse($reservation->reservation_date . ' ' . $reservation->start_time);
-            $resEnd = Carbon::parse($reservation->reservation_date . ' ' . $reservation->end_time);
+            $date = substr($reservation->reservation_date, 0, 10); // YYYY-MM-DD
+            $startTime = substr($reservation->start_time, 11, 8); // HH:MM:SS
+            $endTime = substr($reservation->end_time, 11, 8);
+            
+            // time形式の場合は11文字目が存在しないので、そのまま使う
+            if (strlen($reservation->start_time) <= 8) {
+                $startTime = $reservation->start_time;
+                $endTime = $reservation->end_time;
+            }
+            
+            $resStart = Carbon::parse($date . ' ' . $startTime);
+            $resEnd = Carbon::parse($date . ' ' . $endTime);
 
             if ($this->isOverlapping($slotStart, $slotEnd, $resStart, $resEnd)) {
                 return false;
@@ -95,8 +168,12 @@ class ReservationService
 
         // ブロックとの重複チェック
         foreach ($blocks as $block) {
-            $blockStart = Carbon::parse($block->block_date . ' ' . $block->start_time);
-            $blockEnd = Carbon::parse($block->block_date . ' ' . $block->end_time);
+            $date = substr($block->block_date, 0, 10);
+            $startTime = strlen($block->start_time) > 8 ? substr($block->start_time, 11, 8) : $block->start_time;
+            $endTime = strlen($block->end_time) > 8 ? substr($block->end_time, 11, 8) : $block->end_time;
+            
+            $blockStart = Carbon::parse($date . ' ' . $startTime);
+            $blockEnd = Carbon::parse($date . ' ' . $endTime);
 
             if ($this->isOverlapping($slotStart, $slotEnd, $blockStart, $blockEnd)) {
                 return false;

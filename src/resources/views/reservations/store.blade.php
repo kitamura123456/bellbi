@@ -109,12 +109,44 @@
         @if($staffs->isNotEmpty())
         <div class="job-detail-card">
             <h3 style="margin-top: 0;">スタッフ指名（任意）</h3>
-            <select name="staff_id" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
-                <option value="">指名なし</option>
+            <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">ご希望のスタッフを選択してください</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+                <label style="display: flex; flex-direction: column; align-items: center; padding: 12px; background-color: #f9fafb; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent;" class="staff-option">
+                    <input type="radio" name="staff_id" value="" checked style="display: none;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fb7185; font-size: 12px; margin-bottom: 8px;">
+                        指名なし
+                    </div>
+                    <span style="font-size: 14px; font-weight: 500; text-align: center;">指名なし</span>
+                </label>
                 @foreach($staffs as $staff)
-                    <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                    <label style="display: flex; flex-direction: column; align-items: center; padding: 12px; background-color: #f9fafb; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent;" class="staff-option">
+                        <input type="radio" name="staff_id" value="{{ $staff->id }}" style="display: none;">
+                        @if($staff->image_path)
+                            <img src="{{ asset('storage/' . $staff->image_path) }}" alt="{{ $staff->name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; margin-bottom: 8px;">
+                        @else
+                            <div style="width: 80px; height: 80px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; margin-bottom: 8px;">
+                                No Image
+                            </div>
+                        @endif
+                        <span style="font-size: 14px; font-weight: 500; text-align: center;">{{ $staff->name }}</span>
+                    </label>
                 @endforeach
-            </select>
+            </div>
+            
+            <style>
+            .staff-option:hover {
+                border-color: #fb7185 !important;
+                background-color: #fef2f2 !important;
+            }
+            .staff-option input:checked + div,
+            .staff-option input:checked ~ img,
+            .staff-option:has(input:checked) {
+                border-color: #fb7185 !important;
+                background-color: #fef2f2 !important;
+            }
+            </style>
+            
             @error('staff_id')
                 <span class="error">{{ $message }}</span>
             @enderror

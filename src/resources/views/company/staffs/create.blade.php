@@ -9,7 +9,7 @@
 </div>
 
 <div class="company-card">
-    <form action="{{ route('company.staffs.store') }}" method="POST" class="company-form">
+    <form action="{{ route('company.staffs.store') }}" method="POST" enctype="multipart/form-data" class="company-form">
         @csrf
 
         <div class="form-group">
@@ -31,6 +31,15 @@
             <label for="name">スタッフ名 <span class="required">必須</span></label>
             <input type="text" id="name" name="name" value="{{ old('name') }}" required>
             @error('name')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="image_path">プロフィール写真</label>
+            <input type="file" id="image_path" name="image_path" accept="image/jpeg,image/png,image/jpg">
+            <small>JPEG, PNG形式、最大2MBまで</small>
+            @error('image_path')
                 <span class="error">{{ $message }}</span>
             @enderror
         </div>

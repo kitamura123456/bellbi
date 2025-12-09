@@ -18,15 +18,25 @@
         <table class="company-table">
             <thead>
                 <tr>
+                    <th style="width: 80px;">写真</th>
                     <th>スタッフ名</th>
-                    <th>表示順</th>
-                    <th>ステータス</th>
-                    <th>操作</th>
+                    <th style="width: 80px;">表示順</th>
+                    <th style="width: 100px;">ステータス</th>
+                    <th style="width: 160px;">操作</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($store->staffs as $staff)
                 <tr>
+                    <td>
+                        @if($staff->image_path)
+                            <img src="{{ asset('storage/' . $staff->image_path) }}" alt="{{ $staff->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                        @else
+                            <div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 10px;">
+                                No Image
+                            </div>
+                        @endif
+                    </td>
                     <td>{{ $staff->name }}</td>
                     <td>{{ $staff->display_order }}</td>
                     <td>
