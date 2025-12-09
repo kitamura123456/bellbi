@@ -15,7 +15,7 @@
                     <a href="{{ route('company.dashboard') }}" class="brand-link">
                         <span class="brand-mark">B</span>
                         <span class="brand-text">
-                            <span class="brand-name">Bellbi 事業者</span>
+                            <span class="brand-name">Bellbi 店舗版</span>
                             <span class="brand-sub">Business Dashboard</span>
                         </span>
                     </a>
