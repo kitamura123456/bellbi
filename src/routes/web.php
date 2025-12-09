@@ -28,7 +28,7 @@ use App\Http\Controllers\Api\BusinessCategoryController;
 Route::get('/api/business-categories/{industry_type}', [BusinessCategoryController::class, 'getCategories'])->name('api.business-categories');
 
 // トップ・求人
-Route::get('/', [JobPostController::class, 'index'])->name('jobs.index');
+Route::get('/', [JobPostController::class, 'index'])->name('home');
 Route::get('/jobs', [JobPostController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobPostController::class, 'show'])->name('jobs.show');
 Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'store'])
