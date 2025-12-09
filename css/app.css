@@ -1,8 +1,8 @@
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-    background: radial-gradient(circle at top left, #ffe4f1 0, #fdf2ff 40%, #f6f8fb 100%);
-    color: #222;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    color: #1e293b;
 }
 
 .page-wrapper {
@@ -18,9 +18,10 @@ body {
 }
 
 .site-header {
-    background: linear-gradient(90deg, #f973b3, #fb7185, #fbbf77);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(90deg, #ffffff, #f8fafc, #f1f5f9);
+    color: #1e293b;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .header-inner {
@@ -46,14 +47,14 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #fdf2ff, #fee2e2);
-    color: #fb7185;
+    background: linear-gradient(135deg, #ec4899, #f472b6);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     margin-right: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
 }
 
 .brand-text {
@@ -73,11 +74,12 @@ body {
 }
 
 .main-nav a {
-    color: #fff;
+    color: #1e293b;
     text-decoration: none;
     font-size: 14px;
     margin-left: 16px;
     position: relative;
+    font-weight: 500;
 }
 
 .main-nav a::after {
@@ -87,7 +89,7 @@ body {
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #ec4899;
     transition: width 0.2s ease;
 }
 
@@ -103,11 +105,12 @@ body {
 .nav-link-button {
     background: transparent;
     border: none;
-    color: #fff;
+    color: #1e293b;
     font-size: 14px;
     cursor: pointer;
     padding: 0;
     position: relative;
+    font-weight: 500;
 }
 
 .nav-link-button::after {
@@ -117,7 +120,7 @@ body {
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #ec4899;
     transition: width 0.2s ease;
 }
 
@@ -163,14 +166,14 @@ body {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #fb7185;
+    color: #ec4899;
     margin: 0 0 4px;
 }
 
 .page-title {
     margin: 0 0 8px;
     font-size: 24px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .page-lead {
@@ -181,17 +184,17 @@ body {
 }
 
 .sidebar-card {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #ffffff;
     border-radius: 16px;
     padding: 16px 18px;
-    box-shadow: 0 10px 30px rgba(248, 113, 113, 0.18);
-    border: 1px solid rgba(251, 113, 133, 0.2);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .sidebar-title {
     margin: 0 0 12px;
     font-size: 16px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .search-form .form-group {
@@ -223,8 +226,8 @@ body {
 .search-form select:focus,
 .job-apply textarea:focus {
     outline: none;
-    border-color: #fb7185;
-    box-shadow: 0 0 0 1px rgba(251, 113, 133, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .btn-primary,
@@ -232,7 +235,7 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
+    border-radius: 8px;
     border: none;
     padding: 8px 18px;
     font-size: 13px;
@@ -242,25 +245,26 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #fb7185, #f973b3);
+    background: linear-gradient(135deg, #ec4899, #db2777);
     color: #fff;
-    box-shadow: 0 8px 18px rgba(248, 113, 113, 0.35);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #f973b3, #fb7185);
-    box-shadow: 0 10px 22px rgba(248, 113, 113, 0.45);
+    background: linear-gradient(135deg, #db2777, #be185d);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
     transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background-color: #fff;
-    color: #fb7185;
-    border: 1px solid rgba(251, 113, 133, 0.5);
+    background-color: #ffffff;
+    color: #ec4899;
+    border: 1px solid rgba(236, 72, 153, 0.5);
 }
 
 .btn-secondary:hover {
-    background-color: #fff5f8;
+    background-color: #fdf2f8;
+    border-color: #ec4899;
 }
 
 .btn-block {
@@ -274,14 +278,20 @@ body {
 }
 
 .job-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 18px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 14px 14px 10px;
-    box-shadow: 0 12px 24px rgba(148, 163, 184, 0.26);
-    border: 1px solid rgba(248, 250, 252, 0.6);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.job-card:hover {
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.3);
 }
 
 .job-card-body {
@@ -292,9 +302,9 @@ body {
     display: inline-block;
     font-size: 10px;
     padding: 2px 8px;
-    border-radius: 999px;
-    background-color: #fee2e2;
-    color: #b91c1c;
+    border-radius: 4px;
+    background-color: rgba(236, 72, 153, 0.15);
+    color: #db2777;
     margin: 0 0 6px;
 }
 
@@ -304,7 +314,7 @@ body {
 }
 
 .job-card-title a {
-    color: #111827;
+    color: #0f172a;
     text-decoration: none;
 }
 
@@ -351,11 +361,11 @@ body {
 }
 
 .job-detail-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 18px 20px;
-    box-shadow: 0 14px 28px rgba(148, 163, 184, 0.26);
-    border: 1px solid rgba(248, 250, 252, 0.7);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     margin-bottom: 20px;
 }
 
@@ -366,7 +376,7 @@ body {
 .job-detail-title {
     margin: 0 0 6px;
     font-size: 22px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .job-detail-salon {
@@ -395,31 +405,32 @@ body {
 }
 
 .meta-value {
-    color: #111827;
+    color: #475569;
 }
 
 .job-description h3 {
     margin: 0 0 4px;
     font-size: 15px;
+    color: #0f172a;
 }
 
 .job-description p {
     font-size: 13px;
     line-height: 1.7;
-    color: #374151;
+    color: #475569;
 }
 
 .job-apply {
-    background-color: rgba(255, 255, 255, 0.94);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 16px 18px;
-    border: 1px solid rgba(251, 113, 133, 0.25);
+    border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 .job-apply-title {
     margin: 0 0 8px;
     font-size: 16px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .job-apply-note {
@@ -458,11 +469,11 @@ body {
 
 .auth-card,
 .dashboard-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 18px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 18px 20px;
-    box-shadow: 0 12px 24px rgba(148, 163, 184, 0.26);
-    border: 1px solid rgba(248, 250, 252, 0.7);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     max-width: 480px;
 }
 
@@ -470,7 +481,7 @@ body {
 .dashboard-title {
     margin: 0 0 8px;
     font-size: 20px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .auth-lead,
@@ -510,8 +521,8 @@ body {
 
 .auth-form input:focus {
     outline: none;
-    border-color: #fb7185;
-    box-shadow: 0 0 0 1px rgba(251, 113, 133, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .auth-form .form-inline {
@@ -526,7 +537,7 @@ body {
 }
 
 .auth-footnote a {
-    color: #fb7185;
+    color: #ec4899;
     text-decoration: none;
 }
 
@@ -560,7 +571,7 @@ body {
 
 /* 管理画面用スタイル */
 .admin-header-bg {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+    background: linear-gradient(90deg, #ffffff, #fdf2f8, #fce7f3);
 }
 
 .admin-main {
@@ -581,15 +592,15 @@ body {
 .admin-title {
     margin: 0;
     font-size: 26px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .admin-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 20px 24px;
-    box-shadow: 0 10px 24px rgba(148, 163, 184, 0.22);
-    border: 1px solid rgba(248, 250, 252, 0.6);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .admin-table {
@@ -599,24 +610,25 @@ body {
 }
 
 .admin-table thead {
-    background-color: #f9fafb;
-    border-bottom: 2px solid #e5e7eb;
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .admin-table th {
     padding: 10px 12px;
     text-align: left;
     font-weight: 600;
-    color: #374151;
+    color: #334155;
 }
 
 .admin-table td {
     padding: 12px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
 }
 
 .admin-table tbody tr:hover {
-    background-color: #fafafa;
+    background-color: #f8fafc;
 }
 
 .admin-actions {
@@ -699,8 +711,8 @@ body {
 .admin-form input:focus,
 .admin-form select:focus {
     outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .admin-form small {
@@ -724,11 +736,11 @@ body {
 }
 
 .admin-menu-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 24px 20px;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     text-decoration: none;
     color: inherit;
     transition: all 0.2s ease;
@@ -740,8 +752,8 @@ body {
 
 .admin-menu-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(99, 102, 241, 0.24);
-    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.4);
 }
 
 .admin-menu-disabled {
@@ -750,15 +762,10 @@ body {
     pointer-events: none;
 }
 
-.admin-menu-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-}
-
 .admin-menu-title {
     margin: 0 0 8px;
     font-size: 18px;
-    color: #111827;
+    color: #0f172a;
     font-weight: 600;
 }
 
@@ -770,7 +777,7 @@ body {
 
 /* 事業者管理画面用スタイル */
 .company-header-bg {
-    background: linear-gradient(90deg, #10b981, #14b8a6, #06b6d4);
+    background: linear-gradient(90deg, #ffffff, #fdf2f8, #fce7f3);
 }
 
 .company-main {
@@ -791,27 +798,27 @@ body {
 .company-title {
     margin: 0;
     font-size: 26px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .company-welcome-card {
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-    border-radius: 16px;
+    background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+    border-radius: 12px;
     padding: 24px 28px;
     margin-bottom: 24px;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 .company-welcome-title {
     margin: 0 0 8px;
     font-size: 22px;
-    color: #065f46;
+    color: #be185d;
 }
 
 .company-welcome-text {
     margin: 0;
     font-size: 14px;
-    color: #047857;
+    color: #9f1239;
 }
 
 .company-menu-grid {
@@ -821,11 +828,11 @@ body {
 }
 
 .company-menu-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 24px 20px;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(20, 184, 166, 0.2);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     text-decoration: none;
     color: inherit;
     transition: all 0.2s ease;
@@ -837,8 +844,8 @@ body {
 
 .company-menu-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.24);
-    border-color: rgba(20, 184, 166, 0.4);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.4);
 }
 
 .company-menu-disabled {
@@ -847,27 +854,22 @@ body {
     pointer-events: none;
 }
 
-.company-menu-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-}
-
 .company-menu-title {
     margin: 0 0 8px;
     font-size: 18px;
-    color: #111827;
+    color: #0f172a;
     font-weight: 600;
 }
 
 .company-menu-desc {
     margin: 0;
     font-size: 13px;
-    color: #6b7280;
+    color: #64748b;
 }
 
 .company-alert {
     background-color: #fef2f2;
-    border: 1px solid #f87171;
+    border: 1px solid #fecaca;
     color: #b91c1c;
     padding: 16px 20px;
     border-radius: 12px;
@@ -875,11 +877,11 @@ body {
 }
 
 .company-card {
-    background-color: rgba(255, 255, 255, 0.97);
-    border-radius: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
     padding: 20px 24px;
-    box-shadow: 0 10px 24px rgba(148, 163, 184, 0.22);
-    border: 1px solid rgba(248, 250, 252, 0.6);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     margin-bottom: 20px;
 }
 
@@ -913,8 +915,8 @@ body {
 .company-form textarea:focus,
 .company-form select:focus {
     outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .company-form textarea {
@@ -928,24 +930,25 @@ body {
 }
 
 .company-table thead {
-    background-color: #f9fafb;
-    border-bottom: 2px solid #e5e7eb;
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .company-table th {
     padding: 10px 12px;
     text-align: left;
     font-weight: 600;
-    color: #374151;
+    color: #334155;
 }
 
 .company-table td {
     padding: 12px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
 }
 
 .company-table tbody tr:hover {
-    background-color: #fafafa;
+    background-color: #f8fafc;
 }
 
 .company-actions {
@@ -974,19 +977,19 @@ body {
 }
 
 .sidebar-menu-link:hover {
-    background-color: #f3f4f6;
-    color: #fb7185;
+    background-color: #fdf2f8;
+    color: #ec4899;
 }
 
 .sidebar-menu-link.active {
-    background-color: #fee2e2;
-    color: #fb7185;
+    background-color: #fce7f3;
+    color: #db2777;
     font-weight: 500;
 }
 
 .scout-candidate-card {
-    background-color: rgba(255, 255, 255, 0.98);
-    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 12px;
     padding: 16px 20px;
     margin-bottom: 12px;
@@ -997,8 +1000,8 @@ body {
 }
 
 .scout-candidate-card:hover {
-    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
-    border-color: #10b981;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
+    border-color: #ec4899;
 }
 
 .scout-candidate-body {
@@ -1008,7 +1011,7 @@ body {
 .scout-candidate-name {
     margin: 0 0 8px;
     font-size: 16px;
-    color: #111827;
+    color: #0f172a;
 }
 
 .scout-candidate-info {

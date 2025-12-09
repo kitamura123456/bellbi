@@ -37,6 +37,18 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // 管理者アカウント (admin)
+        if (!User::where('email', 'admin')->exists()) {
+            User::create([
+                'name' => 'admin',
+                'email' => 'admin',
+                'password' => Hash::make('test1234'),
+                'role' => User::ROLE_ADMIN,
+                'profile_completed_flg' => 1,
+                'delete_flg' => 0,
+            ]);
+        }
+
         // 店舗テストアカウント
         if (!User::where('email', 'tenpo')->exists()) {
             $tenpoUser = User::create([
