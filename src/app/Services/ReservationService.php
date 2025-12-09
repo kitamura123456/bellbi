@@ -205,7 +205,13 @@ class ReservationService
             return true; // 期限設定なしの場合は常にキャンセル可能
         }
 
-        $reservationDateTime = Carbon::parse($reservation->reservation_date . ' ' . $reservation->start_time);
+        // reservation_dateとstart_timeから正しくDateTimeを構築
+        $date = substr($reservation->reservation_date, 0, 10); // YYYY-MM-DD
+        $time = strlen($reservation->start_time) > 8 
+            ? substr($reservation->start_time, 11, 8) // datetime形式の場合
+            : $reservation->start_time; // time形式の場合
+        
+        $reservationDateTime = Carbon::parse($date . ' ' . $time);
         $deadline = $reservationDateTime->copy()->subHours($store->cancel_deadline_hours);
 
         return now()->lt($deadline);
