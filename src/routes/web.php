@@ -16,6 +16,12 @@ use App\Http\Controllers\Company\ScoutController as CompanyScouts;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\Mypage\ScoutProfileController;
 use App\Http\Controllers\Mypage\ScoutController as MypageScouts;
+use App\Http\Controllers\Mypage\ReservationController as MypageReservations;
+use App\Http\Controllers\Company\StaffController as CompanyStaffs;
+use App\Http\Controllers\Company\MenuController as CompanyMenus;
+use App\Http\Controllers\Company\ScheduleController as CompanySchedules;
+use App\Http\Controllers\Company\ReservationController as CompanyReservations;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 
 // API
@@ -27,6 +33,12 @@ Route::get('/jobs', [JobPostController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobPostController::class, 'show'])->name('jobs.show');
 Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'store'])
     ->name('jobs.apply');
+
+// 予約
+Route::get('/reservations/search', [ReservationController::class, 'search'])->name('reservations.search');
+Route::get('/reservations/store/{store}', [ReservationController::class, 'store'])->name('reservations.store');
+Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking');
+Route::post('/reservations/store/{store}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
 
 // 認証
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -49,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/mypage/scouts', [MypageScouts::class, 'index'])->name('mypage.scouts.index');
     Route::get('/mypage/scouts/{scout}', [MypageScouts::class, 'show'])->name('mypage.scouts.show');
     Route::post('/mypage/scouts/{scout}/reply', [MypageScouts::class, 'reply'])->name('mypage.scouts.reply');
+    Route::get('/mypage/reservations', [MypageReservations::class, 'index'])->name('mypage.reservations.index');
+    Route::get('/mypage/reservations/{reservation}', [MypageReservations::class, 'show'])->name('mypage.reservations.show');
+    Route::post('/mypage/reservations/{reservation}/cancel', [MypageReservations::class, 'cancel'])->name('mypage.reservations.cancel');
 
     // 事業者管理画面
     Route::get('/company', [CompanyDashboard::class, 'index'])->name('company.dashboard');
@@ -79,6 +94,28 @@ Route::middleware('auth')->group(function () {
     Route::post('/company/scouts/{profile}', [CompanyScouts::class, 'store'])->name('company.scouts.store');
     Route::get('/company/scouts/sent', [CompanyScouts::class, 'sent'])->name('company.scouts.sent');
     Route::get('/company/scouts/{scout}', [CompanyScouts::class, 'show'])->name('company.scouts.show');
+
+    Route::get('/company/staffs', [CompanyStaffs::class, 'index'])->name('company.staffs.index');
+    Route::get('/company/staffs/create', [CompanyStaffs::class, 'create'])->name('company.staffs.create');
+    Route::post('/company/staffs', [CompanyStaffs::class, 'store'])->name('company.staffs.store');
+    Route::get('/company/staffs/{staff}/edit', [CompanyStaffs::class, 'edit'])->name('company.staffs.edit');
+    Route::put('/company/staffs/{staff}', [CompanyStaffs::class, 'update'])->name('company.staffs.update');
+    Route::delete('/company/staffs/{staff}', [CompanyStaffs::class, 'destroy'])->name('company.staffs.destroy');
+
+    Route::get('/company/menus', [CompanyMenus::class, 'index'])->name('company.menus.index');
+    Route::get('/company/menus/create', [CompanyMenus::class, 'create'])->name('company.menus.create');
+    Route::post('/company/menus', [CompanyMenus::class, 'store'])->name('company.menus.store');
+    Route::get('/company/menus/{menu}/edit', [CompanyMenus::class, 'edit'])->name('company.menus.edit');
+    Route::put('/company/menus/{menu}', [CompanyMenus::class, 'update'])->name('company.menus.update');
+    Route::delete('/company/menus/{menu}', [CompanyMenus::class, 'destroy'])->name('company.menus.destroy');
+
+    Route::get('/company/schedules', [CompanySchedules::class, 'index'])->name('company.schedules.index');
+    Route::get('/company/schedules/{store}/edit', [CompanySchedules::class, 'edit'])->name('company.schedules.edit');
+    Route::put('/company/schedules/{store}', [CompanySchedules::class, 'update'])->name('company.schedules.update');
+
+    Route::get('/company/reservations', [CompanyReservations::class, 'index'])->name('company.reservations.index');
+    Route::get('/company/reservations/{reservation}', [CompanyReservations::class, 'show'])->name('company.reservations.show');
+    Route::put('/company/reservations/{reservation}/status', [CompanyReservations::class, 'updateStatus'])->name('company.reservations.update-status');
 
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {

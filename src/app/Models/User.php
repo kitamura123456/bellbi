@@ -74,4 +74,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ScoutMessage::class, 'to_user_id');
     }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

@@ -9,7 +9,7 @@
 </div>
 
 <div class="company-card">
-    <form action="{{ route('company.stores.store') }}" method="POST" class="company-form">
+    <form action="{{ route('company.stores.store') }}" method="POST" enctype="multipart/form-data" class="company-form">
         @csrf
 
         <div class="form-group">
@@ -36,6 +36,96 @@
         </div>
 
         <div class="form-group">
+            <label for="description">店舗説明</label>
+            <textarea id="description" name="description" rows="4" placeholder="店舗の特徴やアピールポイントを入力してください">{{ old('description') }}</textarea>
+            <small>お客様に向けた店舗の紹介文を入力できます</small>
+            @error('description')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="thumbnail_image">サムネイル画像</label>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: normal;">
+                    <input type="radio" name="image_source" value="upload" checked> 画像をアップロード
+                </label>
+                <div id="upload-section" style="margin-left: 24px;">
+                    <input type="file" id="thumbnail_image" name="thumbnail_image" accept="image/*">
+                    <small>JPEG、PNG形式、最大2MBまで</small>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: normal;">
+                    <input type="radio" name="image_source" value="template"> テンプレート画像を選択
+                </label>
+                <div id="template-section" style="margin-left: 24px; display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store1.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store2.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store3.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store4.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            @error('thumbnail_image')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const imageSourceRadios = document.querySelectorAll('input[name="image_source"]');
+                const uploadSection = document.getElementById('upload-section');
+                const templateSection = document.getElementById('template-section');
+                const fileInput = document.getElementById('thumbnail_image');
+
+                imageSourceRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.value === 'upload') {
+                            uploadSection.style.display = 'block';
+                            templateSection.style.display = 'none';
+                            fileInput.disabled = false;
+                            document.querySelectorAll('input[name="template_image"]').forEach(t => t.checked = false);
+                        } else {
+                            uploadSection.style.display = 'none';
+                            templateSection.style.display = 'block';
+                            fileInput.disabled = true;
+                            fileInput.value = '';
+                        }
+                    });
+                });
+
+                // Template image selection
+                document.querySelectorAll('input[name="template_image"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        document.querySelectorAll('input[name="template_image"] + img').forEach(img => {
+                            img.style.borderColor = 'transparent';
+                        });
+                        if (this.checked) {
+                            this.nextElementSibling.style.borderColor = '#ec4899';
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <div class="form-group">
             <label for="postal_code">郵便番号</label>
             <input type="text" id="postal_code" name="postal_code" value="{{ old('postal_code') }}" placeholder="例：123-4567">
             @error('postal_code')
@@ -55,6 +145,26 @@
             <label for="tel">電話番号</label>
             <input type="text" id="tel" name="tel" value="{{ old('tel') }}" placeholder="例：03-1234-5678">
             @error('tel')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="accepts_reservations">予約受付</label>
+            <select id="accepts_reservations" name="accepts_reservations">
+                <option value="0" {{ old('accepts_reservations', 0) == 0 ? 'selected' : '' }}>受付しない</option>
+                <option value="1" {{ old('accepts_reservations') == 1 ? 'selected' : '' }}>受付する</option>
+            </select>
+            @error('accepts_reservations')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="cancel_deadline_hours">キャンセル期限（時間前まで）</label>
+            <input type="number" id="cancel_deadline_hours" name="cancel_deadline_hours" value="{{ old('cancel_deadline_hours', 24) }}" min="0" placeholder="例：24">
+            <small>予約のキャンセルを受け付ける期限（予約時刻の何時間前まで）</small>
+            @error('cancel_deadline_hours')
                 <span class="error">{{ $message }}</span>
             @enderror
         </div>

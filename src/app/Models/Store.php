@@ -16,12 +16,18 @@ class Store extends Model
         'postal_code',
         'address',
         'tel',
+        'description',
+        'thumbnail_image',
+        'accepts_reservations',
+        'cancel_deadline_hours',
         'delete_flg',
     ];
 
     protected $casts = [
         'company_id' => 'integer',
         'store_type' => 'integer',
+        'accepts_reservations' => 'integer',
+        'cancel_deadline_hours' => 'integer',
         'delete_flg' => 'integer',
     ];
 
@@ -33,6 +39,31 @@ class Store extends Model
     public function jobPosts()
     {
         return $this->hasMany(JobPost::class);
+    }
+
+    public function staffs()
+    {
+        return $this->hasMany(StoreStaff::class);
+    }
+
+    public function serviceMenus()
+    {
+        return $this->hasMany(ServiceMenu::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(StoreSchedule::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function reservationBlocks()
+    {
+        return $this->hasMany(ReservationBlock::class);
     }
 }
 

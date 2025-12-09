@@ -23,6 +23,7 @@
                 </div>
                 <nav class="main-nav">
                     <a href="{{ route('jobs.index') }}">求人を探す</a>
+                    <a href="{{ route('reservations.search') }}">予約する</a>
 
                     @auth
                         @php

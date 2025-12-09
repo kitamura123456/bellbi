@@ -9,6 +9,7 @@
             <li><a href="{{ route('mypage') }}" class="sidebar-menu-link">応募履歴</a></li>
             <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link active">スカウト受信</a></li>
             <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
+            <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
         </ul>
     </div>
 @endsection

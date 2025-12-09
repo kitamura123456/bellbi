@@ -89,6 +89,12 @@
 - `/mypage/subsidies/bookmarks`  
   - ブックマークした補助金一覧画面。
 
+- `/mypage/reservations`  
+  - 予約履歴一覧画面。
+
+- `/mypage/reservations/{id}`  
+  - 予約詳細画面。キャンセル処理も可能。
+
 #### 3.3 事業者向け画面
 
 - `/company`  
@@ -115,7 +121,33 @@
 - `/company/shops`  
   - ECショップ管理画面（ショップ情報編集、商品一覧など）。
 
-#### 3.4 管理者向け画面
+- `/company/reservations`  
+  - 予約管理画面。予約一覧、カレンダー表示。
+
+- `/company/reservations/{id}`  
+  - 予約詳細画面。ステータス変更、メモ追加など。
+
+- `/company/menus`  
+  - 施術メニュー一覧・登録・編集画面。
+
+- `/company/staffs`  
+  - スタッフ一覧・登録・編集画面。
+
+- `/company/schedules`  
+  - 営業時間・定休日設定画面。
+
+#### 3.4 フロント（予約関連）
+
+- `/reservations/search`  
+  - 予約可能な店舗検索画面。
+
+- `/reservations/store/{id}`  
+  - 店舗詳細・メニュー選択画面。
+
+- `/reservations/store/{id}/booking`  
+  - 日時選択・予約確定画面。
+
+#### 3.5 管理者向け画面
 
 - `/admin`  
   - 管理ダッシュボード。
@@ -177,6 +209,8 @@
   - `postal_code`: VARCHAR  
   - `address`: VARCHAR  
   - `tel`: VARCHAR  
+  - `accepts_reservations`: TINYINT（0:予約不可, 1:予約可）  
+  - `cancel_deadline_hours`: SMALLINT（キャンセル期限：予約時刻の何時間前まで、NULL可）  
   - `delete_flg`: TINYINT
 
 #### 4.4 `job_posts` テーブル
@@ -294,7 +328,96 @@
   - `subsidy_id`: BIGINT, FK → `subsidies.id`  
   - `delete_flg`: TINYINT
 
-#### 4.12 EC関連・プラン関連（概要）
+#### 4.12 予約システム関連テーブル
+
+##### 4.12.1 `store_staffs` テーブル
+
+- **用途**: 店舗スタッフ情報の管理。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `store_id`: BIGINT, FK → `stores.id`  
+  - `name`: VARCHAR（スタッフ名）  
+  - `display_order`: SMALLINT（表示順）  
+  - `is_active`: TINYINT（0:非公開, 1:公開）  
+  - `delete_flg`: TINYINT
+
+##### 4.12.2 `service_menus` テーブル
+
+- **用途**: 施術メニュー情報の管理。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `store_id`: BIGINT, FK → `stores.id`  
+  - `name`: VARCHAR（メニュー名）  
+  - `description`: TEXT（説明）  
+  - `duration_minutes`: SMALLINT（施術時間、30分単位）  
+  - `price`: INT（料金）  
+  - `category`: TINYINT（カテゴリ数値）  
+  - `display_order`: SMALLINT（表示順）  
+  - `is_active`: TINYINT（0:非公開, 1:公開）  
+  - `delete_flg`: TINYINT
+
+##### 4.12.3 `store_schedules` テーブル
+
+- **用途**: 店舗の営業スケジュール設定。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `store_id`: BIGINT, FK → `stores.id`  
+  - `day_of_week`: TINYINT（0:日曜, 1:月曜, ..., 6:土曜）  
+  - `is_open`: TINYINT（0:定休日, 1:営業日）  
+  - `open_time`: TIME（営業開始時間）  
+  - `close_time`: TIME（営業終了時間）  
+  - `delete_flg`: TINYINT
+
+##### 4.12.4 `reservations` テーブル
+
+- **用途**: 予約情報の管理。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `store_id`: BIGINT, FK → `stores.id`  
+  - `user_id`: BIGINT, FK → `users.id`（予約者）  
+  - `staff_id`: BIGINT, FK → `store_staffs.id`（NULL可：指名なし）  
+  - `reservation_date`: DATE（予約日）  
+  - `start_time`: TIME（開始時刻）  
+  - `end_time`: TIME（終了時刻）  
+  - `total_duration_minutes`: SMALLINT（合計所要時間）  
+  - `total_price`: INT（合計料金）  
+  - `status`: TINYINT  
+    - 1: 予約確定  
+    - 2: 来店済  
+    - 3: 店舗キャンセル  
+    - 4: 顧客キャンセル  
+    - 9: 無断キャンセル  
+  - `customer_note`: TEXT（顧客からの要望・メモ）  
+  - `store_note`: TEXT（店舗側メモ）  
+  - `delete_flg`: TINYINT
+
+##### 4.12.5 `reservation_menus` テーブル
+
+- **用途**: 予約と施術メニューの中間テーブル（複数メニュー対応）。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `reservation_id`: BIGINT, FK → `reservations.id`  
+  - `service_menu_id`: BIGINT, FK → `service_menus.id`  
+  - `menu_name`: VARCHAR（予約時点のメニュー名スナップショット）  
+  - `duration_minutes`: SMALLINT（予約時点の所要時間）  
+  - `price`: INT（予約時点の料金）  
+  - `display_order`: TINYINT（施術順）  
+  - `delete_flg`: TINYINT
+
+##### 4.12.6 `reservation_blocks` テーブル
+
+- **用途**: 予約枠のブロック情報（休憩時間、貸切、スタッフ不在など）。  
+- **主な項目**  
+  - `id`: BIGINT, PK  
+  - `store_id`: BIGINT, FK → `stores.id`  
+  - `staff_id`: BIGINT, FK → `store_staffs.id`（NULL可：店舗全体のブロック）  
+  - `block_date`: DATE  
+  - `start_time`: TIME  
+  - `end_time`: TIME  
+  - `reason`: VARCHAR（ブロック理由）  
+  - `delete_flg`: TINYINT
+
+#### 4.13 EC関連・プラン関連（概要）
 
 - `shops`  
   - 事業者のECショップ情報（`company_id`, `store_id`, `name`, `status`, `delete_flg` 等）
@@ -324,7 +447,15 @@
     - `User` - `ScoutProfile`: 1対1  
     - `Company` - `Transaction`: 1対多  
     - `Shop` - `Product`: 1対多  
-    - `Order` - `OrderItem`: 1対多
+    - `Order` - `OrderItem`: 1対多  
+    - `Store` - `StoreStaff`: 1対多  
+    - `Store` - `ServiceMenu`: 1対多  
+    - `Store` - `StoreSchedule`: 1対多（曜日別）  
+    - `Store` - `Reservation`: 1対多  
+    - `User` - `Reservation`: 1対多（予約者視点）  
+    - `StoreStaff` - `Reservation`: 1対多  
+    - `Reservation` - `ReservationMenu`: 1対多  
+    - `ServiceMenu` - `ReservationMenu`: 1対多
 
 - **5.2 ステータス・カテゴリ管理**  
   - `app/Enums/` または `config/const.php` などに Enum/定数クラスを定義し、  
@@ -333,6 +464,18 @@
 - **5.3 バリデーション方針**  
   - フォーム入力ごとに `FormRequest` クラスを作成し、必須項目・型・範囲チェックを定義する。  
   - ステータスやカテゴリの値は定数一覧に含まれる値のみ許可する。
+
+- **5.4 予約システム実装方針**  
+  - **予約枠計算ロジック**  
+    - 店舗の営業時間と既存予約、ブロック情報から空き枠を30分単位で算出する。  
+    - 選択されたメニューの所要時間に基づき、連続した空き枠を検索する。  
+  - **ダブルブッキング防止**  
+    - 予約確定時にトランザクションを使用し、同一時間帯の予約をロックして重複を防ぐ。  
+  - **カレンダー表示**  
+    - フロントエンドでは jQuery と FullCalendar（または類似ライブラリ）を利用し、視覚的なカレンダーUIを提供する。  
+  - **キャンセルポリシー**  
+    - 店舗ごとに `cancel_deadline_hours`（キャンセル期限：予約時刻の何時間前まで）を設定可能とする。  
+    - 期限を過ぎた場合は画面上でキャンセルボタンを非表示または無効化し、店舗連絡を促す。
 
 ---
 
