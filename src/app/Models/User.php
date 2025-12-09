@@ -64,4 +64,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(JobApplication::class);
     }
+
+    public function scoutProfile()
+    {
+        return $this->hasOne(ScoutProfile::class);
+    }
+
+    public function receivedScouts()
+    {
+        return $this->hasMany(ScoutMessage::class, 'to_user_id');
+    }
 }

@@ -12,7 +12,10 @@ use App\Http\Controllers\Company\CompanyController as CompanyInfo;
 use App\Http\Controllers\Company\StoreController as CompanyStores;
 use App\Http\Controllers\Company\JobPostController as CompanyJobPosts;
 use App\Http\Controllers\Company\JobApplicationController as CompanyApplications;
+use App\Http\Controllers\Company\ScoutController as CompanyScouts;
 use App\Http\Controllers\MypageController;
+use App\Http\Controllers\Mypage\ScoutProfileController;
+use App\Http\Controllers\Mypage\ScoutController as MypageScouts;
 use App\Http\Controllers\Api\BusinessCategoryController;
 
 // API
@@ -39,7 +42,13 @@ Route::post('/company/register', [CompanyRegisterController::class, 'register'])
 
 // ロール別ダッシュボード（最低限のプレースホルダ）
 Route::middleware('auth')->group(function () {
+    // 個人用マイページ
     Route::get('/mypage', [MypageController::class, 'index'])->name('mypage');
+    Route::get('/mypage/scout-profile', [ScoutProfileController::class, 'edit'])->name('mypage.scout-profile.edit');
+    Route::put('/mypage/scout-profile', [ScoutProfileController::class, 'update'])->name('mypage.scout-profile.update');
+    Route::get('/mypage/scouts', [MypageScouts::class, 'index'])->name('mypage.scouts.index');
+    Route::get('/mypage/scouts/{scout}', [MypageScouts::class, 'show'])->name('mypage.scouts.show');
+    Route::post('/mypage/scouts/{scout}/reply', [MypageScouts::class, 'reply'])->name('mypage.scouts.reply');
 
     // 事業者管理画面
     Route::get('/company', [CompanyDashboard::class, 'index'])->name('company.dashboard');
@@ -64,6 +73,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/applications', [CompanyApplications::class, 'index'])->name('company.applications.index');
     Route::get('/company/applications/{application}', [CompanyApplications::class, 'show'])->name('company.applications.show');
     Route::put('/company/applications/{application}/status', [CompanyApplications::class, 'updateStatus'])->name('company.applications.update-status');
+
+    Route::get('/company/scouts/search', [CompanyScouts::class, 'search'])->name('company.scouts.search');
+    Route::get('/company/scouts/create/{profile}', [CompanyScouts::class, 'create'])->name('company.scouts.create');
+    Route::post('/company/scouts/{profile}', [CompanyScouts::class, 'store'])->name('company.scouts.store');
+    Route::get('/company/scouts/sent', [CompanyScouts::class, 'sent'])->name('company.scouts.sent');
+    Route::get('/company/scouts/{scout}', [CompanyScouts::class, 'show'])->name('company.scouts.show');
 
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {

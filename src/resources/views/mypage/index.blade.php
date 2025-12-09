@@ -7,8 +7,8 @@
         <h3 class="sidebar-title">メニュー</h3>
         <ul class="sidebar-menu">
             <li><a href="{{ route('mypage') }}" class="sidebar-menu-link active">応募履歴</a></li>
-            <li><a href="#" class="sidebar-menu-link">スカウト受信（準備中）</a></li>
-            <li><a href="#" class="sidebar-menu-link">プロフィール編集（準備中）</a></li>
+            <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link">スカウト受信</a></li>
+            <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
         </ul>
     </div>
 @endsection

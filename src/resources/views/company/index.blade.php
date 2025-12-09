@@ -32,11 +32,11 @@
             <p class="company-menu-desc">求人の作成・編集・応募管理</p>
         </a>
 
-        <div class="company-menu-card company-menu-disabled">
+        <a href="{{ route('company.scouts.search') }}" class="company-menu-card">
             <div class="company-menu-icon">📧</div>
             <h3 class="company-menu-title">スカウト管理</h3>
-            <p class="company-menu-desc">準備中</p>
-        </div>
+            <p class="company-menu-desc">候補者検索・スカウト送信</p>
+        </a>
 
         <div class="company-menu-card company-menu-disabled">
             <div class="company-menu-icon">💰</div>
