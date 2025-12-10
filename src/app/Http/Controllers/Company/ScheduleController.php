@@ -80,6 +80,7 @@ class ScheduleController extends Controller
             'schedules.*.is_open' => ['required', 'integer', 'in:0,1'],
             'schedules.*.open_time' => ['nullable', 'date_format:H:i'],
             'schedules.*.close_time' => ['nullable', 'date_format:H:i'],
+            'schedules.*.max_concurrent_reservations' => ['required', 'integer', 'min:1', 'max:50'],
         ]);
 
         DB::transaction(function () use ($store, $validated) {
@@ -94,6 +95,7 @@ class ScheduleController extends Controller
                         'is_open' => $data['is_open'],
                         'open_time' => $data['is_open'] ? $data['open_time'] : null,
                         'close_time' => $data['is_open'] ? $data['close_time'] : null,
+                        'max_concurrent_reservations' => $data['max_concurrent_reservations'],
                     ]);
                 } else {
                     StoreSchedule::create([
@@ -102,6 +104,7 @@ class ScheduleController extends Controller
                         'is_open' => $data['is_open'],
                         'open_time' => $data['is_open'] ? $data['open_time'] : null,
                         'close_time' => $data['is_open'] ? $data['close_time'] : null,
+                        'max_concurrent_reservations' => $data['max_concurrent_reservations'],
                         'delete_flg' => 0,
                     ]);
                 }

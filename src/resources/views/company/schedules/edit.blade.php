@@ -40,6 +40,12 @@
                     <input type="time" id="close_time_{{ $day }}" name="schedules[{{ $day }}][close_time]" value="{{ old("schedules.$day.close_time", $schedule->close_time ?? '19:00') }}">
                 </div>
             </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+                <label for="max_concurrent_{{ $day }}">同時対応可能予約数</label>
+                <input type="number" id="max_concurrent_{{ $day }}" name="schedules[{{ $day }}][max_concurrent_reservations]" value="{{ old("schedules.$day.max_concurrent_reservations", $schedule->max_concurrent_reservations ?? 1) }}" min="1" max="50" style="width: 100px;">
+                <small style="color: #666;">※ 同時に対応できる予約の数を設定してください</small>
+            </div>
         </div>
         @endforeach
 

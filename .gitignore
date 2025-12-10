@@ -51,6 +51,7 @@ Thumbs.db
 
 # MAMP specific
 .htaccess
+.htpasswd
 error_log
 
 # Build files

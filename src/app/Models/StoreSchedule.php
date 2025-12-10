@@ -15,6 +15,7 @@ class StoreSchedule extends Model
         'is_open',
         'open_time',
         'close_time',
+        'max_concurrent_reservations',
         'delete_flg',
     ];
 
@@ -22,6 +23,7 @@ class StoreSchedule extends Model
         'store_id' => 'integer',
         'day_of_week' => 'integer',
         'is_open' => 'integer',
+        'max_concurrent_reservations' => 'integer',
         'delete_flg' => 'integer',
     ];
 

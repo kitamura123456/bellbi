@@ -74,10 +74,16 @@ class ReservationService
                 }
             }
 
-            // 2. 店舗の同時対応可能人数チェック
+            // 2. 店舗の同時対応可能人数チェック（曜日ごと）
             if ($isAvailable) {
                 $concurrentCount = $this->getConcurrentReservationCount($slotStart, $slotEnd, $allReservations);
-                $maxConcurrent = $store->max_concurrent_reservations ?? 3;
+                $dayOfWeek = $date->dayOfWeek;
+                $schedule = $store->schedules()
+                    ->where('day_of_week', $dayOfWeek)
+                    ->where('is_open', 1)
+                    ->where('delete_flg', 0)
+                    ->first();
+                $maxConcurrent = $schedule->max_concurrent_reservations ?? 1;
                 
                 if ($concurrentCount >= $maxConcurrent) {
                     $isAvailable = false;
