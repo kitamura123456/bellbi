@@ -85,6 +85,7 @@
             @error('tax_amount')
                 <span class="error-message">{{ $message }}</span>
             @enderror
+            <small class="form-help">科目のデフォルト税率から自動計算されます</small>
         </div>
 
         <div class="form-group">
@@ -150,6 +151,12 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.form-help {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
 .error-message {
     color: #e53e3e;
     font-size: 13px;
@@ -176,6 +183,7 @@
 
 <script>
 $(document).ready(function() {
+    // 種別に応じて科目の選択肢を切り替え
     function updateAccountItems() {
         var type = $('#transaction_type').val();
         $('#revenue-items').hide();
@@ -188,6 +196,18 @@ $(document).ready(function() {
         }
     }
 
+    // 税額と合計金額を自動計算
+    function calculateTax() {
+        var amount = parseFloat($('#amount').val()) || 0;
+        var selectedOption = $('#account_item_id option:selected');
+        var taxRate = parseFloat(selectedOption.data('tax-rate')) || 0;
+        
+        var taxAmount = Math.floor(amount * taxRate / 100);
+        $('#tax_amount').val(taxAmount);
+        
+        updateTotal();
+    }
+
     function updateTotal() {
         var amount = parseFloat($('#amount').val()) || 0;
         var taxAmount = parseFloat($('#tax_amount').val()) || 0;
@@ -196,10 +216,13 @@ $(document).ready(function() {
         $('#total-amount').text('¥' + total.toLocaleString());
     }
 
+    // イベントハンドラー
     $('#transaction_type').on('change', updateAccountItems);
-    $('#amount').on('input', updateTotal);
+    $('#account_item_id').on('change', calculateTax);
+    $('#amount').on('input', calculateTax);
     $('#tax_amount').on('input', updateTotal);
 
+    // 初期化
     updateAccountItems();
     updateTotal();
 });
