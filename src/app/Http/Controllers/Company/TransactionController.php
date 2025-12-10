@@ -270,13 +270,13 @@ class TransactionController extends Controller
 
         // 科目別集計
         $revenueByItem = (clone $query)->revenue()
-            ->selectRaw('account_item_id, SUM(amount) as total_amount, SUM(tax_amount) as total_tax')
+            ->selectRaw('account_item_id, CAST(SUM(amount) AS INTEGER) as total_amount, CAST(SUM(tax_amount) AS INTEGER) as total_tax')
             ->groupBy('account_item_id')
             ->with('accountItem')
             ->get();
 
         $expenseByItem = (clone $query)->expense()
-            ->selectRaw('account_item_id, SUM(amount) as total_amount, SUM(tax_amount) as total_tax')
+            ->selectRaw('account_item_id, CAST(SUM(amount) AS INTEGER) as total_amount, CAST(SUM(tax_amount) AS INTEGER) as total_tax')
             ->groupBy('account_item_id')
             ->with('accountItem')
             ->get();
