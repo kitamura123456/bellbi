@@ -12,9 +12,12 @@ use App\Models\JobPost;
 use App\Models\JobApplication;
 use App\Models\ScoutProfile;
 use App\Models\ScoutMessage;
+use App\Models\AccountItem;
+use App\Models\Transaction;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -634,6 +637,208 @@ class DatabaseSeeder extends Seeder
                     'body' => "渡辺様\n\nエステティックサロン Lumièreです。\n\n5年の経験をお持ちで、パート勤務をご希望とのこと、当店の勤務条件とマッチするのではと思いご連絡差し上げました。\n\n週3日〜、時短勤務も相談可能です。\n\nお気軽にご連絡ください。\n\n--- 返信 ---\nご連絡ありがとうございます。ぜひ詳しいお話を伺いたいです。店舗見学は可能でしょうか？",
                     'delete_flg' => 0,
                 ]);
+            }
+        }
+
+        // ===== テスト美容サロン（tenpo）の会計データ =====
+        
+        $tenpoUser = User::where('email', 'tenpo')->first();
+        if ($tenpoUser) {
+            $tenpoCompany = Company::where('user_id', $tenpoUser->id)->first();
+            $tenpoStore = Store::where('company_id', $tenpoCompany->id)->first();
+
+            if ($tenpoCompany && $tenpoStore) {
+                // 科目マスタ作成
+                $revenueItems = [];
+                $expenseItems = [];
+
+                // 売上科目
+                if (!AccountItem::where('company_id', $tenpoCompany->id)->where('type', 1)->exists()) {
+                    $revenueItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 1,
+                        'name' => 'カット',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $revenueItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 1,
+                        'name' => 'カラー',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $revenueItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 1,
+                        'name' => 'パーマ',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $revenueItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 1,
+                        'name' => 'トリートメント',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $revenueItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 1,
+                        'name' => 'ヘッドスパ',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+                } else {
+                    $revenueItems = AccountItem::where('company_id', $tenpoCompany->id)
+                        ->where('type', 1)
+                        ->where('delete_flg', 0)
+                        ->get()
+                        ->toArray();
+                }
+
+                // 経費科目
+                if (!AccountItem::where('company_id', $tenpoCompany->id)->where('type', 2)->exists()) {
+                    $expenseItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 2,
+                        'name' => '材料費（カラー剤）',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $expenseItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 2,
+                        'name' => '材料費（パーマ液）',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $expenseItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 2,
+                        'name' => '広告宣伝費',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $expenseItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 2,
+                        'name' => '水道光熱費',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+
+                    $expenseItems[] = AccountItem::create([
+                        'company_id' => $tenpoCompany->id,
+                        'type' => 2,
+                        'name' => '消耗品費',
+                        'default_tax_rate' => 10.0,
+                        'delete_flg' => 0,
+                    ]);
+                } else {
+                    $expenseItems = AccountItem::where('company_id', $tenpoCompany->id)
+                        ->where('type', 2)
+                        ->where('delete_flg', 0)
+                        ->get()
+                        ->toArray();
+                }
+
+                // 取引データ作成（過去3ヶ月分）
+                if (!Transaction::where('company_id', $tenpoCompany->id)->exists()) {
+                    $startDate = Carbon::now()->subMonths(3)->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+
+                    $currentDate = $startDate->copy();
+                    while ($currentDate <= $endDate) {
+                        // 定休日（火曜日）以外は営業
+                        if ($currentDate->dayOfWeek !== 2) {
+                            // 1日あたり3〜8件の売上
+                            $salesCount = rand(3, 8);
+                            for ($i = 0; $i < $salesCount; $i++) {
+                                $revenueItem = $revenueItems[array_rand($revenueItems)];
+                                
+                                // 科目に応じた金額設定
+                                $amounts = [
+                                    'カット' => [4000, 6000],
+                                    'カラー' => [6000, 12000],
+                                    'パーマ' => [8000, 15000],
+                                    'トリートメント' => [2000, 5000],
+                                    'ヘッドスパ' => [3000, 5000],
+                                ];
+
+                                $itemName = is_array($revenueItem) ? $revenueItem['name'] : $revenueItem->name;
+                                $itemId = is_array($revenueItem) ? $revenueItem['id'] : $revenueItem->id;
+                                
+                                if (isset($amounts[$itemName])) {
+                                    $amount = rand($amounts[$itemName][0], $amounts[$itemName][1]);
+                                } else {
+                                    $amount = rand(3000, 10000);
+                                }
+                                
+                                $taxAmount = floor($amount * 0.1);
+
+                                Transaction::create([
+                                    'company_id' => $tenpoCompany->id,
+                                    'store_id' => $tenpoStore->id,
+                                    'date' => $currentDate->format('Y-m-d'),
+                                    'account_item_id' => $itemId,
+                                    'amount' => $amount,
+                                    'tax_amount' => $taxAmount,
+                                    'transaction_type' => 1,
+                                    'source_type' => 1,
+                                    'note' => null,
+                                    'delete_flg' => 0,
+                                ]);
+                            }
+
+                            // 経費（週に2〜3回程度）
+                            if (rand(1, 3) <= 2) {
+                                $expenseItem = $expenseItems[array_rand($expenseItems)];
+                                
+                                $expenseAmounts = [
+                                    '材料費（カラー剤）' => [5000, 15000],
+                                    '材料費（パーマ液）' => [3000, 10000],
+                                    '広告宣伝費' => [10000, 50000],
+                                    '水道光熱費' => [5000, 20000],
+                                    '消耗品費' => [2000, 8000],
+                                ];
+
+                                $itemName = is_array($expenseItem) ? $expenseItem['name'] : $expenseItem->name;
+                                $itemId = is_array($expenseItem) ? $expenseItem['id'] : $expenseItem->id;
+                                
+                                if (isset($expenseAmounts[$itemName])) {
+                                    $amount = rand($expenseAmounts[$itemName][0], $expenseAmounts[$itemName][1]);
+                                } else {
+                                    $amount = rand(3000, 15000);
+                                }
+                                
+                                $taxAmount = floor($amount * 0.1);
+
+                                Transaction::create([
+                                    'company_id' => $tenpoCompany->id,
+                                    'store_id' => $tenpoStore->id,
+                                    'date' => $currentDate->format('Y-m-d'),
+                                    'account_item_id' => $itemId,
+                                    'amount' => $amount,
+                                    'tax_amount' => $taxAmount,
+                                    'transaction_type' => 2,
+                                    'source_type' => 1,
+                                    'note' => null,
+                                    'delete_flg' => 0,
+                                ]);
+                            }
+                        }
+
+                        $currentDate->addDay();
+                    }
+                }
             }
         }
     }

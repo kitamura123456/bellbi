@@ -45,6 +45,16 @@ class Company extends Model
     {
         return $this->hasMany(JobPost::class);
     }
+
+    public function accountItems()
+    {
+        return $this->hasMany(AccountItem::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
 
 

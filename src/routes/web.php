@@ -21,6 +21,8 @@ use App\Http\Controllers\Company\StaffController as CompanyStaffs;
 use App\Http\Controllers\Company\MenuController as CompanyMenus;
 use App\Http\Controllers\Company\ScheduleController as CompanySchedules;
 use App\Http\Controllers\Company\ReservationController as CompanyReservations;
+use App\Http\Controllers\Company\AccountItemController as CompanyAccountItems;
+use App\Http\Controllers\Company\TransactionController as CompanyTransactions;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 
@@ -116,6 +118,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/reservations', [CompanyReservations::class, 'index'])->name('company.reservations.index');
     Route::get('/company/reservations/{reservation}', [CompanyReservations::class, 'show'])->name('company.reservations.show');
     Route::put('/company/reservations/{reservation}/status', [CompanyReservations::class, 'updateStatus'])->name('company.reservations.update-status');
+
+    // 経営現場改善機能（会計）
+    Route::get('/company/account-items', [CompanyAccountItems::class, 'index'])->name('company.account-items.index');
+    Route::get('/company/account-items/create', [CompanyAccountItems::class, 'create'])->name('company.account-items.create');
+    Route::post('/company/account-items', [CompanyAccountItems::class, 'store'])->name('company.account-items.store');
+    Route::get('/company/account-items/{accountItem}/edit', [CompanyAccountItems::class, 'edit'])->name('company.account-items.edit');
+    Route::put('/company/account-items/{accountItem}', [CompanyAccountItems::class, 'update'])->name('company.account-items.update');
+    Route::delete('/company/account-items/{accountItem}', [CompanyAccountItems::class, 'destroy'])->name('company.account-items.destroy');
+
+    Route::get('/company/transactions', [CompanyTransactions::class, 'index'])->name('company.transactions.index');
+    Route::get('/company/transactions/create', [CompanyTransactions::class, 'create'])->name('company.transactions.create');
+    Route::post('/company/transactions', [CompanyTransactions::class, 'store'])->name('company.transactions.store');
+    Route::get('/company/transactions/{transaction}/edit', [CompanyTransactions::class, 'edit'])->name('company.transactions.edit');
+    Route::put('/company/transactions/{transaction}', [CompanyTransactions::class, 'update'])->name('company.transactions.update');
+    Route::delete('/company/transactions/{transaction}', [CompanyTransactions::class, 'destroy'])->name('company.transactions.destroy');
+    Route::get('/company/transactions/report', [CompanyTransactions::class, 'report'])->name('company.transactions.report');
+    Route::get('/company/transactions/export', [CompanyTransactions::class, 'export'])->name('company.transactions.export');
 
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {

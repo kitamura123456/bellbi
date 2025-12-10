@@ -28,6 +28,7 @@
                     <a href="{{ route('company.applications.index') }}">応募管理</a>
                     <a href="{{ route('company.scouts.search') }}">スカウト</a>
                     <a href="{{ route('company.reservations.index') }}">予約管理</a>
+                    <a href="{{ route('company.transactions.index') }}">売上・経費</a>
                     <a href="{{ route('jobs.index') }}">フロントを見る</a>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

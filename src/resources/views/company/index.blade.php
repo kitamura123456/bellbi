@@ -54,10 +54,20 @@
             <p class="company-menu-desc">営業時間・定休日設定</p>
         </a>
 
-        <div class="company-menu-card company-menu-disabled">
-            <h3 class="company-menu-title">売上管理</h3>
-            <p class="company-menu-desc">準備中</p>
-        </div>
+        <a href="{{ route('company.transactions.index') }}" class="company-menu-card">
+            <h3 class="company-menu-title">売上・経費管理</h3>
+            <p class="company-menu-desc">日々の売上・経費を記録・集計</p>
+        </a>
+
+        <a href="{{ route('company.account-items.index') }}" class="company-menu-card">
+            <h3 class="company-menu-title">科目マスタ</h3>
+            <p class="company-menu-desc">売上・経費の科目設定</p>
+        </a>
+
+        <a href="{{ route('company.transactions.report') }}" class="company-menu-card">
+            <h3 class="company-menu-title">月次レポート</h3>
+            <p class="company-menu-desc">売上・経費の月次集計</p>
+        </a>
 
         <div class="company-menu-card company-menu-disabled">
             <h3 class="company-menu-title">ECショップ</h3>
