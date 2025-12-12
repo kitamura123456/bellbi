@@ -33,7 +33,7 @@ class ReservationController extends Controller
 
         $stores = $query->paginate(20);
 
-        return view('reservations.search', compact('stores'));
+        return view('', compact('stores'));
     }
 
     // 店舗詳細・メニュー選択
