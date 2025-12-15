@@ -7,6 +7,23 @@
         <header class="job-detail-header">
             <p class="page-label">求人詳細</p>
             <h2 class="job-detail-title">{{ $job->title }}</h2>
+            <div style="flex-shrink: 0;">
+                                @if($job->thumbnail_image)
+                                    @if(strpos($job->thumbnail_image, 'templates/') === 0)
+                                        <img src="{{ asset('images/' . $job->thumbnail_image) }}" alt="{{ $job->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                    @elseif(file_exists(public_path('storage/' . $job->thumbnail_image)))
+                                        <img src="{{ asset('storage/' . $job->thumbnail_image) }}" alt="{{ $job->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                    @else
+                                        <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                            No Image
+                                        </div>
+                                    @endif
+                                @else
+                                    <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                        No Image
+                                    </div>
+                                @endif
+                            </div>
             <p class="job-detail-salon">
                 @if ($job->company)
                     {{ $job->company->name }}
