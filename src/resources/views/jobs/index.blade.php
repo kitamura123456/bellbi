@@ -1,3 +1,4 @@
+use App\Enums\Prefecture;
 @extends('layouts.app')
 
 @section('title', '求人一覧 | Bellbi')
@@ -11,12 +12,13 @@
                 <input type="text" id="keyword" name="keyword" placeholder="エリア・サロン名・職種など">
             </div>
             <div class="form-group">
+                {{-- enumで都道府県全部対応させる --}}
                 <label for="area">エリア</label>
                 <select id="area" name="area">
                     <option value="">指定なし</option>
-                    <option>東京</option>
-                    <option>神奈川</option>
-                    <option>大阪</option>
+                    @foreach(\App\Enums\Todoufuken::cases() as $pref)
+                    <option value="{{ $pref->value}}">{{ $pref->label() }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="form-group">
