@@ -9,7 +9,7 @@
 </div>
 
 <div class="company-card">
-    <form action="{{ route('company.job-posts.update', $jobPost) }}" method="POST" class="company-form">
+    <form action="{{ route('company.job-posts.update', $jobPost) }}" method="POST" class="company-form" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -108,6 +108,51 @@
             <label for="description">仕事内容・詳細 <span class="required">必須</span></label>
             <textarea id="description" name="description" required>{{ old('description', $jobPost->description) }}</textarea>
             @error('description')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        
+        <div class="form-group">
+            <label for="thumbnail_image">サムネイル画像</label>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: normal;">
+                    <input type="radio" name="image_source" value="upload" checked> 画像をアップロード
+                </label>
+                <div id="upload-section" style="margin-left: 24px;">
+                    <input type="file" id="thumbnail_image" name="thumbnail_image" accept="image/*">
+                    <small>JPEG、PNG形式、最大2MBまで</small>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: normal;">
+                    <input type="radio" name="image_source" value="template"> テンプレート画像を選択
+                </label>
+                <div id="template-section" style="margin-left: 24px; display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store1.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store2.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store3.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="template_image" value="templates/stores/store4.svg" style="display: none;">
+                            <img src="{{ asset('images/templates/stores/store4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            @error('thumbnail_image')
                 <span class="error">{{ $message }}</span>
             @enderror
         </div>

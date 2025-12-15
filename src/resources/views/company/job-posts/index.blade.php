@@ -23,6 +23,25 @@
         <tbody>
             @forelse($jobPosts as $jobPost)
             <tr>
+                <td>
+                    <div style="flex-shrink: 0;">
+                            @if($jobPost->thumbnail_image)
+                                @if(strpos($jobPost->thumbnail_image, 'templates/') === 0)
+                                    <img src="{{ asset('images/' . $jobPost->thumbnail_image) }}" alt="{{ $jobPost->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                @elseif(file_exists(public_path('storage/' . $jobPost->thumbnail_image)))
+                                    <img src="{{ asset('storage/' . $jobPost->thumbnail_image) }}" alt="{{ $jobPost->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                @else
+                                    <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                        No Image
+                                    </div>
+                                @endif
+                            @else
+                                <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                    No Image
+                                </div>
+                            @endif
+                    </div>
+                </td>
                 <td>{{ $jobPost->title }}</td>
                 <td>
                     @if($jobPost->status === 0)

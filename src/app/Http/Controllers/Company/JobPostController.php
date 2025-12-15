@@ -59,7 +59,7 @@ class JobPostController extends Controller
             'max_salary' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'integer'],
 
-            'thumbnail_image' => ['nullable', 'image', 'max:2048'],
+            'thumbnail_image' => $request->input('template_image') ? 'nullable' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'template_image' => ['nullable', 'string'],
         ]);
 
@@ -117,7 +117,7 @@ class JobPostController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
+        $data = $request->validate([
             'store_id' => ['nullable', 'exists:stores,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -130,7 +130,18 @@ class JobPostController extends Controller
             'status' => ['required', 'integer'],
         ]);
 
-        $jobPost->update($validated);
+        
+        // 画像アップロード処理
+        if ($request->hasFile('thumbnail_image')) {
+            $path = $request->file('thumbnail_image')->store('stores', 'public');
+            $data['thumbnail_image'] = $path;
+        } elseif ($request->input('template_image')) {
+            // テンプレート画像を選択した場合
+            $data['thumbnail_image'] = $request->input('template_image');
+        }
+
+
+        $jobPost->update($data);
 
         return redirect()->route('company.job-posts.index')->with('status', '求人を更新しました。');
     }

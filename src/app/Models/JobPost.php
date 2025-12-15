@@ -25,6 +25,7 @@ class JobPost extends Model
         'publish_start_at',
         'publish_end_at',
         'delete_flg',
+        'thumbnail_image'
     ];
 
     protected $casts = [

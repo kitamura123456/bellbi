@@ -51,6 +51,23 @@
                 <article class="job-card">
                     <div class="job-card-body">
                         <p class="job-card-tag">募集</p>
+                            <div style="flex-shrink: 0;">
+                                @if($job->thumbnail_image)
+                                    @if(strpos($job->thumbnail_image, 'templates/') === 0)
+                                        <img src="{{ asset('images/' . $job->thumbnail_image) }}" alt="{{ $job->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                    @elseif(file_exists(public_path('storage/' . $job->thumbnail_image)))
+                                        <img src="{{ asset('storage/' . $job->thumbnail_image) }}" alt="{{ $job->name }}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px;">
+                                    @else
+                                        <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                            No Image
+                                        </div>
+                                    @endif
+                                @else
+                                    <div style="width: 180px; height: 180px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;">
+                                        No Image
+                                    </div>
+                                @endif
+                            </div>
                         <h3 class="job-card-title">
                             <a href="{{ route('jobs.show', $job) }}">
                                 {{ $job->title }}
