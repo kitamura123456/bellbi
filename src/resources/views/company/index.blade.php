@@ -34,6 +34,11 @@
             <p class="company-menu-desc">候補者検索・スカウト送信</p>
         </a>
 
+        <a href="{{ route('company.messages.index') }}" class="company-menu-card">
+            <h3 class="company-menu-title">メッセージ</h3>
+            <p class="company-menu-desc">応募者・スカウト送信先とのやりとり</p>
+        </a>
+
         <a href="{{ route('company.reservations.index') }}" class="company-menu-card">
             <h3 class="company-menu-title">予約管理</h3>
             <p class="company-menu-desc">予約一覧・ステータス変更</p>

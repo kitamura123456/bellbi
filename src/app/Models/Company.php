@@ -55,6 +55,11 @@ class Company extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
+    }
 }
 
 

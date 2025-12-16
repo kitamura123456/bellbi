@@ -8,6 +8,7 @@
         <ul class="sidebar-menu">
             <li><a href="{{ route('mypage') }}" class="sidebar-menu-link active">応募履歴</a></li>
             <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link">スカウト受信</a></li>
+            <li><a href="{{ route('mypage.messages.index') }}" class="sidebar-menu-link">メッセージ</a></li>
             <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
             <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
         </ul>
@@ -43,6 +44,9 @@
                     メッセージ：{{ \Str::limit($application->message, 50) }}
                 </p>
             @endif
+        </div>
+        <div class="job-card-footer">
+            <a href="{{ route('mypage.messages.create-from-application', $application) }}" class="btn-secondary btn-sm">メッセージを送る</a>
         </div>
     </div>
     @empty

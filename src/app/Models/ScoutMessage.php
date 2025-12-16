@@ -54,6 +54,11 @@ class ScoutMessage extends Model
     {
         return $this->belongsTo(ScoutProfile::class);
     }
+
+    public function conversation()
+    {
+        return $this->hasOne(Conversation::class);
+    }
 }
 
 

@@ -38,6 +38,7 @@
                 </td>
                 <td class="company-actions">
                     <a href="{{ route('company.scouts.show', $scout) }}" class="btn-secondary btn-sm">詳細</a>
+                    <a href="{{ route('company.messages.create-from-scout', $scout) }}" class="btn-primary btn-sm" style="margin-left: 8px;">メッセージ</a>
                 </td>
             </tr>
             @empty

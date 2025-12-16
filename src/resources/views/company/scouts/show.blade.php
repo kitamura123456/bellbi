@@ -5,7 +5,10 @@
 @section('content')
 <div class="company-header">
     <h1 class="company-title">スカウト詳細</h1>
-    <a href="{{ route('company.scouts.sent') }}" class="btn-secondary">一覧に戻る</a>
+    <div>
+        <a href="{{ route('company.messages.create-from-scout', $scout) }}" class="btn-primary" style="margin-right: 8px;">メッセージでやりとりする</a>
+        <a href="{{ route('company.scouts.sent') }}" class="btn-secondary">一覧に戻る</a>
+    </div>
 </div>
 
 <div class="company-card">

@@ -8,6 +8,7 @@
         <ul class="sidebar-menu">
             <li><a href="{{ route('mypage') }}" class="sidebar-menu-link">応募履歴</a></li>
             <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link active">スカウト受信</a></li>
+            <li><a href="{{ route('mypage.messages.index') }}" class="sidebar-menu-link">メッセージ</a></li>
             <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
             <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
         </ul>
@@ -52,6 +53,10 @@
         <div style="margin-top: 20px;">
             <h4>メッセージ</h4>
             <div style="white-space: pre-wrap; background-color: #f9fafb; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.7;">{{ $scout->body }}</div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="{{ route('mypage.messages.create-from-scout', $scout) }}" class="btn-primary">メッセージでやりとりする</a>
         </div>
     </div>
 

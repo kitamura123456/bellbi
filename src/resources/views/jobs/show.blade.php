@@ -40,7 +40,14 @@
                     <span class="meta-label">勤務地</span>
                     <span class="meta-value">
                         @if($job->prefecture_code)
-                            {{ \App\Services\LocationService::getPrefectureName($job->prefecture_code) }}
+                            @php
+                                $prefecture = \App\Enums\Todofuken::tryFrom($job->prefecture_code);
+                            @endphp
+                            @if($prefecture)
+                                {{ $prefecture->label() }}
+                            @else
+                                {{ $job->prefecture_code }}
+                            @endif
                             @if($job->city){{ $job->city }}@endif
                         @else
                             {{ $job->work_location }}

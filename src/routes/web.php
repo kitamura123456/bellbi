@@ -13,10 +13,12 @@ use App\Http\Controllers\Company\StoreController as CompanyStores;
 use App\Http\Controllers\Company\JobPostController as CompanyJobPosts;
 use App\Http\Controllers\Company\JobApplicationController as CompanyApplications;
 use App\Http\Controllers\Company\ScoutController as CompanyScouts;
+use App\Http\Controllers\Company\MessageController as CompanyMessages;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\Mypage\ScoutProfileController;
 use App\Http\Controllers\Mypage\ScoutController as MypageScouts;
 use App\Http\Controllers\Mypage\ReservationController as MypageReservations;
+use App\Http\Controllers\Mypage\MessageController as MypageMessages;
 use App\Http\Controllers\Company\StaffController as CompanyStaffs;
 use App\Http\Controllers\Company\MenuController as CompanyMenus;
 use App\Http\Controllers\Company\ScheduleController as CompanySchedules;
@@ -66,6 +68,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/mypage/reservations', [MypageReservations::class, 'index'])->name('mypage.reservations.index');
     Route::get('/mypage/reservations/{reservation}', [MypageReservations::class, 'show'])->name('mypage.reservations.show');
     Route::post('/mypage/reservations/{reservation}/cancel', [MypageReservations::class, 'cancel'])->name('mypage.reservations.cancel');
+    
+    // メッセージ機能
+    Route::get('/mypage/messages', [MypageMessages::class, 'index'])->name('mypage.messages.index');
+    Route::get('/mypage/messages/{conversation}', [MypageMessages::class, 'show'])->name('mypage.messages.show');
+    Route::post('/mypage/messages/{conversation}', [MypageMessages::class, 'store'])->name('mypage.messages.store');
+    Route::get('/mypage/applications/{application}/messages', [MypageMessages::class, 'createFromApplication'])->name('mypage.messages.create-from-application');
+    Route::get('/mypage/scouts/{scout}/messages', [MypageMessages::class, 'createFromScout'])->name('mypage.messages.create-from-scout');
 
     // 事業者管理画面
     Route::get('/company', [CompanyDashboard::class, 'index'])->name('company.dashboard');
@@ -96,6 +105,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/company/scouts/{profile}', [CompanyScouts::class, 'store'])->name('company.scouts.store');
     Route::get('/company/scouts/sent', [CompanyScouts::class, 'sent'])->name('company.scouts.sent');
     Route::get('/company/scouts/{scout}', [CompanyScouts::class, 'show'])->name('company.scouts.show');
+    
+    // メッセージ機能
+    Route::get('/company/messages', [CompanyMessages::class, 'index'])->name('company.messages.index');
+    Route::get('/company/messages/{conversation}', [CompanyMessages::class, 'show'])->name('company.messages.show');
+    Route::post('/company/messages/{conversation}', [CompanyMessages::class, 'store'])->name('company.messages.store');
+    Route::get('/company/applications/{application}/messages', [CompanyMessages::class, 'createFromApplication'])->name('company.messages.create-from-application');
+    Route::get('/company/scouts/{scout}/messages', [CompanyMessages::class, 'createFromScout'])->name('company.messages.create-from-scout');
 
     Route::get('/company/staffs', [CompanyStaffs::class, 'index'])->name('company.staffs.index');
     Route::get('/company/staffs/create', [CompanyStaffs::class, 'create'])->name('company.staffs.create');
