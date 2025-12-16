@@ -1,3 +1,4 @@
+-- Active: 1765333928509@@127.0.0.1@3306@bellbi
 @php
 use App\Enums\Todofuken;
 @endphp
@@ -16,20 +17,23 @@ use App\Enums\Todofuken;
             <div class="form-group">
                 {{-- enumで都道府県全部対応させる --}}
                 <label for="area">エリア</label>
-                <select id="area" name="area">
+                <select multiple id="area" name="area">
                     <option value="">指定なし</option>
                     @foreach(App\Enums\Todofuken::cases() as $pref)
-                    <option value="{{ $pref->value}}">{{ $pref->label() }}</option>
+                    <option value="{{ $pref->value }}"
+                        {{ is_array(request('area')) == $pref->label() ? 'selected' : ''}}>
+                        {{ $pref->label()}}
+                    </option>
                     @endforeach
                 </select>
             </div>
             <div class="form-group">
                 <label for="employment_type">雇用形態</label>
-                <select id="employment_type" name="employment_type">
+                <select multiple id="employment_type" name="employment_type">
                     <option value="">指定なし</option>
-                    <option value="1">正社員</option>
-                    <option value="2">パート・アルバイト</option>
-                    <option value="3">業務委託</option>
+                    <option value="1" {{ is_array(request('employment_type')) == 1 ? 'selected' : ''}}>正社員</option>
+                    <option value="2" {{ is_array(request('employment_type')) == 2 ? 'selected' : ''}}>パート・アルバイト</option>
+                    <option value="3" {{ is_array(request('employment_type')) == 3 ? 'selected' : ''}}>業務委託</option>
                 </select>
             </div>
             <button type="submit" class="btn-primary btn-block">この条件で検索</button>

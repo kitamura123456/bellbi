@@ -69,9 +69,9 @@
             <label for="prefecture_code">勤務地（都道府県）</label>
             <select id="prefecture_code" name="prefecture_code">
                 <option value="">選択してください</option>
-                @foreach($prefectures as $code => $name)
-                    <option value="{{ $code }}" {{ old('prefecture_code') == $code ? 'selected' : '' }}>
-                        {{ $name }}
+                @foreach($prefectures as $pref)
+                    <option value="{{ $pref }}" {{ old('prefecture_code') == $pref ? 'selected' : '' }}>
+                        {{ $pref->label() }}
                     </option>
                 @endforeach
             </select>

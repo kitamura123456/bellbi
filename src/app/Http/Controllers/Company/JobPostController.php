@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\JobPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\Todofuken;
 
 class JobPostController extends Controller
 {
@@ -33,7 +34,7 @@ class JobPostController extends Controller
         }
 
         $stores = $company->stores()->where('delete_flg', 0)->get();
-        $prefectures = \App\Services\LocationService::getPrefectures();
+        $prefectures = Todofuken::cases();
 
         return view('company.job-posts.create', compact('company', 'stores', 'prefectures'));
     }
@@ -103,7 +104,7 @@ class JobPostController extends Controller
         }
 
         $stores = $company->stores()->where('delete_flg', 0)->get();
-        $prefectures = \App\Services\LocationService::getPrefectures();
+        $prefectures = Todofuken::cases();
 
         return view('company.job-posts.edit', compact('company', 'stores', 'jobPost', 'prefectures'));
     }

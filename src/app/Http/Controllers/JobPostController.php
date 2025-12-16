@@ -10,13 +10,37 @@ class JobPostController extends Controller
     /**
      * 公開中の求人一覧
      */
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = JobPost::with(['company', 'store'])
+        $query = JobPost::with(['company', 'store'])
             ->where('status', 1) // 公開中
-            ->where('delete_flg', 0)
-            ->latest()
-            ->paginate(10);
+            ->where('delete_flg', 0);
+
+        if($request->filled('keyword') && !empty(array_filter((array)$request->input('keyword')))){
+            $keyword = $request->input('keyword');
+            $query->where(function($q) use ($keyword){
+                $q->where('title','like',"%{$keyword}%")
+                ->orWhere('description', 'like', "%{$keyword}%")
+                ->orWhereHas('company', function($q2) use ($keyword){
+                    $q2->where('name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('store', function($q2) use ($keyword){
+                    $q2->where('name', 'like', "%{$keyword}%");
+                });
+            });
+        }
+
+        if($request->filled('area') && !empty(array_filter((array)$request->input('area')))){
+            $areas = (array)$request->input('area');
+            $query->whereIn('prefecture_code', $areas);
+        }
+
+        if($request->filled('employment_type') && !empty(array_filter((array)$request->input('employment_type')))){
+            $types = (array)$request->input('employment_type');
+            $query->whereIn('employment_type', $types);
+        }
+
+        $jobs = $query->latest()->paginate(10)->withQueryString();
 
         return view('jobs.index', compact('jobs'));
     }
