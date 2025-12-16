@@ -1,5 +1,7 @@
 <?php
-enum Prefecture: int {
+namespace App\Enums;
+
+enum Todofuken: int {
     case HOKKAIDO    = 1;
     case AOMORI      = 2;
     case IWATE       = 3;

@@ -1,4 +1,6 @@
-use App\Enums\Prefecture;
+@php
+use App\Enums\Todofuken;
+@endphp
 @extends('layouts.app')
 
 @section('title', '求人一覧 | Bellbi')
@@ -16,7 +18,7 @@ use App\Enums\Prefecture;
                 <label for="area">エリア</label>
                 <select id="area" name="area">
                     <option value="">指定なし</option>
-                    @foreach(\App\Enums\Todoufuken::cases() as $pref)
+                    @foreach(App\Enums\Todofuken::cases() as $pref)
                     <option value="{{ $pref->value}}">{{ $pref->label() }}</option>
                     @endforeach
                 </select>
