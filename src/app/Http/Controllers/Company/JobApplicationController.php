@@ -54,9 +54,11 @@ class JobApplicationController extends Controller
 
         $validated = $request->validate([
             'status' => ['required', 'integer'],
+            'interview_date' => ['nullable', 'date', 'after_or_equal:today'],
         ]);
 
         $application->status = $validated['status'];
+        $application->interview_date = $validated['interview_date'] ?? null;
         $application->save();
 
         return redirect()->route('company.applications.show', $application)->with('status', 'ステータスを更新しました。');

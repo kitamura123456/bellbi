@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPost;
+use App\Models\JobPostImage;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Enums\Todofuken;
 
 class JobPostController extends Controller
@@ -66,8 +68,12 @@ class JobPostController extends Controller
             'tags.*' => ['nullable', 'integer', 'exists:tags,id'],
             'new_tags' => ['nullable', 'string'],
 
-            'thumbnail_image' => $request->input('template_image') ? 'nullable' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'template_image' => ['nullable', 'string'],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'gallery_sort_order' => ['nullable', 'array'],
+            'gallery_sort_order.*' => ['integer'],
+            'delete_gallery_images' => ['nullable', 'array'],
+            'delete_gallery_images.*' => ['integer'],
         ]);
 
         $data=[
@@ -83,16 +89,6 @@ class JobPostController extends Controller
             'status' => $validated['status'],
             'delete_flg' => 0,
         ];
-
-        
-        // 画像アップロード処理
-        if ($request->hasFile('thumbnail_image')) {
-            $path = $request->file('thumbnail_image')->store('stores', 'public');
-            $data['thumbnail_image'] = $path;
-        } elseif ($request->input('template_image')) {
-            // テンプレート画像を選択した場合
-            $data['thumbnail_image'] = $request->input('template_image');
-        }
 
         $jobPost = $company->jobPosts()->create($data);
 
@@ -122,6 +118,50 @@ class JobPostController extends Controller
             $jobPost->tags()->detach();
         }
 
+        // ギャラリー画像の処理
+        if ($request->hasFile('gallery_images')) {
+            $sortOrder = $request->input('gallery_sort_order', []);
+            $maxSortOrder = JobPostImage::where('job_post_id', $jobPost->id)->max('sort_order') ?? 0;
+            
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $path = $file->store('job_posts', 'public');
+                $order = isset($sortOrder[$index]) ? (int)$sortOrder[$index] : ($maxSortOrder + $index + 1);
+                
+                JobPostImage::create([
+                    'job_post_id' => $jobPost->id,
+                    'path' => $path,
+                    'sort_order' => $order,
+                    'delete_flg' => 0,
+                ]);
+            }
+        }
+
+        // 並び替えの処理（既存画像の順序更新）
+        if ($request->filled('gallery_sort_order')) {
+            $sortOrders = $request->input('gallery_sort_order');
+            foreach ($sortOrders as $imageId => $order) {
+                JobPostImage::where('id', $imageId)
+                    ->where('job_post_id', $jobPost->id)
+                    ->update(['sort_order' => (int)$order]);
+            }
+        }
+
+        // 削除フラグの処理
+        if ($request->filled('delete_gallery_images')) {
+            $deleteIds = $request->input('delete_gallery_images');
+            foreach ($deleteIds as $imageId) {
+                $image = JobPostImage::find($imageId);
+                if ($image && $image->job_post_id === $jobPost->id) {
+                    // ストレージから削除
+                    if (Storage::disk('public')->exists($image->path)) {
+                        Storage::disk('public')->delete($image->path);
+                    }
+                    $image->delete_flg = 1;
+                    $image->save();
+                }
+            }
+        }
+
         return redirect()->route('company.job-posts.index')->with('status', '求人を作成しました。');
     }
 
@@ -137,6 +177,7 @@ class JobPostController extends Controller
         $stores = $company->stores()->where('delete_flg', 0)->get();
         $prefectures = Todofuken::cases();
         $tags = Tag::where('delete_flg', 0)->orderBy('name')->get();
+        $jobPost->load('images');
 
         return view('company.job-posts.edit', compact('company', 'stores', 'jobPost', 'prefectures', 'tags'));
     }
@@ -164,18 +205,13 @@ class JobPostController extends Controller
             'tags' => ['nullable', 'array'],
             'tags.*' => ['nullable', 'integer', 'exists:tags,id'],
             'new_tags' => ['nullable', 'string'],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'gallery_sort_order' => ['nullable', 'array'],
+            'gallery_sort_order.*' => ['integer'],
+            'delete_gallery_images' => ['nullable', 'array'],
+            'delete_gallery_images.*' => ['integer'],
         ]);
-
-        
-        // 画像アップロード処理
-        if ($request->hasFile('thumbnail_image')) {
-            $path = $request->file('thumbnail_image')->store('stores', 'public');
-            $data['thumbnail_image'] = $path;
-        } elseif ($request->input('template_image')) {
-            // テンプレート画像を選択した場合
-            $data['thumbnail_image'] = $request->input('template_image');
-        }
-
 
         $jobPost->update($data);
 
@@ -203,6 +239,65 @@ class JobPostController extends Controller
             $jobPost->tags()->sync(array_unique($tagIds));
         } else {
             $jobPost->tags()->detach();
+        }
+
+        // ギャラリー画像の処理
+        if ($request->hasFile('gallery_images')) {
+            $sortOrder = $request->input('gallery_sort_order', []);
+            $maxSortOrder = JobPostImage::where('job_post_id', $jobPost->id)->max('sort_order') ?? 0;
+            
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $path = $file->store('job_posts', 'public');
+                $order = isset($sortOrder[$index]) ? (int)$sortOrder[$index] : ($maxSortOrder + $index + 1);
+                
+                JobPostImage::create([
+                    'job_post_id' => $jobPost->id,
+                    'path' => $path,
+                    'sort_order' => $order,
+                    'delete_flg' => 0,
+                ]);
+            }
+        }
+
+        // 並び替えの処理（既存画像の順序更新）
+        if ($request->filled('gallery_sort_order')) {
+            $sortOrders = $request->input('gallery_sort_order');
+            foreach ($sortOrders as $imageId => $order) {
+                JobPostImage::where('id', $imageId)
+                    ->where('job_post_id', $jobPost->id)
+                    ->update(['sort_order' => (int)$order]);
+            }
+        }
+
+        // 削除フラグの処理
+        if ($request->filled('delete_gallery_images')) {
+            $deleteIds = $request->input('delete_gallery_images');
+            foreach ($deleteIds as $imageId) {
+                $image = JobPostImage::find($imageId);
+                if ($image && $image->job_post_id === $jobPost->id) {
+                    // ストレージから削除
+                    if (Storage::disk('public')->exists($image->path)) {
+                        Storage::disk('public')->delete($image->path);
+                    }
+                    $image->delete_flg = 1;
+                    $image->save();
+                }
+            }
+        }
+
+        // 最初の画像をサムネイルとして設定
+        $firstImage = JobPostImage::where('job_post_id', $jobPost->id)
+            ->where('delete_flg', 0)
+            ->orderBy('sort_order')
+            ->first();
+        
+        if ($firstImage) {
+            $jobPost->thumbnail_image = $firstImage->path;
+            $jobPost->save();
+        } else {
+            // 画像がなくなった場合はサムネイルもクリア
+            $jobPost->thumbnail_image = null;
+            $jobPost->save();
         }
 
         return redirect()->route('company.job-posts.index')->with('status', '求人を更新しました。');

@@ -369,54 +369,30 @@
                 font-weight: 700;
                 color: #5D535E;
                 font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            ">サムネイル画像</label>
+            ">画像（複数枚アップロード可能）</label>
+            <small style="display: block; margin-bottom: 12px; color: #999999; font-size: 12px;">最初の画像がサムネイルとして使用されます。ドラッグ&ドロップで並び替えができます。</small>
             
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #2A3132; font-size: 14px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">
-                    <input type="radio" name="image_source" value="upload" checked style="margin-right: 8px;"> 画像をアップロード
-                </label>
-                <div id="upload-section" style="margin-left: 24px;">
-                    <input type="file" id="thumbnail_image" name="thumbnail_image" accept="image/*" style="
-                        width: 100%;
-                        padding: 12px;
-                        border: 1px solid #e8e8e8;
-                        border-radius: 12px;
-                        font-size: 13px;
-                        color: #5D535E;
-                        background: #fafafa;
-                        cursor: pointer;
-                    ">
-                    <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">JPEG、PNG形式、最大2MBまで</small>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #2A3132; font-size: 14px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">
-                    <input type="radio" name="image_source" value="template" style="margin-right: 8px;"> テンプレート画像を選択
-                </label>
-                <div id="template-section" style="margin-left: 24px; display: none;">
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store1.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store2.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store3.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store4.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            @error('thumbnail_image')
+            <input type="file" id="gallery_images" name="gallery_images[]" accept="image/*" multiple style="
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 13px;
+                color: #5D535E;
+                background: #fafafa;
+                cursor: pointer;
+                margin-bottom: 16px;
+            ">
+            <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">JPEG、PNG形式、最大2MBまで。複数選択可能です。</small>
+            
+            <div id="gallery-preview" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+                margin-top: 16px;
+            "></div>
+            
+            @error('gallery_images')
                 <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
@@ -488,6 +464,137 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryInput = document.getElementById('gallery_images');
+    const galleryPreview = document.getElementById('gallery-preview');
+    let imageFiles = [];
+    let sortOrder = 0;
+
+    // 画像選択時の処理
+    galleryInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        file: file,
+                        preview: e.target.result,
+                        sortOrder: sortOrder++
+                    };
+                    imageFiles.push(imageData);
+                    renderGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    // ギャラリービューの描画
+    function renderGallery() {
+        galleryPreview.innerHTML = '';
+        imageFiles.forEach((imageData, index) => {
+            const imageItem = document.createElement('div');
+            imageItem.className = 'gallery-item';
+            imageItem.draggable = true;
+            imageItem.dataset.index = index;
+            imageItem.style.cssText = `
+                position: relative;
+                width: 120px;
+                height: 120px;
+                border: 2px solid ${index === 0 ? '#90AFC5' : '#e8e8e8'};
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: move;
+            `;
+            
+            // 最初の画像に「メイン」ラベルを追加
+            if (index === 0) {
+                const mainLabel = document.createElement('div');
+                mainLabel.textContent = 'メイン';
+                mainLabel.style.cssText = 'position: absolute; top: 4px; left: 4px; background: #90AFC5; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; z-index: 10;';
+                imageItem.appendChild(mainLabel);
+            }
+            
+            const img = document.createElement('img');
+            img.src = imageData.preview;
+            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '×';
+            deleteBtn.type = 'button';
+            deleteBtn.style.cssText = `
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                background: rgba(255, 0, 0, 0.7);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+                font-size: 16px;
+                line-height: 1;
+            `;
+            deleteBtn.onclick = function() {
+                imageFiles.splice(index, 1);
+                renderGallery();
+                updateFileInput();
+            };
+            
+            imageItem.appendChild(img);
+            imageItem.appendChild(deleteBtn);
+            
+            // ドラッグ&ドロップ
+            imageItem.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', index);
+                this.style.opacity = '0.5';
+            });
+            
+            imageItem.addEventListener('dragend', function() {
+                this.style.opacity = '1';
+            });
+            
+            imageItem.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            imageItem.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIndex = parseInt(this.dataset.index);
+                
+                const moved = imageFiles.splice(fromIndex, 1)[0];
+                imageFiles.splice(toIndex, 0, moved);
+                
+                renderGallery();
+                updateFileInput();
+            });
+            
+            galleryPreview.appendChild(imageItem);
+            
+            // 並び順をhidden inputに保存
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'gallery_sort_order[]';
+            hiddenInput.value = imageData.sortOrder;
+            imageItem.appendChild(hiddenInput);
+        });
+    }
+
+    // ファイル入力の更新
+    function updateFileInput() {
+        const dt = new DataTransfer();
+        imageFiles.forEach(imageData => {
+            dt.items.add(imageData.file);
+        });
+        galleryInput.files = dt.files;
+    }
+});
+</script>
 
 @endsection
 

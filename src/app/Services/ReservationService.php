@@ -77,9 +77,9 @@ class ReservationService
             // 2. 店舗の同時対応可能人数チェック（曜日ごと）
             if ($isAvailable) {
                 $concurrentCount = $this->getConcurrentReservationCount($slotStart, $slotEnd, $allReservations);
-                $dayOfWeek = $date->dayOfWeek;
+                $slotDayOfWeek = $slotStart->dayOfWeek;
                 $schedule = $store->schedules()
-                    ->where('day_of_week', $dayOfWeek)
+                    ->where('day_of_week', $slotDayOfWeek)
                     ->where('is_open', 1)
                     ->where('delete_flg', 0)
                     ->first();

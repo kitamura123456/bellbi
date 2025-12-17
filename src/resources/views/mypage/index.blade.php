@@ -13,6 +13,45 @@
             <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
         </ul>
     </div>
+    @if($upcomingInterviews->isNotEmpty())
+    <div class="sidebar-card" style="margin-top: 16px;">
+        <h3 class="sidebar-title">面接予定</h3>
+        @foreach($upcomingInterviews as $interview)
+        <div style="
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        ">
+            <p style="
+                margin: 0 0 4px 0;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                {{ $interview->interview_date->format('Y年m月d日') }}
+            </p>
+            <p style="
+                margin: 0 0 4px 0;
+                font-size: 12px;
+                color: #6b7280;
+            ">
+                {{ $interview->jobPost->company->name }}
+            </p>
+            <a href="{{ route('jobs.show', $interview->jobPost) }}" style="
+                font-size: 12px;
+                color: #90AFC5;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            " onmouseover="this.style.color='#7FB3D3'; this.style.textDecoration='underline';" onmouseout="this.style.color='#90AFC5'; this.style.textDecoration='none';">
+                求人詳細を見る →
+            </a>
+        </div>
+        @endforeach
+    </div>
+    @endif
 @endsection
 
 @section('content')
@@ -25,7 +64,7 @@
     @forelse($applications as $application)
     <div class="job-card" style="margin-bottom: 16px;">
         <div class="job-card-body">
-            <span class="job-card-tag">
+            <span class="job-card-tag" style="{{ $application->status === 5 ? 'background-color: #3b82f6; color: #ffffff;' : '' }}">
                 @if($application->status === 1) 応募済
                 @elseif($application->status === 2) 書類選考中
                 @elseif($application->status === 3) 面接中
@@ -39,6 +78,24 @@
             </h3>
             <p class="job-card-salon">{{ $application->jobPost->company->name }}</p>
             <p class="job-card-location" style="margin-top: 8px;">応募日：{{ $application->created_at->format('Y年m月d日') }}</p>
+            @if($application->interview_date)
+                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E; font-weight: 600;">
+                    面接日：{{ $application->interview_date->format('Y年m月d日') }}
+                </p>
+            @endif
+            @if($application->status === 2)
+                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E;">
+                    ステータス：書類選考中
+                </p>
+            @elseif($application->status === 3)
+                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E;">
+                    ステータス：面接中
+                </p>
+            @elseif($application->status === 4)
+                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #10b981; font-weight: 600;">
+                    ステータス：内定
+                </p>
+            @endif
             @if($application->message)
                 <p class="job-card-location" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
                     メッセージ：{{ \Str::limit($application->message, 50) }}

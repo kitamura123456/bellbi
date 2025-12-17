@@ -26,6 +26,47 @@
         @endif
     @endif
 
+    @if($store->images && $store->images->count() > 0)
+    <div class="job-detail-card" style="margin-top: 24px;">
+        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px; font-weight: 700; color: #5D535E;">画像ギャラリー</h3>
+        @php
+            $imageCount = $store->images->count();
+        @endphp
+        
+        @if($imageCount === 1)
+            {{-- 1枚の場合は大きく表示 --}}
+            <div style="display: flex; justify-content: center;">
+                @foreach($store->images as $image)
+                    <img src="{{ asset('storage/' . $image->path) }}" 
+                         alt="店舗画像" 
+                         class="gallery-image"
+                         data-image-index="0"
+                         style="max-width: 100%; max-height: 500px; object-fit: contain; border-radius: 12px; cursor: pointer;"
+                         onclick="openStoreImageModal(0)">
+                @endforeach
+            </div>
+        @else
+            {{-- 複数枚の場合はグリッドレイアウト --}}
+            <div class="image-grid" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 12px;
+            ">
+                @foreach($store->images as $index => $image)
+                    <img src="{{ asset('storage/' . $image->path) }}" 
+                         alt="店舗画像 {{ $index + 1 }}" 
+                         class="gallery-image"
+                         data-image-index="{{ $index }}"
+                         style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.02)'"
+                         onmouseout="this.style.transform='scale(1)'"
+                         onclick="openStoreImageModal({{ $index }})">
+                @endforeach
+            </div>
+        @endif
+    </div>
+    @endif
+
     @if($store->description)
     <div class="job-detail-card">
         <h3 style="margin-top: 0;">店舗について</h3>
@@ -187,5 +228,109 @@
             </a>
         </div>
     </form>
+
+    {{-- 画像拡大モーダル --}}
+    @if($store->images && $store->images->count() > 0)
+    <div id="storeImageModal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    ">
+        <button onclick="closeStoreImageModal()" style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10001;
+        ">&times;</button>
+        <button onclick="prevStoreImage()" style="
+            position: absolute;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10001;
+        ">&#8249;</button>
+        <button onclick="nextStoreImage()" style="
+            position: absolute;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10001;
+        ">&#8250;</button>
+        <img id="storeModalImage" src="" alt="拡大画像" style="
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        ">
+    </div>
+
+    <script>
+        let currentStoreImageIndex = 0;
+        const storeImages = [
+            @foreach($store->images as $image)
+                '{{ asset('storage/' . $image->path) }}',
+            @endforeach
+        ];
+
+        function openStoreImageModal(index) {
+            currentStoreImageIndex = index;
+            document.getElementById('storeImageModal').style.display = 'flex';
+            updateStoreModalImage();
+        }
+
+        function closeStoreImageModal() {
+            document.getElementById('storeImageModal').style.display = 'none';
+        }
+
+        function prevStoreImage() {
+            currentStoreImageIndex = (currentStoreImageIndex - 1 + storeImages.length) % storeImages.length;
+            updateStoreModalImage();
+        }
+
+        function nextStoreImage() {
+            currentStoreImageIndex = (currentStoreImageIndex + 1) % storeImages.length;
+            updateStoreModalImage();
+        }
+
+        function updateStoreModalImage() {
+            document.getElementById('storeModalImage').src = storeImages[currentStoreImageIndex];
+        }
+
+        // ESCキーで閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeStoreImageModal();
+            } else if (e.key === 'ArrowLeft') {
+                prevStoreImage();
+            } else if (e.key === 'ArrowRight') {
+                nextStoreImage();
+            }
+        });
+    </script>
+    @endif
 @endsection
 

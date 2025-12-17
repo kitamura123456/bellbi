@@ -61,6 +61,11 @@ class JobPost extends Model
     {
         return $this->belongsToMany(Tag::class, 'job_post_tags');
     }
+
+    public function images()
+    {
+        return $this->hasMany(JobPostImage::class)->where('delete_flg', 0)->orderBy('sort_order');
+    }
 }
 
 

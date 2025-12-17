@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Models\StoreImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -81,7 +82,25 @@ class StoreController extends Controller
             $data['thumbnail_image'] = $request->input('template_image');
         }
 
-        $company->stores()->create($data);
+        $store = $company->stores()->create($data);
+
+        // ギャラリー画像の処理
+        if ($request->hasFile('gallery_images')) {
+            $sortOrder = $request->input('gallery_sort_order', []);
+            $maxSortOrder = StoreImage::where('store_id', $store->id)->max('sort_order') ?? 0;
+            
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $path = $file->store('stores', 'public');
+                $order = isset($sortOrder[$index]) ? (int)$sortOrder[$index] : ($maxSortOrder + $index + 1);
+                
+                StoreImage::create([
+                    'store_id' => $store->id,
+                    'path' => $path,
+                    'sort_order' => $order,
+                    'delete_flg' => 0,
+                ]);
+            }
+        }
 
         return redirect()->route('company.stores.index')->with('status', '店舗を追加しました。');
     }
@@ -94,6 +113,8 @@ class StoreController extends Controller
         if (!$company || $store->company_id !== $company->id) {
             abort(403);
         }
+
+        $store->load('images');
 
         return view('company.stores.edit', compact('company', 'store'));
     }
@@ -119,6 +140,12 @@ class StoreController extends Controller
             'accepts_reservations' => ['nullable', 'integer', 'in:0,1'],
             'cancel_deadline_hours' => ['nullable', 'integer', 'min:0'],
             'max_concurrent_reservations' => ['nullable', 'integer', 'min:1', 'max:20'],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'gallery_sort_order' => ['nullable', 'array'],
+            'gallery_sort_order.*' => ['integer'],
+            'delete_gallery_images' => ['nullable', 'array'],
+            'delete_gallery_images.*' => ['integer'],
         ]);
 
         $data = [
@@ -150,6 +177,50 @@ class StoreController extends Controller
         }
 
         $store->update($data);
+
+        // ギャラリー画像の処理
+        if ($request->hasFile('gallery_images')) {
+            $sortOrder = $request->input('gallery_sort_order', []);
+            $maxSortOrder = StoreImage::where('store_id', $store->id)->max('sort_order') ?? 0;
+            
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $path = $file->store('stores', 'public');
+                $order = isset($sortOrder[$index]) ? (int)$sortOrder[$index] : ($maxSortOrder + $index + 1);
+                
+                StoreImage::create([
+                    'store_id' => $store->id,
+                    'path' => $path,
+                    'sort_order' => $order,
+                    'delete_flg' => 0,
+                ]);
+            }
+        }
+
+        // 並び替えの処理（既存画像の順序更新）
+        if ($request->filled('gallery_sort_order')) {
+            $sortOrders = $request->input('gallery_sort_order');
+            foreach ($sortOrders as $imageId => $order) {
+                StoreImage::where('id', $imageId)
+                    ->where('store_id', $store->id)
+                    ->update(['sort_order' => (int)$order]);
+            }
+        }
+
+        // 削除フラグの処理
+        if ($request->filled('delete_gallery_images')) {
+            $deleteIds = $request->input('delete_gallery_images');
+            foreach ($deleteIds as $imageId) {
+                $image = StoreImage::find($imageId);
+                if ($image && $image->store_id === $store->id) {
+                    // ストレージから削除
+                    if (Storage::disk('public')->exists($image->path)) {
+                        Storage::disk('public')->delete($image->path);
+                    }
+                    $image->delete_flg = 1;
+                    $image->save();
+                }
+            }
+        }
 
         return redirect()->route('company.stores.index')->with('status', '店舗情報を更新しました。');
     }

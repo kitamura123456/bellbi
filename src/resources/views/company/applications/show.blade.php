@@ -123,6 +123,46 @@
                     font-size: 14px;
                 ">{{ $application->user->email }}</td>
             </tr>
+            <tr style="border-bottom: 1px solid #f5f5f5;">
+                <th style="
+                    padding: 12px 0;
+                    text-align: left;
+                    font-weight: 700;
+                    color: #5D535E;
+                    font-size: 13px;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                ">ステータス</th>
+                <td style="
+                    padding: 12px 0;
+                    color: #2A3132;
+                    font-size: 14px;
+                ">
+                    @if($application->status === 1) 応募済
+                    @elseif($application->status === 2) 書類選考中
+                    @elseif($application->status === 3) 面接中
+                    @elseif($application->status === 4) 内定
+                    @elseif($application->status === 5) 不採用
+                    @elseif($application->status === 9) キャンセル
+                    @endif
+                </td>
+            </tr>
+            @if($application->interview_date)
+            <tr style="border-bottom: 1px solid #f5f5f5;">
+                <th style="
+                    padding: 12px 0;
+                    text-align: left;
+                    font-weight: 700;
+                    color: #5D535E;
+                    font-size: 13px;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                ">面接日</th>
+                <td style="
+                    padding: 12px 0;
+                    color: #2A3132;
+                    font-size: 14px;
+                ">{{ $application->interview_date->format('Y年m月d日') }}</td>
+            </tr>
+            @endif
             <tr>
                 <th style="
                     padding: 12px 0;
@@ -189,6 +229,31 @@
                 <option value="5" {{ $application->status == 5 ? 'selected' : '' }}>不採用</option>
                 <option value="9" {{ $application->status == 9 ? 'selected' : '' }}>キャンセル</option>
             </select>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="interview_date" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                面接日
+            </label>
+            <input type="date" id="interview_date" name="interview_date" value="{{ $application->interview_date ? $application->interview_date->format('Y-m-d') : '' }}" style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
         </div>
 
         <div style="display: flex; justify-content: flex-end;">

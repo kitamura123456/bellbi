@@ -15,7 +15,16 @@ class MypageController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('mypage.index', compact('user', 'applications'));
+        // 面接日がある応募を取得（サイドバー下に表示するため）
+        $upcomingInterviews = $applications
+            ->filter(function ($application) {
+                return $application->interview_date 
+                    && $application->interview_date->toDateString() >= now()->toDateString();
+            })
+            ->sortBy('interview_date')
+            ->take(5);
+
+        return view('mypage.index', compact('user', 'applications', 'upcomingInterviews'));
     }
 }
 

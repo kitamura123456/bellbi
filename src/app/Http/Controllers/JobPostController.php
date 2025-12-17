@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobApplication;
 use App\Models\JobPost;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobPostController extends Controller
 {
@@ -13,7 +15,7 @@ class JobPostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobPost::with(['company', 'store', 'tags'])
+        $query = JobPost::with(['company', 'store', 'tags', 'images'])
             ->where('status', 1) // 公開中
             ->where('delete_flg', 0);
 
@@ -51,9 +53,44 @@ class JobPostController extends Controller
         }
 
         $jobs = $query->latest()->paginate(10)->withQueryString();
-        $tags = Tag::where('delete_flg', 0)->orderBy('name')->get();
+        
+        // ログインユーザーの応募情報を取得（不採用の応募を識別するため）
+        $userApplications = collect();
+        if (Auth::check()) {
+            $userApplications = JobApplication::where('user_id', Auth::id())
+                ->where('delete_flg', 0)
+                ->whereIn('job_post_id', $jobs->pluck('id'))
+                ->pluck('status', 'job_post_id');
+        }
+        
+        // 各タグの件数を取得（公開中の求人のみ）
+        $tags = Tag::where('delete_flg', 0)
+            ->withCount(['jobPosts' => function($query) {
+                $query->where('status', 1)
+                    ->where('delete_flg', 0);
+            }])
+            ->orderBy('name')
+            ->get();
 
-        return view('jobs.index', compact('jobs', 'tags'));
+        // 各都道府県の件数を取得
+        $areaCounts = JobPost::where('status', 1)
+            ->where('delete_flg', 0)
+            ->whereNotNull('prefecture_code')
+            ->selectRaw('prefecture_code, count(*) as count')
+            ->groupBy('prefecture_code')
+            ->pluck('count', 'prefecture_code')
+            ->toArray();
+
+        // 各雇用形態の件数を取得
+        $employmentTypeCounts = JobPost::where('status', 1)
+            ->where('delete_flg', 0)
+            ->whereNotNull('employment_type')
+            ->selectRaw('employment_type, count(*) as count')
+            ->groupBy('employment_type')
+            ->pluck('count', 'employment_type')
+            ->toArray();
+
+        return view('jobs.index', compact('jobs', 'tags', 'areaCounts', 'employmentTypeCounts', 'userApplications'));
     }
 
     /**
@@ -65,7 +102,19 @@ class JobPostController extends Controller
             abort(404);
         }
 
-        return view('jobs.show', compact('job'));
+        // 画像を読み込む
+        $job->load('images');
+
+        // ログインユーザーが既に応募済みかチェック
+        $hasApplied = false;
+        if (Auth::check()) {
+            $hasApplied = JobApplication::where('job_post_id', $job->id)
+                ->where('user_id', Auth::id())
+                ->where('delete_flg', 0)
+                ->exists();
+        }
+
+        return view('jobs.show', compact('job', 'hasApplied'));
     }
 }
 

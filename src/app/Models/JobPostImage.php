@@ -5,24 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class JobApplication extends Model
+class JobPostImage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'job_post_id',
-        'user_id',
-        'status',
-        'interview_date',
-        'message',
+        'path',
+        'sort_order',
         'delete_flg',
     ];
 
     protected $casts = [
         'job_post_id' => 'integer',
-        'user_id' => 'integer',
-        'status' => 'integer',
-        'interview_date' => 'date',
+        'sort_order' => 'integer',
         'delete_flg' => 'integer',
     ];
 
@@ -30,16 +26,4 @@ class JobApplication extends Model
     {
         return $this->belongsTo(JobPost::class);
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function conversation()
-    {
-        return $this->hasOne(Conversation::class);
-    }
 }
-
-

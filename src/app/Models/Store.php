@@ -65,6 +65,11 @@ class Store extends Model
     {
         return $this->hasMany(ReservationBlock::class);
     }
+
+    public function images()
+    {
+        return $this->hasMany(StoreImage::class)->where('delete_flg', 0)->orderBy('sort_order');
+    }
 }
 
 

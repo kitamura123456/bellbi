@@ -368,54 +368,63 @@
                 font-weight: 700;
                 color: #5D535E;
                 font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            ">サムネイル画像</label>
+            ">画像（複数枚アップロード可能）</label>
+            <small style="display: block; margin-bottom: 12px; color: #999999; font-size: 12px;">最初の画像がサムネイルとして使用されます。ドラッグ&ドロップで並び替えができます。</small>
             
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #2A3132; font-size: 14px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">
-                    <input type="radio" name="image_source" value="upload" checked style="margin-right: 8px;"> 画像をアップロード
-                </label>
-                <div id="upload-section" style="margin-left: 24px;">
-                    <input type="file" id="thumbnail_image" name="thumbnail_image" accept="image/*" style="
-                        width: 100%;
-                        padding: 12px;
-                        border: 1px solid #e8e8e8;
-                        border-radius: 12px;
-                        font-size: 13px;
-                        color: #5D535E;
-                        background: #fafafa;
-                        cursor: pointer;
+            <input type="file" id="gallery_images" name="gallery_images[]" accept="image/*" multiple style="
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 13px;
+                color: #5D535E;
+                background: #fafafa;
+                cursor: pointer;
+                margin-bottom: 16px;
+            ">
+            <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">JPEG、PNG形式、最大2MBまで。複数選択可能です。</small>
+            
+            <div id="gallery-preview" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+                margin-top: 16px;
+            ">
+                @foreach($jobPost->images as $index => $image)
+                    <div class="gallery-item existing" data-image-id="{{ $image->id }}" style="
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        border: 2px solid {{ $index === 0 ? '#90AFC5' : '#e8e8e8' }};
+                        border-radius: 8px;
+                        overflow: hidden;
+                        cursor: move;
                     ">
-                    <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">JPEG、PNG形式、最大2MBまで</small>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #2A3132; font-size: 14px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">
-                    <input type="radio" name="image_source" value="template" style="margin-right: 8px;"> テンプレート画像を選択
-                </label>
-                <div id="template-section" style="margin-left: 24px; display: none;">
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store1.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store2.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store3.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
-                        <label style="cursor: pointer;">
-                            <input type="radio" name="template_image" value="templates/stores/store4.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/stores/store4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
-                        </label>
+                        @if($index === 0)
+                            <div style="position: absolute; top: 4px; left: 4px; background: #90AFC5; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; z-index: 10;">メイン</div>
+                        @endif
+                        <img src="{{ asset('storage/' . $image->path) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <button type="button" class="delete-existing-image" data-image-id="{{ $image->id }}" style="
+                            position: absolute;
+                            top: 4px;
+                            right: 4px;
+                            background: rgba(255, 0, 0, 0.7);
+                            color: white;
+                            border: none;
+                            border-radius: 50%;
+                            width: 24px;
+                            height: 24px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            line-height: 1;
+                        ">×</button>
+                        <input type="hidden" name="gallery_sort_order[{{ $image->id }}]" value="{{ $image->sort_order }}">
+                        <input type="checkbox" name="delete_gallery_images[]" value="{{ $image->id }}" style="display: none;" class="delete-checkbox">
                     </div>
-                </div>
+                @endforeach
             </div>
-
-            @error('thumbnail_image')
+            
+            @error('gallery_images')
                 <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
@@ -487,6 +496,188 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryInput = document.getElementById('gallery_images');
+    const galleryPreview = document.getElementById('gallery-preview');
+    let imageFiles = [];
+    let sortOrder = {{ $jobPost->images->max('sort_order') ?? 0 }};
+
+    // 既存画像の削除ボタン
+    document.querySelectorAll('.delete-existing-image').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const imageId = this.dataset.imageId;
+            const checkbox = document.querySelector(`.delete-checkbox[value="${imageId}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                this.closest('.gallery-item').style.opacity = '0.5';
+                this.closest('.gallery-item').style.borderColor = '#ef4444';
+            }
+        });
+    });
+
+    // 画像選択時の処理
+    galleryInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        file: file,
+                        preview: e.target.result,
+                        sortOrder: ++sortOrder
+                    };
+                    imageFiles.push(imageData);
+                    renderNewImages();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    // 新規画像の描画
+    function renderNewImages() {
+        imageFiles.forEach((imageData, index) => {
+            if (document.querySelector(`[data-new-index="${index}"]`)) return;
+            
+            const imageItem = document.createElement('div');
+            imageItem.className = 'gallery-item new';
+            imageItem.draggable = true;
+            imageItem.dataset.newIndex = index;
+            imageItem.style.cssText = `
+                position: relative;
+                width: 120px;
+                height: 120px;
+                border: 2px solid #e8e8e8;
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: move;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageData.preview;
+            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '×';
+            deleteBtn.type = 'button';
+            deleteBtn.style.cssText = `
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                background: rgba(255, 0, 0, 0.7);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+                font-size: 16px;
+                line-height: 1;
+            `;
+            deleteBtn.onclick = function() {
+                imageFiles.splice(index, 1);
+                imageItem.remove();
+                updateFileInput();
+            };
+            
+            imageItem.appendChild(img);
+            imageItem.appendChild(deleteBtn);
+            
+            // ドラッグ&ドロップ
+            imageItem.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', 'new-' + index);
+                this.style.opacity = '0.5';
+            });
+            
+            imageItem.addEventListener('dragend', function() {
+                this.style.opacity = '1';
+            });
+            
+            imageItem.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            imageItem.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('text/plain');
+                const toIndex = parseInt(this.dataset.newIndex);
+                
+                if (data.startsWith('new-')) {
+                    const fromIndex = parseInt(data.replace('new-', ''));
+                    const moved = imageFiles.splice(fromIndex, 1)[0];
+                    imageFiles.splice(toIndex, 0, moved);
+                    renderNewImages();
+                }
+            });
+            
+            galleryPreview.appendChild(imageItem);
+        });
+    }
+
+    // 既存画像のドラッグ&ドロップ
+    document.querySelectorAll('.gallery-item.existing').forEach((item, index) => {
+        item.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', 'existing-' + this.dataset.imageId);
+            this.style.opacity = '0.5';
+        });
+        
+        item.addEventListener('dragend', function() {
+            this.style.opacity = '1';
+            updateMainImageIndicator();
+        });
+        
+        item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+        
+        item.addEventListener('drop', function(e) {
+            e.preventDefault();
+            // 並び替えの処理はサーバー側で行う
+            updateMainImageIndicator();
+        });
+    });
+
+    // 最初の画像に「メイン」ラベルを表示
+    function updateMainImageIndicator() {
+        const items = document.querySelectorAll('.gallery-item.existing');
+        items.forEach((item, index) => {
+            // 既存のメインラベルを削除
+            const existingLabel = item.querySelector('.main-label');
+            if (existingLabel) {
+                existingLabel.remove();
+            }
+            
+            // ボーダーをリセット
+            item.style.borderColor = '#e8e8e8';
+            
+            // 最初の画像にラベルとボーダーを追加
+            if (index === 0) {
+                item.style.borderColor = '#90AFC5';
+                const label = document.createElement('div');
+                label.className = 'main-label';
+                label.textContent = 'メイン';
+                label.style.cssText = 'position: absolute; top: 4px; left: 4px; background: #90AFC5; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; z-index: 10;';
+                item.appendChild(label);
+            }
+        });
+    }
+
+    // 初期表示時にメインラベルを設定
+    updateMainImageIndicator();
+
+    // ファイル入力の更新
+    function updateFileInput() {
+        const dt = new DataTransfer();
+        imageFiles.forEach(imageData => {
+            dt.items.add(imageData.file);
+        });
+        galleryInput.files = dt.files;
+    }
+});
+</script>
 
 @endsection
 

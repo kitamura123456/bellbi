@@ -7,6 +7,7 @@ use App\Models\ServiceMenu;
 use App\Models\Reservation;
 use App\Models\ReservationMenu;
 use App\Services\ReservationService;
+use App\Enums\Todofuken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,12 +29,62 @@ class ReservationController extends Controller
             ->where('accepts_reservations', 1)
             ->with('company');
 
-        // エリアフィルタ（将来拡張）
-        // if ($request->filled('area')) { ... }
+        // キーワード検索
+        if ($request->filled('keyword') && !empty(trim($request->input('keyword')))) {
+            $keyword = trim($request->input('keyword'));
+            $query->where(function($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%")
+                    ->orWhere('address', 'like', "%{$keyword}%")
+                    ->orWhereHas('company', function($q2) use ($keyword) {
+                        $q2->where('name', 'like', "%{$keyword}%");
+                    });
+            });
+        }
 
-        $stores = $query->paginate(20);
+        // エリア検索（addressフィールドに都道府県名が含まれているかで検索）
+        if ($request->filled('area') && !empty(array_filter((array)$request->input('area')))) {
+            $areas = (array)$request->input('area');
+            $prefectureNames = [];
+            foreach ($areas as $prefCode) {
+                $pref = Todofuken::tryFrom((int)$prefCode);
+                if ($pref) {
+                    $prefectureNames[] = $pref->label();
+                }
+            }
+            
+            if (!empty($prefectureNames)) {
+                $query->where(function($q) use ($prefectureNames) {
+                    foreach ($prefectureNames as $prefName) {
+                        $q->orWhere('address', 'like', "%{$prefName}%");
+                    }
+                });
+            }
+        }
 
-        return view('reservations.search', compact('stores'));
+        $stores = $query->with('images')->paginate(20)->withQueryString();
+
+        // 各都道府県の件数を取得（予約可能な店舗のみ）
+        $areaCounts = [];
+        $allStores = Store::where('delete_flg', 0)
+            ->where('accepts_reservations', 1)
+            ->whereNotNull('address')
+            ->get();
+        
+        foreach (Todofuken::cases() as $pref) {
+            $count = 0;
+            $prefName = $pref->label();
+            foreach ($allStores as $store) {
+                if ($store->address && strpos($store->address, $prefName) !== false) {
+                    $count++;
+                }
+            }
+            if ($count > 0) {
+                $areaCounts[$pref->value] = $count;
+            }
+        }
+
+        return view('reservations.search', compact('stores', 'areaCounts'));
     }
 
     // 店舗詳細・メニュー選択
@@ -42,6 +93,9 @@ class ReservationController extends Controller
         if (!$store->accepts_reservations) {
             abort(404);
         }
+
+        // 画像を読み込む
+        $store->load('images');
 
         $menus = $store->serviceMenus()
             ->where('is_active', 1)

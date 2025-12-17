@@ -60,6 +60,11 @@ class Company extends Model
     {
         return $this->hasMany(Conversation::class);
     }
+
+    public function images()
+    {
+        return $this->hasMany(CompanyImage::class)->where('delete_flg', 0)->orderBy('sort_order');
+    }
 }
 
 

@@ -24,6 +24,18 @@ class JobApplicationController extends Controller
             return redirect()->route('login');
         }
 
+        // 既に応募済みかチェック
+        $existingApplication = JobApplication::where('job_post_id', $job->id)
+            ->where('user_id', $userId)
+            ->where('delete_flg', 0)
+            ->first();
+
+        if ($existingApplication) {
+            return redirect()
+                ->route('jobs.show', $job)
+                ->with('error', 'この求人には既に応募済みです。');
+        }
+
         JobApplication::create([
             'job_post_id' => $job->id,
             'user_id' => $userId,
