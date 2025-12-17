@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPost;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Enums\Todofuken;
 
 class JobPostController extends Controller
@@ -35,8 +37,9 @@ class JobPostController extends Controller
 
         $stores = $company->stores()->where('delete_flg', 0)->get();
         $prefectures = Todofuken::cases();
+        $tags = Tag::where('delete_flg', 0)->orderBy('name')->get();
 
-        return view('company.job-posts.create', compact('company', 'stores', 'prefectures'));
+        return view('company.job-posts.create', compact('company', 'stores', 'prefectures', 'tags'));
     }
 
     public function store(Request $request)
@@ -59,6 +62,9 @@ class JobPostController extends Controller
             'min_salary' => ['nullable', 'integer', 'min:0'],
             'max_salary' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'integer'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['nullable', 'integer', 'exists:tags,id'],
+            'new_tags' => ['nullable', 'string'],
 
             'thumbnail_image' => $request->input('template_image') ? 'nullable' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'template_image' => ['nullable', 'string'],
@@ -88,8 +94,33 @@ class JobPostController extends Controller
             $data['thumbnail_image'] = $request->input('template_image');
         }
 
-        $company->jobPosts()->create($data);
+        $jobPost = $company->jobPosts()->create($data);
 
+        // タグの処理
+        $tagIds = [];
+        if ($request->filled('tags')) {
+            $tagIds = array_filter($request->input('tags'));
+        }
+        
+        // 新しいタグを追加
+        if ($request->filled('new_tags')) {
+            $newTagNames = array_map('trim', explode(',', $request->input('new_tags')));
+            foreach ($newTagNames as $tagName) {
+                if (!empty($tagName)) {
+                    $tag = Tag::firstOrCreate(
+                        ['name' => $tagName],
+                        ['delete_flg' => 0]
+                    );
+                    $tagIds[] = $tag->id;
+                }
+            }
+        }
+
+        if (!empty($tagIds)) {
+            $jobPost->tags()->sync(array_unique($tagIds));
+        } else {
+            $jobPost->tags()->detach();
+        }
 
         return redirect()->route('company.job-posts.index')->with('status', '求人を作成しました。');
     }
@@ -105,8 +136,9 @@ class JobPostController extends Controller
 
         $stores = $company->stores()->where('delete_flg', 0)->get();
         $prefectures = Todofuken::cases();
+        $tags = Tag::where('delete_flg', 0)->orderBy('name')->get();
 
-        return view('company.job-posts.edit', compact('company', 'stores', 'jobPost', 'prefectures'));
+        return view('company.job-posts.edit', compact('company', 'stores', 'jobPost', 'prefectures', 'tags'));
     }
 
     public function update(Request $request, JobPost $jobPost)
@@ -129,6 +161,9 @@ class JobPostController extends Controller
             'min_salary' => ['nullable', 'integer', 'min:0'],
             'max_salary' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'integer'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['nullable', 'integer', 'exists:tags,id'],
+            'new_tags' => ['nullable', 'string'],
         ]);
 
         
@@ -143,6 +178,32 @@ class JobPostController extends Controller
 
 
         $jobPost->update($data);
+
+        // タグの処理
+        $tagIds = [];
+        if ($request->filled('tags')) {
+            $tagIds = array_filter($request->input('tags'));
+        }
+        
+        // 新しいタグを追加
+        if ($request->filled('new_tags')) {
+            $newTagNames = array_map('trim', explode(',', $request->input('new_tags')));
+            foreach ($newTagNames as $tagName) {
+                if (!empty($tagName)) {
+                    $tag = Tag::firstOrCreate(
+                        ['name' => $tagName],
+                        ['delete_flg' => 0]
+                    );
+                    $tagIds[] = $tag->id;
+                }
+            }
+        }
+
+        if (!empty($tagIds)) {
+            $jobPost->tags()->sync(array_unique($tagIds));
+        } else {
+            $jobPost->tags()->detach();
+        }
 
         return redirect()->route('company.job-posts.index')->with('status', '求人を更新しました。');
     }

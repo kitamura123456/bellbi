@@ -3,9 +3,24 @@
 @section('title', '予約詳細')
 
 @section('content')
-<div class="company-header">
-    <h1 class="company-title">予約詳細</h1>
-    <a href="{{ route('company.reservations.index') }}" class="btn-secondary">一覧に戻る</a>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">予約詳細</h1>
+    <a href="{{ route('company.reservations.index') }}" style="
+        padding: 12px 24px;
+        background: transparent;
+        color: #5D535E;
+        border: 1px solid #5D535E;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+        一覧に戻る
+    </a>
 </div>
 
 <div class="company-card">
@@ -114,7 +129,21 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-primary">更新する</button>
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                更新する
+            </button>
         </div>
     </form>
 </div>

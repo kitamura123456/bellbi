@@ -68,7 +68,7 @@
                 <p class="empty-message">メニューが登録されていません。</p>
             @else
                 @foreach($menus as $menu)
-                <label style="display: flex; gap: 12px; padding: 12px; background-color: #f9fafb; border-radius: 8px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent;" onmouseover="this.style.borderColor='#fb7185'" onmouseout="this.style.borderColor='transparent'">
+                <label style="display: flex; gap: 12px; padding: 12px; background-color: #f9fafb; border-radius: 8px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent;" onmouseover="this.style.borderColor='#90AFC5'" onmouseout="this.style.borderColor='transparent'">
                     <input type="checkbox" name="menu_ids[]" value="{{ $menu->id }}" style="margin-top: 4px;">
                     <div style="flex-shrink: 0;">
                         @if($menu->thumbnail_image)
@@ -90,7 +90,7 @@
                     <div style="flex: 1;">
                         <div>
                             <strong style="font-size: 15px;">{{ $menu->name }}</strong>
-                            <span style="color: #fb7185; margin-left: 12px; font-weight: 600;">{{ number_format($menu->price) }}円</span>
+                            <span style="color: #5D535E; margin-left: 12px; font-weight: 600;">{{ number_format($menu->price) }}円</span>
                             <span style="color: #6b7280; margin-left: 8px; font-size: 14px;">（{{ $menu->duration_minutes }}分）</span>
                         </div>
                         @if($menu->description)
@@ -114,7 +114,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
                 <label style="display: flex; flex-direction: column; align-items: center; padding: 12px; background-color: #f9fafb; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent;" class="staff-option">
                     <input type="radio" name="staff_id" value="" checked style="display: none;">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fb7185; font-size: 12px; margin-bottom: 8px;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #e8e8e8 0%, #d1d5db 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #5D535E; font-size: 12px; margin-bottom: 8px;">
                         指名なし
                     </div>
                     <span style="font-size: 14px; font-weight: 500; text-align: center;">指名なし</span>
@@ -136,14 +136,14 @@
             
             <style>
             .staff-option:hover {
-                border-color: #fb7185 !important;
-                background-color: #fef2f2 !important;
+                border-color: #90AFC5 !important;
+                background-color: #f0f4f8 !important;
             }
             .staff-option input:checked + div,
             .staff-option input:checked ~ img,
             .staff-option:has(input:checked) {
-                border-color: #fb7185 !important;
-                background-color: #fef2f2 !important;
+                border-color: #90AFC5 !important;
+                background-color: #f0f4f8 !important;
             }
             </style>
             
@@ -153,9 +153,38 @@
         </div>
         @endif
 
-        <div class="form-actions">
-            <button type="submit" class="btn-primary">日時を選択する</button>
-            <a href="{{ route('reservations.search') }}" class="btn-secondary">戻る</a>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                日時を選択する
+            </button>
+            <a href="{{ route('reservations.search') }}" style="
+                padding: 12px 24px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                戻る
+            </a>
         </div>
     </form>
 @endsection

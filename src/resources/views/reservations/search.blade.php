@@ -51,7 +51,22 @@
                 @endif
             </div>
             <div class="job-card-footer">
-                <a href="{{ route('reservations.store', $store) }}" class="btn-primary btn-sm">予約する</a>
+                <a href="{{ route('reservations.store', $store) }}" style="
+                    padding: 8px 20px;
+                    background: #5D535E;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: inline-block;
+                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                    予約する
+                </a>
             </div>
         </div>
     </div>

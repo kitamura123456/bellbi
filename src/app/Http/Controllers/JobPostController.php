@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobPost;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class JobPostController extends Controller
@@ -12,7 +13,7 @@ class JobPostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobPost::with(['company', 'store'])
+        $query = JobPost::with(['company', 'store', 'tags'])
             ->where('status', 1) // 公開中
             ->where('delete_flg', 0);
 
@@ -40,9 +41,19 @@ class JobPostController extends Controller
             $query->whereIn('employment_type', $types);
         }
 
-        $jobs = $query->latest()->paginate(10)->withQueryString();
+        if($request->filled('tags')){
+            $tagIds = array_filter((array)$request->input('tags'));
+            if(!empty($tagIds)){
+                $query->whereHas('tags', function($q) use ($tagIds) {
+                    $q->whereIn('tags.id', $tagIds);
+                });
+            }
+        }
 
-        return view('jobs.index', compact('jobs'));
+        $jobs = $query->latest()->paginate(10)->withQueryString();
+        $tags = Tag::where('delete_flg', 0)->orderBy('name')->get();
+
+        return view('jobs.index', compact('jobs', 'tags'));
     }
 
     /**

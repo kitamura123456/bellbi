@@ -19,7 +19,22 @@
     <div class="page-header">
         <h1 class="page-title">予約詳細</h1>
         <p class="page-lead">
-            <a href="{{ route('mypage.reservations.index') }}" class="btn-secondary btn-sm">一覧に戻る</a>
+            <a href="{{ route('mypage.reservations.index') }}" style="
+                padding: 8px 16px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: inline-block;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                一覧に戻る
+            </a>
         </p>
     </div>
 
@@ -101,7 +116,21 @@
         </p>
         <form action="{{ route('mypage.reservations.cancel', $reservation) }}" method="POST" onsubmit="return confirm('予約をキャンセルしてもよろしいですか？')">
             @csrf
-            <button type="submit" class="btn-danger">予約をキャンセルする</button>
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: transparent;
+                color: #dc2626;
+                border: 1px solid #dc2626;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#dc2626'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#dc2626';">
+                予約をキャンセルする
+            </button>
         </form>
     </div>
     @elseif($reservation->status === 1)

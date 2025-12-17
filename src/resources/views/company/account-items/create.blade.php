@@ -3,8 +3,8 @@
 @section('title', '科目作成')
 
 @section('content')
-<div class="content-header">
-    <h1 class="content-title">科目作成</h1>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">科目作成</h1>
 </div>
 
 <div class="form-container">
@@ -41,9 +41,38 @@
             <small class="form-help">取引登録時にこの税率がデフォルトで適用されます</small>
         </div>
 
-        <div class="form-actions">
-            <a href="{{ route('company.account-items.index') }}" class="btn btn-secondary">キャンセル</a>
-            <button type="submit" class="btn btn-primary">作成する</button>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <a href="{{ route('company.account-items.index') }}" style="
+                padding: 12px 24px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                キャンセル
+            </a>
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                作成する
+            </button>
         </div>
     </form>
 </div>

@@ -50,14 +50,62 @@
             @endif
         </div>
         <div class="job-card-footer">
-            <a href="{{ route('mypage.messages.show', $conversation) }}" class="btn-secondary btn-sm">メッセージを見る</a>
+            <a href="{{ route('mypage.messages.show', $conversation) }}" style="
+                padding: 8px 16px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: inline-block;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                メッセージを見る
+            </a>
         </div>
     </div>
     @empty
     <p class="empty-message">まだメッセージはありません。</p>
     <p style="margin-top: 16px;">
-        <a href="{{ route('mypage') }}" class="btn-primary">応募履歴を見る</a>
-        <a href="{{ route('mypage.scouts.index') }}" class="btn-secondary" style="margin-left: 8px;">スカウト受信を見る</a>
+        <a href="{{ route('mypage') }}" style="
+            padding: 12px 32px;
+            background: #5D535E;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline-block;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+            応募履歴を見る
+        </a>
+        <a href="{{ route('mypage.scouts.index') }}" style="
+            padding: 12px 24px;
+            background: transparent;
+            color: #5D535E;
+            border: 1px solid #5D535E;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline-block;
+            margin-left: 8px;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+            スカウト受信を見る
+        </a>
     </p>
     @endforelse
 @endsection

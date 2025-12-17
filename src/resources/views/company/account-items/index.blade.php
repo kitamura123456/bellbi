@@ -3,10 +3,25 @@
 @section('title', '科目マスタ管理')
 
 @section('content')
-<div class="content-header">
-    <h1 class="content-title">科目マスタ管理</h1>
-    <div class="content-actions">
-        <a href="{{ route('company.account-items.create') }}" class="btn btn-primary">新しい科目を追加</a>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">科目マスタ管理</h1>
+    <div>
+        <a href="{{ route('company.account-items.create') }}" style="
+            padding: 12px 32px;
+            background: #5D535E;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+            新しい科目を追加
+        </a>
     </div>
 </div>
 
@@ -45,11 +60,39 @@
                                 <td class="col-tax">{{ $item->default_tax_rate ? $item->default_tax_rate . '%' : '-' }}</td>
                                 <td class="col-date">{{ $item->created_at->format('Y年m月d日') }}</td>
                                 <td class="col-actions">
-                                    <a href="{{ route('company.account-items.edit', $item) }}" class="btn btn-sm btn-secondary">編集</a>
-                                    <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');">
+                                    <a href="{{ route('company.account-items.edit', $item) }}" style="
+                                        padding: 8px 16px;
+                                        background: transparent;
+                                        color: #5D535E;
+                                        border: 1px solid #5D535E;
+                                        border-radius: 20px;
+                                        font-size: 13px;
+                                        font-weight: 700;
+                                        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                        text-decoration: none;
+                                        cursor: pointer;
+                                        transition: all 0.2s ease;
+                                        display: inline-block;
+                                    " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                                        編集
+                                    </a>
+                                    <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');" style="display: inline; margin-left: 6px;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                                        <button type="submit" style="
+                                            padding: 8px 16px;
+                                            background: transparent;
+                                            color: #dc2626;
+                                            border: 1px solid #dc2626;
+                                            border-radius: 20px;
+                                            font-size: 13px;
+                                            font-weight: 700;
+                                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                            cursor: pointer;
+                                            transition: all 0.2s ease;
+                                        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#dc2626'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#dc2626';">
+                                            削除
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -84,11 +127,39 @@
                                 <td class="col-tax">{{ $item->default_tax_rate ? $item->default_tax_rate . '%' : '-' }}</td>
                                 <td class="col-date">{{ $item->created_at->format('Y年m月d日') }}</td>
                                 <td class="col-actions">
-                                    <a href="{{ route('company.account-items.edit', $item) }}" class="btn btn-sm btn-secondary">編集</a>
-                                    <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');">
+                                    <a href="{{ route('company.account-items.edit', $item) }}" style="
+                                        padding: 8px 16px;
+                                        background: transparent;
+                                        color: #5D535E;
+                                        border: 1px solid #5D535E;
+                                        border-radius: 20px;
+                                        font-size: 13px;
+                                        font-weight: 700;
+                                        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                        text-decoration: none;
+                                        cursor: pointer;
+                                        transition: all 0.2s ease;
+                                        display: inline-block;
+                                    " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                                        編集
+                                    </a>
+                                    <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');" style="display: inline; margin-left: 6px;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                                        <button type="submit" style="
+                                            padding: 8px 16px;
+                                            background: transparent;
+                                            color: #dc2626;
+                                            border: 1px solid #dc2626;
+                                            border-radius: 20px;
+                                            font-size: 13px;
+                                            font-weight: 700;
+                                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                            cursor: pointer;
+                                            transition: all 0.2s ease;
+                                        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#dc2626'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#dc2626';">
+                                            削除
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

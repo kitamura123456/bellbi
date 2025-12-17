@@ -12,7 +12,7 @@ use App\Enums\Todofuken;
         <form class="search-form">
             <div class="form-group">
                 <label for="keyword">キーワード</label>
-                <input type="text" id="keyword" name="keyword" placeholder="エリア・サロン名・職種など">
+                <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="エリア・サロン名・職種など">
             </div>
             <div class="form-group">
                 {{-- enumで都道府県全部対応させる --}}
@@ -21,7 +21,7 @@ use App\Enums\Todofuken;
                     <option value="">指定なし</option>
                     @foreach(App\Enums\Todofuken::cases() as $pref)
                     <option value="{{ $pref->value }}"
-                        {{ is_array(request('area')) == $pref->label() ? 'selected' : ''}}>
+                        {{ is_array(request('area')) && in_array($pref->value, request('area', [])) ? 'selected' : ''}}>
                         {{ $pref->label()}}
                     </option>
                     @endforeach
@@ -31,12 +31,40 @@ use App\Enums\Todofuken;
                 <label for="employment_type">雇用形態</label>
                 <select multiple id="employment_type" name="employment_type">
                     <option value="">指定なし</option>
-                    <option value="1" {{ is_array(request('employment_type')) == 1 ? 'selected' : ''}}>正社員</option>
-                    <option value="2" {{ is_array(request('employment_type')) == 2 ? 'selected' : ''}}>パート・アルバイト</option>
-                    <option value="3" {{ is_array(request('employment_type')) == 3 ? 'selected' : ''}}>業務委託</option>
+                    <option value="1" {{ is_array(request('employment_type')) && in_array(1, request('employment_type', [])) ? 'selected' : ''}}>正社員</option>
+                    <option value="2" {{ is_array(request('employment_type')) && in_array(2, request('employment_type', [])) ? 'selected' : ''}}>パート・アルバイト</option>
+                    <option value="3" {{ is_array(request('employment_type')) && in_array(3, request('employment_type', [])) ? 'selected' : ''}}>業務委託</option>
                 </select>
             </div>
-            <button type="submit" class="btn-primary btn-block">この条件で検索</button>
+            @if(isset($tags) && $tags->isNotEmpty())
+            <div class="form-group">
+                <label for="tags">タグ</label>
+                <select multiple id="tags" name="tags[]">
+                    <option value="">指定なし</option>
+                    @foreach($tags as $tag)
+                        <option value="{{ $tag->id }}" {{ is_array(request('tags')) && in_array($tag->id, request('tags', [])) ? 'selected' : ''}}>
+                            {{ $tag->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
+            <button type="submit" style="
+                width: 100%;
+                padding: 12px 24px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                この条件で検索
+            </button>
         </form>
     </div>
 @endsection
@@ -105,7 +133,23 @@ use App\Enums\Todofuken;
                         @endif
                     </div>
                     <div class="job-card-footer">
-                        <a href="{{ route('jobs.show', $job) }}" class="btn-secondary">詳細を見る</a>
+                        <a href="{{ route('jobs.show', $job) }}" style="
+                            padding: 12px 24px;
+                            background: transparent;
+                            color: #5D535E;
+                            border: 1px solid #5D535E;
+                            border-radius: 24px;
+                            font-size: 14px;
+                            font-weight: 700;
+                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                            text-decoration: none;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            position: relative;
+                            display: inline-block;
+                        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                            詳細を見る
+                        </a>
                     </div>
                 </article>
             @endforeach

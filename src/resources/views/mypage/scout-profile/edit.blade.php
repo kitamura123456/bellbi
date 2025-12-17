@@ -92,7 +92,21 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">保存する</button>
+                <button type="submit" style="
+                    padding: 12px 32px;
+                    background: #5D535E;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 24px;
+                    font-size: 14px;
+                    font-weight: 700;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    position: relative;
+                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                    保存する
+                </button>
             </div>
         </form>
     </div>

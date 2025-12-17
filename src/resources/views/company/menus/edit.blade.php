@@ -3,9 +3,24 @@
 @section('title', 'メニュー編集')
 
 @section('content')
-<div class="company-header">
-    <h1 class="company-title">メニュー編集</h1>
-    <a href="{{ route('company.menus.index') }}" class="btn-secondary">一覧に戻る</a>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">メニュー編集</h1>
+    <a href="{{ route('company.menus.index') }}" style="
+        padding: 12px 24px;
+        background: transparent;
+        color: #5D535E;
+        border: 1px solid #5D535E;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+        一覧に戻る
+    </a>
 </div>
 
 <div class="company-card">
@@ -77,19 +92,19 @@
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
                         <label style="cursor: pointer;">
                             <input type="radio" name="template_image" value="templates/menus/menu1.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/menus/menu1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                            <img src="{{ asset('images/templates/menus/menu1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
                         </label>
                         <label style="cursor: pointer;">
                             <input type="radio" name="template_image" value="templates/menus/menu2.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/menus/menu2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                            <img src="{{ asset('images/templates/menus/menu2.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
                         </label>
                         <label style="cursor: pointer;">
                             <input type="radio" name="template_image" value="templates/menus/menu3.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/menus/menu3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                            <img src="{{ asset('images/templates/menus/menu3.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
                         </label>
                         <label style="cursor: pointer;">
                             <input type="radio" name="template_image" value="templates/menus/menu4.svg" style="display: none;">
-                            <img src="{{ asset('images/templates/menus/menu4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#ec4899'">
+                            <img src="{{ asset('images/templates/menus/menu4.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
                         </label>
                     </div>
                 </div>
@@ -136,7 +151,7 @@
                             img.style.borderColor = 'transparent';
                         });
                         if (this.checked) {
-                            this.nextElementSibling.style.borderColor = '#ec4899';
+                            this.nextElementSibling.style.borderColor = '#90AFC5';
                         }
                     });
                 });
@@ -200,8 +215,37 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-primary">更新する</button>
-            <a href="{{ route('company.menus.index') }}" class="btn-secondary">キャンセル</a>
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                更新する
+            </button>
+            <a href="{{ route('company.menus.index') }}" style="
+                padding: 12px 24px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                キャンセル
+            </a>
         </div>
     </form>
 </div>

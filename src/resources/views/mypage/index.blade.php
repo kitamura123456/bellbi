@@ -46,13 +46,44 @@
             @endif
         </div>
         <div class="job-card-footer">
-            <a href="{{ route('mypage.messages.create-from-application', $application) }}" class="btn-secondary btn-sm">メッセージを送る</a>
+            <a href="{{ route('mypage.messages.create-from-application', $application) }}" style="
+                padding: 8px 16px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: inline-block;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                メッセージを送る
+            </a>
         </div>
     </div>
     @empty
     <p class="empty-message">まだ応募した求人はありません。</p>
     <p style="margin-top: 16px;">
-        <a href="{{ route('jobs.index') }}" class="btn-primary">求人を探す</a>
+        <a href="{{ route('jobs.index') }}" style="
+            padding: 12px 32px;
+            background: #5D535E;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline-block;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+            求人を探す
+        </a>
     </p>
     @endforelse
 @endsection

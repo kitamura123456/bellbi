@@ -51,13 +51,44 @@
             </p>
         </div>
         <div class="job-card-footer">
-            <a href="{{ route('mypage.reservations.show', $reservation) }}" class="btn-secondary btn-sm">詳細を見る</a>
+            <a href="{{ route('mypage.reservations.show', $reservation) }}" style="
+                padding: 8px 16px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: inline-block;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                詳細を見る
+            </a>
         </div>
     </div>
     @empty
     <p class="empty-message">まだ予約がありません。</p>
     <p style="margin-top: 16px;">
-        <a href="{{ route('reservations.search') }}" class="btn-primary">店舗を探して予約する</a>
+        <a href="{{ route('reservations.search') }}" style="
+            padding: 12px 32px;
+            background: #5D535E;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline-block;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+            店舗を探して予約する
+        </a>
     </p>
     @endforelse
 @endsection

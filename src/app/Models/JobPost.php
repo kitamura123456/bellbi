@@ -56,6 +56,11 @@ class JobPost extends Model
     {
         return $this->hasMany(JobApplication::class);
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'job_post_tags');
+    }
 }
 
 

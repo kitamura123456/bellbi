@@ -4,7 +4,7 @@
 
 @section('content')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/material_pink.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ja.js"></script>
 
@@ -67,9 +67,9 @@
                 <style>
                 .time-slot-btn {
                     padding: 12px 8px;
-                    border: 2px solid #fb7185;
+                    border: 2px solid #90AFC5;
                     background-color: white;
-                    color: #fb7185;
+                    color: #90AFC5;
                     border-radius: 8px;
                     cursor: pointer;
                     transition: all 0.2s;
@@ -77,10 +77,10 @@
                     text-align: center;
                 }
                 .time-slot-btn:hover {
-                    background-color: #fce7f3;
+                    background-color: #f0f4f8;
                 }
                 .time-slot-btn.selected {
-                    background-color: #fb7185;
+                    background-color: #90AFC5;
                     color: white;
                 }
                 </style>
@@ -160,9 +160,38 @@
             @enderror
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn-primary">予約を確定する</button>
-            <a href="{{ route('reservations.store', $store) }}" class="btn-secondary">戻る</a>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                予約を確定する
+            </button>
+            <a href="{{ route('reservations.store', $store) }}" style="
+                padding: 12px 24px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                戻る
+            </a>
         </div>
     </form>
 @endsection

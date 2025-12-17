@@ -3,29 +3,79 @@
 @section('title', '取引登録')
 
 @section('content')
-<div class="content-header">
-    <h1 class="content-title">取引登録</h1>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">取引登録</h1>
 </div>
 
-<div class="form-container">
-    <form action="{{ route('company.transactions.store') }}" method="POST" class="standard-form">
+<div style="
+    padding: 0;
+    border: none;
+    box-shadow: 0 1px 2px rgba(93, 83, 94, 0.1);
+    border-radius: 0;
+    background: #ffffff;
+    max-width: 700px;
+">
+    <div style="padding: 20px 24px; border-bottom: 1px solid #e8e8e8;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">取引情報</h3>
+    </div>
+    <form action="{{ route('company.transactions.store') }}" method="POST" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
         @csrf
 
-        <div class="form-group">
-            <label for="transaction_type" class="form-label">種別 <span class="required">*</span></label>
-            <select name="transaction_type" id="transaction_type" class="form-control" required>
+        <div style="display: flex; flex-direction: column;">
+            <label for="transaction_type" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                種別 <span style="color: #763626; font-size: 11px; font-weight: 400;">必須</span>
+            </label>
+            <select name="transaction_type" id="transaction_type" required style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
                 <option value="">選択してください</option>
                 <option value="1" {{ old('transaction_type', $transactionType) == 1 ? 'selected' : '' }}>売上</option>
                 <option value="2" {{ old('transaction_type', $transactionType) == 2 ? 'selected' : '' }}>経費</option>
             </select>
             @error('transaction_type')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
 
-        <div class="form-group">
-            <label for="store_id" class="form-label">店舗 <span class="required">*</span></label>
-            <select name="store_id" id="store_id" class="form-control" required>
+        <div style="display: flex; flex-direction: column;">
+            <label for="store_id" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                店舗 <span style="color: #763626; font-size: 11px; font-weight: 400;">必須</span>
+            </label>
+            <select name="store_id" id="store_id" required style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
                 <option value="">選択してください</option>
                 @foreach ($stores as $store)
                     <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>
@@ -34,21 +84,61 @@
                 @endforeach
             </select>
             @error('store_id')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
 
-        <div class="form-group">
-            <label for="date" class="form-label">日付 <span class="required">*</span></label>
-            <input type="date" name="date" id="date" class="form-control" value="{{ old('date', date('Y-m-d')) }}" required>
+        <div style="display: flex; flex-direction: column;">
+            <label for="date" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                日付 <span style="color: #763626; font-size: 11px; font-weight: 400;">必須</span>
+            </label>
+            <input type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}" required style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
             @error('date')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
 
-        <div class="form-group">
-            <label for="account_item_id" class="form-label">科目 <span class="required">*</span></label>
-            <select name="account_item_id" id="account_item_id" class="form-control" required>
+        <div style="display: flex; flex-direction: column;">
+            <label for="account_item_id" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                科目 <span style="color: #763626; font-size: 11px; font-weight: 400;">必須</span>
+            </label>
+            <select name="account_item_id" id="account_item_id" required style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
                 <option value="">選択してください</option>
                 <optgroup label="売上科目" id="revenue-items" style="display: none;">
                     @foreach ($revenueItems as $item)
@@ -66,127 +156,152 @@
                 </optgroup>
             </select>
             @error('account_item_id')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
-            <small class="form-help">
-                科目が見つからない場合は、<a href="{{ route('company.account-items.index') }}" target="_blank">科目マスタ</a>から追加してください
+            <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">
+                科目が見つからない場合は、<a href="{{ route('company.account-items.index') }}" target="_blank" style="color: #90AFC5; text-decoration: underline;">科目マスタ</a>から追加してください
             </small>
         </div>
 
-        <div class="form-group">
-            <label for="amount" class="form-label">金額（税抜） <span class="required">*</span></label>
-            <input type="number" name="amount" id="amount" class="form-control" value="{{ old('amount') }}" required min="0">
+        <div style="display: flex; flex-direction: column;">
+            <label for="amount" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">
+                金額（税抜） <span style="color: #763626; font-size: 11px; font-weight: 400;">必須</span>
+            </label>
+            <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="0" style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
             @error('amount')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
 
-        <div class="form-group">
-            <label for="tax_amount" class="form-label">税額</label>
-            <input type="number" name="tax_amount" id="tax_amount" class="form-control" value="{{ old('tax_amount', 0) }}" min="0">
+        <div style="display: flex; flex-direction: column;">
+            <label for="tax_amount" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">税額</label>
+            <input type="number" name="tax_amount" id="tax_amount" value="{{ old('tax_amount', 0) }}" min="0" style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">
             @error('tax_amount')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
-            <small class="form-help">科目のデフォルト税率から自動計算されます</small>
+            <small style="display: block; margin-top: 6px; color: #999999; font-size: 12px;">科目のデフォルト税率から自動計算されます</small>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">合計金額（税込）</label>
-            <div class="total-display" id="total-amount">¥0</div>
+        <div style="display: flex; flex-direction: column;">
+            <label style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">合計金額（税込）</label>
+            <div id="total-amount" style="
+                font-size: 24px;
+                font-weight: 700;
+                color: #059669;
+                padding: 16px;
+                background: #f0fdf4;
+                border-radius: 12px;
+                text-align: center;
+            ">¥0</div>
         </div>
 
-        <div class="form-group">
-            <label for="note" class="form-label">備考</label>
-            <textarea name="note" id="note" class="form-control" rows="3" maxlength="1000">{{ old('note') }}</textarea>
+        <div style="display: flex; flex-direction: column;">
+            <label for="note" style="
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #5D535E;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            ">備考</label>
+            <textarea name="note" id="note" rows="3" maxlength="1000" style="
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                line-height: 1.5;
+                color: #2A3132;
+                background: #fafafa;
+                transition: all 0.2s ease;
+                resize: vertical;
+                box-sizing: border-box;
+            " onfocus="this.style.borderColor='#90AFC5'; this.style.background='#ffffff';" onblur="this.style.borderColor='#e8e8e8'; this.style.background='#fafafa';">{{ old('note') }}</textarea>
             @error('note')
-                <span class="error-message">{{ $message }}</span>
+                <span style="display: block; margin-top: 6px; color: #763626; font-size: 12px;">{{ $message }}</span>
             @enderror
         </div>
 
-        <div class="form-actions">
-            <a href="{{ route('company.transactions.index') }}" class="btn btn-secondary">キャンセル</a>
-            <button type="submit" class="btn btn-primary">登録する</button>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <a href="{{ route('company.transactions.index') }}" style="
+                padding: 12px 24px;
+                background: transparent;
+                color: #5D535E;
+                border: 1px solid #5D535E;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                キャンセル
+            </a>
+            <button type="submit" style="
+                padding: 12px 32px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                登録する
+            </button>
         </div>
     </form>
 </div>
 
-<style>
-.form-container {
-    background: white;
-    border-radius: 8px;
-    padding: 32px;
-    max-width: 700px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.standard-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-.required {
-    color: #e53e3e;
-}
-
-.form-control {
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-help {
-    margin-top: 4px;
-    font-size: 13px;
-    color: #6b7280;
-}
-
-.form-help a {
-    color: #3b82f6;
-    text-decoration: underline;
-}
-
-.error-message {
-    color: #e53e3e;
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-.total-display {
-    font-size: 24px;
-    font-weight: 700;
-    color: #059669;
-    padding: 16px;
-    background: #f0fdf4;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.form-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 8px;
-}
-</style>
 
 <script>
 $(document).ready(function() {
