@@ -236,9 +236,33 @@
     @endif
 
     <section class="job-apply">
-        <h3 class="job-apply-title">この求人に応募する</h3>
+        @if($isExpired)
+            {{-- 公開期間終了のメッセージ --}}
+            <div style="
+                padding: 24px;
+                background: #e0f2fe;
+                border: 2px solid #90AFC5;
+                border-radius: 12px;
+                text-align: center;
+                margin-bottom: 24px;
+            ">
+                <p style="
+                    margin: 0;
+                    color: #0c4a6e;
+                    font-size: 16px;
+                    font-weight: 700;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                ">求人掲載期間は終了しました</p>
+                <p style="
+                    margin: 8px 0 0 0;
+                    color: #075985;
+                    font-size: 13px;
+                ">この求人への応募は受け付けておりません。</p>
+            </div>
+        @else
+            <h3 class="job-apply-title">この求人に応募する</h3>
 
-        @if(session('status'))
+            @if(session('status'))
             <div style="
                 padding: 12px 16px;
                 background: #d1fae5;
@@ -330,6 +354,7 @@
                 </form>
             @endif
         @endguest
+        @endif
     </section>
 @endsection
 

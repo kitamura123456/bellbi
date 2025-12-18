@@ -7,6 +7,7 @@ use App\Models\JobPost;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class JobPostController extends Controller
 {
@@ -15,9 +16,21 @@ class JobPostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobPost::with(['company', 'store', 'tags', 'images'])
+        $now = Carbon::now();
+        
+        $query = JobPost::with(['company', 'store', 'tags'])
             ->where('status', 1) // 公開中
-            ->where('delete_flg', 0);
+            ->where('delete_flg', 0)
+            // 公開開始日のチェック：開始日が設定されている場合は現在日時以降であること
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_start_at')
+                  ->orWhere('publish_start_at', '<=', $now);
+            })
+            // 公開終了日のチェック：終了日が設定されている場合は現在日時より後であること
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_end_at')
+                  ->orWhere('publish_end_at', '>', $now);
+            });
 
         if($request->filled('keyword') && !empty(array_filter((array)$request->input('keyword')))){
             $keyword = $request->input('keyword');
@@ -65,9 +78,17 @@ class JobPostController extends Controller
         
         // 各タグの件数を取得（公開中の求人のみ）
         $tags = Tag::where('delete_flg', 0)
-            ->withCount(['jobPosts' => function($query) {
+            ->withCount(['jobPosts' => function($query) use ($now) {
                 $query->where('status', 1)
-                    ->where('delete_flg', 0);
+                    ->where('delete_flg', 0)
+                    ->where(function($q) use ($now) {
+                        $q->whereNull('publish_start_at')
+                          ->orWhere('publish_start_at', '<=', $now);
+                    })
+                    ->where(function($q) use ($now) {
+                        $q->whereNull('publish_end_at')
+                          ->orWhere('publish_end_at', '>', $now);
+                    });
             }])
             ->orderBy('name')
             ->get();
@@ -76,6 +97,14 @@ class JobPostController extends Controller
         $areaCounts = JobPost::where('status', 1)
             ->where('delete_flg', 0)
             ->whereNotNull('prefecture_code')
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_start_at')
+                  ->orWhere('publish_start_at', '<=', $now);
+            })
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_end_at')
+                  ->orWhere('publish_end_at', '>', $now);
+            })
             ->selectRaw('prefecture_code, count(*) as count')
             ->groupBy('prefecture_code')
             ->pluck('count', 'prefecture_code')
@@ -85,6 +114,14 @@ class JobPostController extends Controller
         $employmentTypeCounts = JobPost::where('status', 1)
             ->where('delete_flg', 0)
             ->whereNotNull('employment_type')
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_start_at')
+                  ->orWhere('publish_start_at', '<=', $now);
+            })
+            ->where(function($q) use ($now) {
+                $q->whereNull('publish_end_at')
+                  ->orWhere('publish_end_at', '>', $now);
+            })
             ->selectRaw('employment_type, count(*) as count')
             ->groupBy('employment_type')
             ->pluck('count', 'employment_type')
@@ -102,8 +139,18 @@ class JobPostController extends Controller
             abort(404);
         }
 
-        // 画像を読み込む
-        $job->load('images');
+        $now = Carbon::now();
+        
+        // 公開開始日のチェック
+        if ($job->publish_start_at && $job->publish_start_at->gt($now)) {
+            abort(404); // まだ公開開始前
+        }
+        
+        // 公開終了後でもページは表示可能にする（404にしない）
+        $isExpired = false;
+        if ($job->publish_end_at && $job->publish_end_at->lte($now)) {
+            $isExpired = true; // 公開期間終了フラグ
+        }
 
         // ログインユーザーが既に応募済みかチェック
         $hasApplied = false;
@@ -114,7 +161,7 @@ class JobPostController extends Controller
                 ->exists();
         }
 
-        return view('jobs.show', compact('job', 'hasApplied'));
+        return view('jobs.show', compact('job', 'hasApplied', 'isExpired'));
     }
 }
 
