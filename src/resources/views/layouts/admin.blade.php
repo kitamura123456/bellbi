@@ -23,6 +23,7 @@
                 <nav class="main-nav">
                     <a href="{{ route('admin.index') }}">ダッシュボード</a>
                     <a href="{{ route('admin.users.index') }}">ユーザー管理</a>
+                    <a href="{{ route('admin.plans.index') }}">プラン管理</a>
                     <a href="{{ route('jobs.index') }}">フロントを見る</a>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

@@ -65,6 +65,36 @@ class Company extends Model
     {
         return $this->hasMany(CompanyImage::class)->where('delete_flg', 0)->orderBy('sort_order');
     }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * 現在有効な契約を取得
+     */
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_TRIAL])
+            ->where('delete_flg', 0)
+            ->where(function($query) {
+                $query->whereNull('started_at')
+                    ->orWhere('started_at', '<=', now());
+            })
+            ->where(function($query) {
+                $query->whereNull('ended_at')
+                    ->orWhere('ended_at', '>', now());
+            })
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
 }
 
 

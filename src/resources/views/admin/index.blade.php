@@ -28,10 +28,10 @@
             <p class="admin-menu-desc">準備中</p>
         </div>
 
-        <div class="admin-menu-card admin-menu-disabled">
+        <a href="{{ route('admin.plans.index') }}" class="admin-menu-card">
             <h3 class="admin-menu-title">プラン管理</h3>
-            <p class="admin-menu-desc">準備中</p>
-        </div>
+            <p class="admin-menu-desc">プランの作成・編集・削除</p>
+        </a>
 
         <div class="admin-menu-card admin-menu-disabled">
             <h3 class="admin-menu-title">システム設定</h3>

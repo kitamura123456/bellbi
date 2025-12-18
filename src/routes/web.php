@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\CompanyRegisterController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PlanController as AdminPlans;
 use App\Http\Controllers\Company\DashboardController as CompanyDashboard;
 use App\Http\Controllers\Company\CompanyController as CompanyInfo;
 use App\Http\Controllers\Company\StoreController as CompanyStores;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Company\ScheduleController as CompanySchedules;
 use App\Http\Controllers\Company\ReservationController as CompanyReservations;
 use App\Http\Controllers\Company\AccountItemController as CompanyAccountItems;
 use App\Http\Controllers\Company\TransactionController as CompanyTransactions;
+use App\Http\Controllers\Company\PlanController as CompanyPlans;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 
@@ -152,6 +154,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/transactions/report', [CompanyTransactions::class, 'report'])->name('company.transactions.report');
     Route::get('/company/transactions/export', [CompanyTransactions::class, 'export'])->name('company.transactions.export');
 
+    // プラン・課金管理
+    Route::get('/company/plans', [CompanyPlans::class, 'index'])->name('company.plans.index');
+    Route::get('/company/plans/{plan}', [CompanyPlans::class, 'show'])->name('company.plans.show');
+    Route::post('/company/plans/{plan}/subscribe', [CompanyPlans::class, 'subscribe'])->name('company.plans.subscribe');
+    Route::get('/company/plans/{plan}/change', [CompanyPlans::class, 'change'])->name('company.plans.change');
+    Route::post('/company/plans/{plan}/update', [CompanyPlans::class, 'update'])->name('company.plans.update');
+    Route::post('/company/plans/cancel', [CompanyPlans::class, 'cancel'])->name('company.plans.cancel');
+
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {
         return view('admin.index');
@@ -167,6 +177,19 @@ Route::middleware('auth')->group(function () {
             'edit' => 'admin.users.edit',
             'update' => 'admin.users.update',
             'destroy' => 'admin.users.destroy',
+        ]
+    ]);
+
+    // 管理画面 - プラン管理
+    Route::resource('admin/plans', AdminPlans::class, [
+        'as' => 'admin',
+        'names' => [
+            'index' => 'admin.plans.index',
+            'create' => 'admin.plans.create',
+            'store' => 'admin.plans.store',
+            'edit' => 'admin.plans.edit',
+            'update' => 'admin.plans.update',
+            'destroy' => 'admin.plans.destroy',
         ]
     ]);
 });
