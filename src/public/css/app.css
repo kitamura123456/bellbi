@@ -47,14 +47,14 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #5D535E, #90AFC5);
+    background: linear-gradient(135deg, #ec4899, #f472b6);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     margin-right: 10px;
-    box-shadow: 0 2px 8px rgba(93, 83, 94, 0.3);
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
 }
 
 .brand-text {
@@ -89,7 +89,7 @@ body {
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: #90AFC5;
+    background-color: #ec4899;
     transition: width 0.2s ease;
 }
 
@@ -120,7 +120,7 @@ body {
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: #90AFC5;
+    background-color: #ec4899;
     transition: width 0.2s ease;
 }
 
@@ -166,7 +166,7 @@ body {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #90AFC5;
+    color: #ec4899;
     margin: 0 0 4px;
 }
 
@@ -226,8 +226,8 @@ body {
 .search-form select:focus,
 .job-apply textarea:focus {
     outline: none;
-    border-color: #90AFC5;
-    box-shadow: 0 0 0 1px rgba(144, 175, 197, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .btn-primary,
@@ -245,26 +245,26 @@ body {
 }
 
 .btn-primary {
-    background: #5D535E;
+    background: linear-gradient(135deg, #ec4899, #db2777);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(93, 83, 94, 0.3);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
 .btn-primary:hover {
-    background: #4a4149;
-    box-shadow: 0 6px 16px rgba(93, 83, 94, 0.4);
+    background: linear-gradient(135deg, #db2777, #be185d);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
     transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: #ffffff;
-    color: #5D535E;
-    border: 1px solid rgba(93, 83, 94, 0.5);
+    color: #ec4899;
+    border: 1px solid rgba(236, 72, 153, 0.5);
 }
 
 .btn-secondary:hover {
-    background-color: #f0f4f8;
-    border-color: #5D535E;
+    background-color: #fdf2f8;
+    border-color: #ec4899;
 }
 
 .btn-block {
@@ -279,7 +279,7 @@ body {
 
 .job-card {
     background-color: #ffffff;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 14px 14px 10px;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     border: 1px solid rgba(226, 232, 240, 0.8);
@@ -289,6 +289,10 @@ body {
     transition: all 0.2s ease;
 }
 
+.job-card:hover {
+    box-shadow: none;
+    border-color: rgba(236, 72, 153, 0.3);
+}
 
 .job-card-body {
     margin-bottom: 8px;
@@ -299,8 +303,8 @@ body {
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 4px;
-    background-color: rgba(144, 175, 197, 0.15);
-    color: #5D535E;
+    background-color: rgba(236, 72, 153, 0.15);
+    color: #db2777;
     margin: 0 0 6px;
 }
 
@@ -360,7 +364,7 @@ body {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 18px 20px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    box-shadow: none;
     border: 1px solid rgba(226, 232, 240, 0.8);
     margin-bottom: 20px;
 }
@@ -420,7 +424,7 @@ body {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 16px 18px;
-    border: 1px solid rgba(144, 175, 197, 0.3);
+    border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 .job-apply-title {
@@ -517,8 +521,8 @@ body {
 
 .auth-form input:focus {
     outline: none;
-    border-color: #90AFC5;
-    box-shadow: 0 0 0 1px rgba(144, 175, 197, 0.4);
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 1px rgba(26, 26, 26, 0.2);
 }
 
 .auth-form .form-inline {
@@ -533,7 +537,7 @@ body {
 }
 
 .auth-footnote a {
-    color: #90AFC5;
+    color: #1a1a1a;
     text-decoration: none;
 }
 
@@ -567,7 +571,7 @@ body {
 
 /* 管理画面用スタイル */
 .admin-header-bg {
-    background: linear-gradient(90deg, #ffffff, #f0f4f8, #e8e8e8);
+    background: linear-gradient(90deg, #ffffff, #fdf2f8, #fce7f3);
 }
 
 .admin-main {
@@ -707,8 +711,8 @@ body {
 .admin-form input:focus,
 .admin-form select:focus {
     outline: none;
-    border-color: #90AFC5;
-    box-shadow: 0 0 0 1px rgba(144, 175, 197, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .admin-form small {
@@ -748,8 +752,8 @@ body {
 
 .admin-menu-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(144, 175, 197, 0.15);
-    border-color: rgba(144, 175, 197, 0.4);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.4);
 }
 
 .admin-menu-disabled {
@@ -773,7 +777,7 @@ body {
 
 /* 事業者管理画面用スタイル */
 .company-header-bg {
-    background: linear-gradient(90deg, #ffffff, #f0f4f8, #e8e8e8);
+    background: linear-gradient(90deg, #ffffff, #fdf2f8, #fce7f3);
 }
 
 .company-main {
@@ -798,23 +802,23 @@ body {
 }
 
 .company-welcome-card {
-    background: linear-gradient(135deg, #f0f4f8, #e8e8e8);
+    background: linear-gradient(135deg, #fdf2f8, #fce7f3);
     border-radius: 12px;
     padding: 24px 28px;
     margin-bottom: 24px;
-    border: 1px solid rgba(144, 175, 197, 0.3);
+    border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 .company-welcome-title {
     margin: 0 0 8px;
     font-size: 22px;
-    color: #5D535E;
+    color: #be185d;
 }
 
 .company-welcome-text {
     margin: 0;
     font-size: 14px;
-    color: #4a4149;
+    color: #9f1239;
 }
 
 .company-menu-grid {
@@ -840,8 +844,8 @@ body {
 
 .company-menu-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(144, 175, 197, 0.15);
-    border-color: rgba(144, 175, 197, 0.4);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.4);
 }
 
 .company-menu-disabled {
@@ -911,8 +915,8 @@ body {
 .company-form textarea:focus,
 .company-form select:focus {
     outline: none;
-    border-color: #90AFC5;
-    box-shadow: 0 0 0 1px rgba(144, 175, 197, 0.4);
+    border-color: #ec4899;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
 }
 
 .company-form textarea {
@@ -973,13 +977,13 @@ body {
 }
 
 .sidebar-menu-link:hover {
-    background-color: #f0f4f8;
-    color: #90AFC5;
+    background-color: #fdf2f8;
+    color: #ec4899;
 }
 
 .sidebar-menu-link.active {
-    background-color: #e8e8e8;
-    color: #5D535E;
+    background-color: #fce7f3;
+    color: #db2777;
     font-weight: 500;
 }
 
@@ -996,8 +1000,8 @@ body {
 }
 
 .scout-candidate-card:hover {
-    box-shadow: 0 2px 8px rgba(144, 175, 197, 0.15);
-    border-color: #90AFC5;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
+    border-color: #ec4899;
 }
 
 .scout-candidate-body {

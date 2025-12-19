@@ -2,7 +2,34 @@
 
 @section('title', $store->name . ' - 予約 | Bellbi')
 
+@section('sidebar')
+    {{-- サイドバーなし --}}
+@endsection
+
 @section('content')
+    <style>
+        /* 予約ページのみ：サイドバーを非表示にしてコンテンツを中央寄せ */
+        @media (min-width: 769px) {
+            .reservation-store-page-wrapper .main-inner {
+                justify-content: center !important;
+            }
+            .reservation-store-page-wrapper .sidebar {
+                display: none !important;
+            }
+            .reservation-store-page-wrapper .content {
+                max-width: 800px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+    <script>
+        // ページ読み込み時にbodyにクラスを追加
+        (function() {
+            document.body.classList.add('reservation-store-page-wrapper');
+        })();
+    </script>
+    <div class="reservation-store-page">
     <header class="page-header" style="margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0;">
         <h1 class="page-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 12px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{{ $store->name }}</h1>
         <p class="page-lead" style="font-size: 14px; color: #666; line-height: 1.7; margin: 0; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{{ $store->company->name }}</p>
@@ -47,21 +74,23 @@
                 @endforeach
             </div>
         @else
-            {{-- 複数枚の場合はグリッドレイアウト --}}
+            {{-- 複数枚の場合はグリッドレイアウト（最適化） --}}
             <div class="image-grid" style="
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
                 gap: 12px;
             ">
                 @foreach($store->images as $index => $image)
-                    <img src="{{ asset('storage/' . $image->path) }}" 
-                         alt="店舗画像 {{ $index + 1 }}" 
-                         class="gallery-image"
-                         data-image-index="{{ $index }}"
-                         style="width: 100%; height: 200px; object-fit: cover; cursor: pointer; transition: opacity 0.3s ease;"
-                         onmouseover="this.style.opacity='0.9';"
-                         onmouseout="this.style.opacity='1';"
+                    <div style="position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #fafafa; cursor: pointer; transition: all 0.3s ease;" 
+                         onmouseover="this.style.opacity='0.95'; this.querySelector('img').style.transform='scale(1.05)';" 
+                         onmouseout="this.style.opacity='1'; this.querySelector('img').style.transform='scale(1)';"
                          onclick="openStoreImageModal({{ $index }})">
+                        <img src="{{ asset('storage/' . $image->path) }}" 
+                             alt="店舗画像 {{ $index + 1 }}" 
+                             class="gallery-image"
+                             data-image-index="{{ $index }}"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                    </div>
                 @endforeach
             </div>
         @endif
@@ -110,8 +139,8 @@
                 <p class="empty-message" style="font-size: 14px; color: #999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">メニューが登録されていません。</p>
             @else
                 @foreach($menus as $menu)
-                <label style="display: flex; gap: 16px; padding: 16px; background-color: #ffffff; border: 1px solid #f0f0f0; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#1a1a1a';" onmouseout="this.style.borderColor='#f0f0f0';">
-                    <input type="checkbox" name="menu_ids[]" value="{{ $menu->id }}" style="margin-top: 4px; accent-color: #1a1a1a; cursor: pointer;">
+                <label class="menu-option" style="display: flex; gap: 16px; padding: 16px; background-color: #ffffff; border: 1px solid #f0f0f0; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease;" onmouseover="if(!this.querySelector('input[type=checkbox]').checked) this.style.borderColor='#1a1a1a';" onmouseout="if(!this.querySelector('input[type=checkbox]').checked) this.style.borderColor='#f0f0f0';">
+                    <input type="checkbox" name="menu_ids[]" value="{{ $menu->id }}" style="margin-top: 4px; accent-color: #1a1a1a; cursor: pointer; width: 18px; height: 18px;" onchange="if(this.checked) { this.closest('label').style.borderColor='#1a1a1a'; } else { this.closest('label').style.borderColor='#f0f0f0'; }">
                     <div style="flex-shrink: 0;">
                         @if($menu->thumbnail_image)
                             @if(strpos($menu->thumbnail_image, 'templates/') === 0)
@@ -221,6 +250,17 @@
         </div>
     </form>
 
+    <script>
+        // ページ読み込み時に、既に選択されているチェックボックスの親labelに黒いボーダーを適用
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[type="checkbox"][name="menu_ids[]"]').forEach(function(checkbox) {
+                if(checkbox.checked) {
+                    checkbox.closest('label').style.borderColor = '#1a1a1a';
+                }
+            });
+        });
+    </script>
+
     {{-- 画像拡大モーダル --}}
     @if($store->images && $store->images->count() > 0)
     <div id="storeImageModal" style="
@@ -324,5 +364,6 @@
         });
     </script>
     @endif
+    </div>
 @endsection
 

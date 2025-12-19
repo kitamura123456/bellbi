@@ -511,7 +511,7 @@ use App\Enums\Todofuken;
         </div>
 
         <div class="pagination-wrapper" style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #f0f0f0;">
-            {{ $jobs->links() }}
+            {{ $jobs->links('vendor.pagination.tailwind') }}
         </div>
     @endif
 @endsection

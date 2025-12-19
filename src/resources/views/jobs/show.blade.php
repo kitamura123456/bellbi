@@ -2,7 +2,34 @@
 
 @section('title', $job->title . ' | Bellbi')
 
+@section('sidebar')
+    {{-- サイドバーなし --}}
+@endsection
+
 @section('content')
+    <style>
+        /* 求人詳細ページのみ：サイドバーを非表示にしてコンテンツを中央寄せ */
+        @media (min-width: 769px) {
+            .job-detail-page-wrapper .main-inner {
+                justify-content: center !important;
+            }
+            .job-detail-page-wrapper .sidebar {
+                display: none !important;
+            }
+            .job-detail-page-wrapper .content {
+                max-width: 800px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+    <script>
+        // ページ読み込み時にbodyにクラスを追加
+        (function() {
+            document.body.classList.add('job-detail-page-wrapper');
+        })();
+    </script>
+    <div class="job-detail-page">
     <header class="page-header" style="margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0;">
         <p class="page-label" style="font-size: 11px; color: #999; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 12px 0; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">求人詳細</p>
         <h2 class="job-detail-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 12px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{{ $job->title }}</h2>
@@ -34,7 +61,51 @@
         @if($mainImage)
         <section class="job-images-gallery" style="margin-bottom: 32px;">
             {{-- メイン画像（最初の1枚を大きく表示） --}}
-            <div style="margin-bottom: 16px;">
+            <div style="position: relative; margin-bottom: 16px;">
+                @if($allImages->count() > 1)
+                <button onclick="prevMainImage()" id="prevMainBtn" style="
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(26, 26, 26, 0.8);
+                    border: none;
+                    color: #ffffff;
+                    width: 48px;
+                    height: 48px;
+                    font-size: 20px;
+                    cursor: pointer;
+                    z-index: 10;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                " onmouseover="this.style.background='rgba(26, 26, 26, 1)';" onmouseout="this.style.background='rgba(26, 26, 26, 0.8)';">
+                    ‹
+                </button>
+                <button onclick="nextMainImage()" id="nextMainBtn" style="
+                    position: absolute;
+                    right: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(26, 26, 26, 0.8);
+                    border: none;
+                    color: #ffffff;
+                    width: 48px;
+                    height: 48px;
+                    font-size: 20px;
+                    cursor: pointer;
+                    z-index: 10;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                " onmouseover="this.style.background='rgba(26, 26, 26, 1)';" onmouseout="this.style.background='rgba(26, 26, 26, 0.8)';">
+                    ›
+                </button>
+                @endif
                 <img src="{{ $mainImage->is_template ?? false ? asset('images/' . $mainImage->path) : asset('storage/' . $mainImage->path) }}" 
                      alt="求人画像" 
                      id="mainJobImage"
@@ -42,34 +113,35 @@
                      data-image-index="0"
                      style="width: 100%; max-height: 500px; object-fit: contain; cursor: pointer; background: #fafafa; transition: opacity 0.3s ease;"
                      onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"
-                     onclick="openImageModal(0)">
+                     onclick="openImageModalFromMain()">
             </div>
             
-            {{-- サムネイル画像（2枚目以降を横並び） --}}
-            @if($thumbnailImages->count() > 0)
+            {{-- サムネイル画像（すべての画像を表示） --}}
+            @if($allImages->count() > 1)
             <div class="thumbnail-images" style="
-                display: flex;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 gap: 12px;
-                overflow-x: auto;
                 padding: 0;
             ">
-                @foreach($thumbnailImages as $index => $image)
+                @foreach($allImages as $index => $image)
                     <img src="{{ $image->is_template ?? false ? asset('images/' . $image->path) : asset('storage/' . $image->path) }}" 
-                         alt="求人画像 {{ $index + 2 }}" 
+                         alt="求人画像 {{ $index + 1 }}" 
                          class="thumbnail-image"
-                         data-image-index="{{ $index + 1 }}"
+                         data-image-index="{{ $index }}"
+                         data-image-src="{{ $image->is_template ?? false ? asset('images/' . $image->path) : asset('storage/' . $image->path) }}"
                          style="
-                             width: 120px;
-                             height: 120px;
+                             width: 100%;
+                             aspect-ratio: 1;
                              object-fit: cover;
                              cursor: pointer;
-                             border: 2px solid transparent;
+                             border: 2px solid {{ $index === 0 ? '#1a1a1a' : 'transparent' }};
                              transition: all 0.3s ease;
-                             flex-shrink: 0;
+                             background: #fafafa;
                          "
-                         onmouseover="this.style.borderColor='#1a1a1a'; this.style.opacity='0.9';"
-                         onmouseout="this.style.borderColor='transparent'; this.style.opacity='1';"
-                         onclick="changeMainImage({{ $index + 1 }}, '{{ $image->is_template ?? false ? asset('images/' . $image->path) : asset('storage/' . $image->path) }}')">
+                         onmouseover="if(!this.classList.contains('active')) this.style.borderColor='#1a1a1a'; this.style.opacity='0.9';"
+                         onmouseout="if(!this.classList.contains('active')) this.style.borderColor='transparent'; this.style.opacity='1';"
+                         onclick="changeMainImage({{ $index }})">
                 @endforeach
             </div>
             @endif
@@ -187,22 +259,43 @@
             @endforeach
         ];
 
-        function changeMainImage(index, imageSrc) {
+        function changeMainImage(index) {
+            const imageSrc = images[index];
             document.getElementById('mainJobImage').src = imageSrc;
             document.getElementById('mainJobImage').dataset.imageIndex = index;
             currentImageIndex = index;
             
-            // サムネイルの選択状態を更新
+            // サムネイルの選択状態を更新（すべてのサムネイルを表示したまま）
             document.querySelectorAll('.thumbnail-image').forEach(thumb => {
-                thumb.style.borderColor = 'transparent';
+                thumb.classList.remove('active');
+                if(parseInt(thumb.dataset.imageIndex) === index) {
+                    thumb.style.borderColor = '#1a1a1a';
+                    thumb.classList.add('active');
+                } else {
+                    thumb.style.borderColor = 'transparent';
+                }
             });
-            event.target.style.borderColor = '#1a1a1a';
+        }
+
+        function prevMainImage() {
+            const newIndex = (currentImageIndex - 1 + images.length) % images.length;
+            changeMainImage(newIndex);
+        }
+
+        function nextMainImage() {
+            const newIndex = (currentImageIndex + 1) % images.length;
+            changeMainImage(newIndex);
         }
 
         function openImageModal(index) {
             currentImageIndex = index;
             document.getElementById('imageModal').style.display = 'flex';
             updateModalImage();
+        }
+
+        function openImageModalFromMain() {
+            const currentIndex = parseInt(document.getElementById('mainJobImage').dataset.imageIndex);
+            openImageModal(currentIndex);
         }
 
         function closeImageModal() {
@@ -364,6 +457,7 @@
         @endguest
         @endif
     </section>
+    </div>
 @endsection
 
 

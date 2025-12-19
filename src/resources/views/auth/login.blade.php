@@ -2,7 +2,34 @@
 
 @section('title', 'ログイン | Bellbi')
 
+@section('sidebar')
+    {{-- サイドバーなし --}}
+@endsection
+
 @section('content')
+    <style>
+        /* ログインページのみ：サイドバーを非表示にしてコンテンツを中央寄せ */
+        @media (min-width: 769px) {
+            .auth-login-page-wrapper .main-inner {
+                justify-content: center !important;
+            }
+            .auth-login-page-wrapper .sidebar {
+                display: none !important;
+            }
+            .auth-login-page-wrapper .content {
+                max-width: 800px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+    <script>
+        // ページ読み込み時にbodyにクラスを追加
+        (function() {
+            document.body.classList.add('auth-login-page-wrapper');
+        })();
+    </script>
+    <div class="auth-login-page">
     <div class="auth-card" style="background: #ffffff; border-radius: 0; padding: 48px 40px; box-shadow: none; border: none; max-width: 480px; margin: 0 auto;">
         <h2 class="auth-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 16px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">ログイン</h2>
         <p class="auth-lead" style="font-size: 14px; color: #666; line-height: 1.7; margin: 0 0 32px 0; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">登録済みのメールアドレス（またはユーザーID）とパスワードでログインしてください。</p>
@@ -56,6 +83,7 @@
             はじめての方は
             <a href="{{ route('register') }}" style="color: #1a1a1a; text-decoration: none; border-bottom: 1px solid #1a1a1a; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">こちらから会員登録</a>
         </p>
+    </div>
     </div>
 @endsection
 
