@@ -29,6 +29,10 @@ use App\Http\Controllers\Company\TransactionController as CompanyTransactions;
 use App\Http\Controllers\Company\PlanController as CompanyPlans;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\Company\ShopController as CompanyShops;
+use App\Http\Controllers\Company\ProductController as CompanyProducts;
+use App\Http\Controllers\Company\OrderController as CompanyOrders;
 
 // API
 Route::get('/api/business-categories/{industry_type}', [BusinessCategoryController::class, 'getCategories'])->name('api.business-categories');
@@ -45,6 +49,10 @@ Route::get('/reservations/search', [ReservationController::class, 'search'])->na
 Route::get('/reservations/store/{store}', [ReservationController::class, 'store'])->name('reservations.store');
 Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking');
 Route::post('/reservations/store/{store}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
+
+// ショップ（フロントエンド）
+Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
+Route::get('/shops/{product}', [ShopController::class, 'show'])->name('shops.show');
 
 // 認証
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -161,6 +169,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/plans/{plan}/change', [CompanyPlans::class, 'change'])->name('company.plans.change');
     Route::post('/company/plans/{plan}/update', [CompanyPlans::class, 'update'])->name('company.plans.update');
     Route::post('/company/plans/cancel', [CompanyPlans::class, 'cancel'])->name('company.plans.cancel');
+
+    // ECモール機能
+    Route::get('/company/shops', [CompanyShops::class, 'index'])->name('company.shops.index');
+    Route::get('/company/shops/create', [CompanyShops::class, 'create'])->name('company.shops.create');
+    Route::post('/company/shops', [CompanyShops::class, 'store'])->name('company.shops.store');
+    Route::get('/company/shops/{shop}/edit', [CompanyShops::class, 'edit'])->name('company.shops.edit');
+    Route::put('/company/shops/{shop}', [CompanyShops::class, 'update'])->name('company.shops.update');
+    Route::delete('/company/shops/{shop}', [CompanyShops::class, 'destroy'])->name('company.shops.destroy');
+
+    Route::get('/company/products', [CompanyProducts::class, 'index'])->name('company.products.index');
+    Route::get('/company/products/create', [CompanyProducts::class, 'create'])->name('company.products.create');
+    Route::post('/company/products', [CompanyProducts::class, 'store'])->name('company.products.store');
+    Route::get('/company/products/{product}/edit', [CompanyProducts::class, 'edit'])->name('company.products.edit');
+    Route::put('/company/products/{product}', [CompanyProducts::class, 'update'])->name('company.products.update');
+    Route::delete('/company/products/{product}', [CompanyProducts::class, 'destroy'])->name('company.products.destroy');
+
+    Route::get('/company/orders', [CompanyOrders::class, 'index'])->name('company.orders.index');
+    Route::get('/company/orders/{order}', [CompanyOrders::class, 'show'])->name('company.orders.show');
+    Route::put('/company/orders/{order}/status', [CompanyOrders::class, 'updateStatus'])->name('company.orders.update-status');
 
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {

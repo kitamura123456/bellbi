@@ -41,6 +41,11 @@ class Company extends Model
         return $this->hasMany(Store::class);
     }
 
+    public function shops()
+    {
+        return $this->hasMany(Shop::class)->where('delete_flg', 0);
+    }
+
     public function jobPosts()
     {
         return $this->hasMany(JobPost::class);

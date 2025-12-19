@@ -95,6 +95,15 @@
                     <a href="{{ route('company.transactions.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
                         売上・経費
                     </a>
+                    <a href="{{ route('company.shops.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                        ECショップ
+                    </a>
+                    <a href="{{ route('company.products.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                        商品管理
+                    </a>
+                    <a href="{{ route('company.orders.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                        受注管理
+                    </a>
                     <a href="{{ route('jobs.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
                         フロントを見る
                     </a>
