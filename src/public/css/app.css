@@ -47,14 +47,14 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #ec4899, #f472b6);
+    background: linear-gradient(135deg, #5D535E, #6B5F6E);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     margin-right: 10px;
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+    box-shadow: 0 2px 8px rgba(93, 83, 94, 0.3);
 }
 
 .brand-text {

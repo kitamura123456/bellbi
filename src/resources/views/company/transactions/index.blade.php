@@ -3,12 +3,55 @@
 @section('title', '売上・経費管理')
 
 @section('content')
-<div class="content-header">
-    <h1 class="content-title">売上・経費管理</h1>
-    <div class="content-actions">
-        <a href="{{ route('company.account-items.index') }}" class="btn btn-secondary">科目マスタ</a>
-        <a href="{{ route('company.transactions.report') }}" class="btn btn-secondary">月次レポート</a>
-        <a href="{{ route('company.transactions.create') }}" class="btn btn-primary">取引を登録</a>
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">売上・経費管理</h1>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="{{ route('company.account-items.index') }}" style="
+            padding: 6px 16px;
+            background: transparent;
+            color: #5D535E;
+            border: 1px solid #5D535E;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+            科目マスタ
+        </a>
+        <a href="{{ route('company.transactions.report') }}" style="
+            padding: 6px 16px;
+            background: transparent;
+            color: #5D535E;
+            border: 1px solid #5D535E;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+            月次レポート
+        </a>
+        <a href="{{ route('company.transactions.create') }}" style="
+            padding: 12px 24px;
+            background: #5D535E;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+            取引を登録
+        </a>
     </div>
 </div>
 
@@ -54,14 +97,56 @@
             </div>
 
             <div class="filter-item">
-                <button type="submit" class="btn btn-primary">検索</button>
-                <a href="{{ route('company.transactions.index') }}" class="btn btn-secondary">クリア</a>
+                <button type="submit" style="
+                    padding: 8px 20px;
+                    background: #5D535E;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    margin-right: 8px;
+                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                    検索
+                </button>
+                <a href="{{ route('company.transactions.index') }}" style="
+                    padding: 8px 20px;
+                    background: transparent;
+                    color: #5D535E;
+                    border: 1px solid #5D535E;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                    display: inline-block;
+                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                    クリア
+                </a>
             </div>
         </div>
     </form>
 
     <div class="export-action">
-        <a href="{{ route('company.transactions.export') }}?{{ http_build_query(request()->all()) }}" class="btn btn-secondary">CSVエクスポート</a>
+        <a href="{{ route('company.transactions.export') }}?{{ http_build_query(request()->all()) }}" style="
+            padding: 8px 20px;
+            background: transparent;
+            color: #5D535E;
+            border: 1px solid #5D535E;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+            CSVエクスポート
+        </a>
     </div>
 </div>
 
@@ -99,11 +184,41 @@
                             <td class="col-amount amount-highlight">¥{{ number_format($transaction->total_amount) }}</td>
                             <td class="col-note">{{ Str::limit($transaction->note, 30) }}</td>
                             <td class="col-actions">
-                                <a href="{{ route('company.transactions.edit', $transaction) }}" class="btn btn-sm btn-secondary">編集</a>
+                                <a href="{{ route('company.transactions.edit', $transaction) }}" style="
+                                    padding: 6px 16px;
+                                    background: transparent;
+                                    color: #5D535E;
+                                    border: 1px solid #5D535E;
+                                    border-radius: 16px;
+                                    font-size: 12px;
+                                    font-weight: 700;
+                                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                    text-decoration: none;
+                                    transition: all 0.2s ease;
+                                    position: relative;
+                                    display: inline-block;
+                                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                                    編集
+                                </a>
                                 <form action="{{ route('company.transactions.destroy', $transaction) }}" method="POST" class="inline-form" onsubmit="return confirm('この取引を削除してもよろしいですか？');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                                    <button type="submit" style="
+                                        padding: 6px 16px;
+                                        background: #763626;
+                                        color: #ffffff;
+                                        border: none;
+                                        border-radius: 16px;
+                                        font-size: 12px;
+                                        font-weight: 700;
+                                        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                                        cursor: pointer;
+                                        transition: all 0.2s ease;
+                                        position: relative;
+                                        margin-left: 6px;
+                                    " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                                        削除
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -119,7 +234,23 @@
     @else
         <div class="empty-state">
             <p>取引が登録されていません。</p>
-            <a href="{{ route('company.transactions.create') }}" class="btn btn-primary">最初の取引を登録</a>
+            <a href="{{ route('company.transactions.create') }}" style="
+                padding: 12px 24px;
+                background: #5D535E;
+                color: #ffffff;
+                border: none;
+                border-radius: 24px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+                display: inline-block;
+            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                最初の取引を登録
+            </a>
         </div>
     @endif
 </div>

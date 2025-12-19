@@ -22,34 +22,57 @@
             color: #ffffff !important;
             font-weight: 700;
             font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #5D535E, #6B5F6E) !important;
+            box-shadow: 0 2px 8px rgba(93, 83, 94, 0.3) !important;
         }
         .brand-name, .brand-sub {
             color: #ffffff !important;
             font-weight: 700;
             font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
         }
-        .main-nav a {
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .main-nav .nav-link {
             color: #ffffff !important;
             text-decoration: none;
-            font-weight: 500;
-            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+            padding: 4px 0;
+            transition: color 0.3s ease;
+            letter-spacing: 0.02em;
             position: relative;
-            transition: all 0.2s ease;
         }
-        .main-nav a:hover {
+        .main-nav .nav-link:not(.active):hover {
             color: #90AFC5 !important;
         }
-        .main-nav a::after {
+        .main-nav .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -4px;
+            bottom: -2px;
             left: 0;
             width: 0;
             height: 1px;
             background: #ffffff;
-            transition: width 0.2s ease;
+            transition: width 0.3s ease;
         }
-        .main-nav a:hover::after {
+        .main-nav .nav-link:not(.active):hover::after {
+            width: 100%;
+        }
+        .main-nav .nav-link.active {
+            color: #90AFC5 !important;
+        }
+        .main-nav .nav-link.active::after {
+            width: 100%;
+        }
+        .main-nav .nav-link-external:hover {
+            color: #90AFC5 !important;
+        }
+        .main-nav .nav-link-external:hover::after {
             width: 100%;
         }
     </style>
@@ -68,46 +91,49 @@
                     </a>
                 </div>
                 <nav class="main-nav">
-                    <a href="{{ route('company.dashboard') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.dashboard') }}" class="nav-link {{ request()->routeIs('company.dashboard') ? 'active' : '' }}">
                         ダッシュボード
                     </a>
-                    <a href="{{ route('company.info') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.info') }}" class="nav-link {{ request()->routeIs('company.info*') ? 'active' : '' }}">
                         会社情報
                     </a>
-                    <a href="{{ route('company.stores.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.stores.index') }}" class="nav-link {{ request()->routeIs('company.stores*') ? 'active' : '' }}">
                         店舗管理
                     </a>
-                    <a href="{{ route('company.job-posts.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.staffs.index') }}" class="nav-link {{ request()->routeIs('company.staffs*') ? 'active' : '' }}">
+                        スタッフ管理
+                    </a>
+                    <a href="{{ route('company.menus.index') }}" class="nav-link {{ request()->routeIs('company.menus*') ? 'active' : '' }}">
+                        メニュー管理
+                    </a>
+                    <a href="{{ route('company.schedules.index') }}" class="nav-link {{ request()->routeIs('company.schedules*') ? 'active' : '' }}">
+                        営業スケジュール
+                    </a>
+                    <a href="{{ route('company.job-posts.index') }}" class="nav-link {{ request()->routeIs('company.job-posts*') ? 'active' : '' }}">
                         求人管理
                     </a>
-                    <a href="{{ route('company.applications.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.applications.index') }}" class="nav-link {{ request()->routeIs('company.applications*') ? 'active' : '' }}">
                         応募管理
                     </a>
-                    <a href="{{ route('company.scouts.search') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.scouts.search') }}" class="nav-link {{ request()->routeIs('company.scouts*') ? 'active' : '' }}">
                         スカウト
                     </a>
-                    <a href="{{ route('company.messages.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.messages.index') }}" class="nav-link {{ request()->routeIs('company.messages*') ? 'active' : '' }}">
                         メッセージ
                     </a>
-                    <a href="{{ route('company.reservations.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.reservations.index') }}" class="nav-link {{ request()->routeIs('company.reservations*') ? 'active' : '' }}">
                         予約管理
                     </a>
-                    <a href="{{ route('company.transactions.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('company.transactions.index') }}" class="nav-link {{ request()->routeIs('company.transactions*') || request()->routeIs('company.account-items*') ? 'active' : '' }}">
                         売上・経費
                     </a>
-                    <a href="{{ route('company.shops.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
-                        ECショップ
+                    <a href="{{ route('company.plans.index') }}" class="nav-link {{ request()->routeIs('company.plans*') ? 'active' : '' }}">
+                        プラン管理
                     </a>
-                    <a href="{{ route('company.products.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
-                        商品管理
-                    </a>
-                    <a href="{{ route('company.orders.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
-                        受注管理
-                    </a>
-                    <a href="{{ route('jobs.index') }}" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="{{ route('jobs.index') }}" target="_blank" class="nav-link nav-link-external">
                         フロントを見る
                     </a>
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: #ffffff; text-decoration: none; font-weight: 500; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; position: relative; transition: all 0.2s ease;" onmouseover="this.style.color='#90AFC5';" onmouseout="this.style.color='#ffffff';">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link nav-link-external">
                         ログアウト
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
