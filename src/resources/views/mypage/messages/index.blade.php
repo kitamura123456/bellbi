@@ -22,91 +22,133 @@
         <p class="page-lead">応募・スカウトのあった企業とのメッセージ一覧です。</p>
     </div>
 
-    @forelse($conversationsWithInfo as $item)
-    @php
-        $conversation = $item['conversation'];
-        $latestMessage = $conversation->latestMessage;
-    @endphp
-    <div class="job-card" style="margin-bottom: 16px;">
-        <div class="job-card-body">
-            <h3 class="job-card-title">
-                <a href="{{ route('mypage.messages.show', $conversation) }}">{{ $item['title'] }}</a>
-            </h3>
-            <p class="job-card-salon">{{ $conversation->company->name }}</p>
-            @if($latestMessage)
-                <p class="job-card-location" style="margin-top: 8px;">
-                    {{ \Str::limit($latestMessage->body, 80) }}
-                </p>
-                <p class="job-card-location" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
-                    {{ $latestMessage->created_at->format('Y年m月d日 H:i') }}
-                    @if($latestMessage->sender_type === 'company' && $latestMessage->read_flg === 0)
-                        <span style="color: #ef4444; margin-left: 8px;">未読</span>
+    <div style="background: #ffffff; border-radius: 0; padding: 0; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
+        @forelse($conversationsWithInfo as $item)
+        @php
+            $conversation = $item['conversation'];
+            $latestMessage = $conversation->latestMessage;
+        @endphp
+        <div style="
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.15s ease;
+        " onmouseover="this.style.backgroundColor='#fafafa';" onmouseout="this.style.backgroundColor='transparent';">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        @if($latestMessage && $latestMessage->sender_type === 'company' && $latestMessage->read_flg === 0)
+                            <span style="
+                                display: inline-block;
+                                padding: 5px 12px;
+                                border-radius: 4px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                background-color: #3b82f6;
+                                color: #ffffff;
+                            ">未読</span>
+                        @endif
+                        @if($latestMessage)
+                            <span style="font-size: 12px; color: #999;">{{ $latestMessage->created_at->format('Y年m月d日 H:i') }}</span>
+                        @endif
+                    </div>
+                    <a href="{{ route('mypage.messages.show', $conversation) }}" style="
+                        display: block;
+                        margin-bottom: 8px;
+                        text-decoration: none;
+                        color: #1a1a1a;
+                    ">
+                        <h3 style="
+                            margin: 0 0 8px 0;
+                            font-size: 18px;
+                            font-weight: 600;
+                            color: #1a1a1a;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                            transition: color 0.15s ease;
+                        " onmouseover="this.style.color='#333333';" onmouseout="this.style.color='#1a1a1a';">
+                            {{ $item['title'] }}
+                        </h3>
+                    </a>
+                    <p style="
+                        margin: 0 0 12px 0;
+                        font-size: 14px;
+                        color: #666;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    ">{{ $conversation->company->name }}</p>
+                    @if($latestMessage)
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <span style="font-size: 12px; color: #999; min-width: 60px;">最新メッセージ</span>
+                                <span style="font-size: 12px; color: #666; line-height: 1.5;">{{ \Str::limit($latestMessage->body, 80) }}</span>
+                            </div>
+                        </div>
+                    @else
+                        <p style="
+                            margin: 0;
+                            font-size: 12px;
+                            color: #999;
+                        ">まだメッセージがありません</p>
                     @endif
-                </p>
-            @else
-                <p class="job-card-location" style="margin-top: 8px; font-size: 12px; color: #6b7280;">
-                    まだメッセージがありません
-                </p>
-            @endif
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 100px;">
+                    <a href="{{ route('mypage.messages.show', $conversation) }}" style="
+                        padding: 8px 16px;
+                        background: #1a1a1a;
+                        color: #ffffff;
+                        border: none;
+                        border-radius: 4px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        text-decoration: none;
+                        cursor: pointer;
+                        transition: all 0.15s ease;
+                        white-space: nowrap;
+                        text-align: center;
+                    " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
+                        メッセージを見る
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="job-card-footer">
-            <a href="{{ route('mypage.messages.show', $conversation) }}" style="
-                padding: 8px 16px;
-                background: transparent;
-                color: #5D535E;
-                border: 1px solid #5D535E;
-                border-radius: 20px;
-                font-size: 13px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                text-decoration: none;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                display: inline-block;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
-                メッセージを見る
-            </a>
+        @empty
+        <div style="padding: 40px 24px; text-align: center;">
+            <p style="margin: 0 0 16px 0; font-size: 14px; color: #666;">まだメッセージはありません。</p>
+            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ route('mypage') }}" style="
+                    padding: 10px 24px;
+                    background: #1a1a1a;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                    display: inline-block;
+                " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
+                    応募履歴を見る
+                </a>
+                <a href="{{ route('mypage.scouts.index') }}" style="
+                    padding: 10px 24px;
+                    background: transparent;
+                    color: #1a1a1a;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                    display: inline-block;
+                " onmouseover="this.style.borderColor='#1a1a1a'; this.style.color='#1a1a1a';" onmouseout="this.style.borderColor='#e0e0e0'; this.style.color='#1a1a1a';">
+                    スカウト受信を見る
+                </a>
+            </div>
         </div>
+        @endforelse
     </div>
-    @empty
-    <p class="empty-message">まだメッセージはありません。</p>
-    <p style="margin-top: 16px;">
-        <a href="{{ route('mypage') }}" style="
-            padding: 12px 32px;
-            background: #5D535E;
-            color: #ffffff;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            display: inline-block;
-        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
-            応募履歴を見る
-        </a>
-        <a href="{{ route('mypage.scouts.index') }}" style="
-            padding: 12px 24px;
-            background: transparent;
-            color: #5D535E;
-            border: 1px solid #5D535E;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            display: inline-block;
-            margin-left: 8px;
-        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
-            スカウト受信を見る
-        </a>
-    </p>
-    @endforelse
 @endsection
 

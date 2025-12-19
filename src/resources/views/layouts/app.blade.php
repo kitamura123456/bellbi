@@ -139,7 +139,7 @@
                             </a>
                         @endif
 
-                        <form method="post" action="{{ route('logout') }}" style="display: inline-block;">
+                        <form method="post" action="{{ route('logout') }}" style="display: flex; align-items: center; margin: 0;">
                             @csrf
                             <button type="submit" class="nav-link-hover" style="
                                 background: transparent;

@@ -272,7 +272,7 @@
                     thumb.style.borderColor = '#1a1a1a';
                     thumb.classList.add('active');
                 } else {
-                    thumb.style.borderColor = 'transparent';
+                thumb.style.borderColor = 'transparent';
                 }
             });
         }

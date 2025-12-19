@@ -85,10 +85,10 @@
                          onmouseover="this.style.opacity='0.95'; this.querySelector('img').style.transform='scale(1.05)';" 
                          onmouseout="this.style.opacity='1'; this.querySelector('img').style.transform='scale(1)';"
                          onclick="openStoreImageModal({{ $index }})">
-                        <img src="{{ asset('storage/' . $image->path) }}" 
-                             alt="店舗画像 {{ $index + 1 }}" 
-                             class="gallery-image"
-                             data-image-index="{{ $index }}"
+                    <img src="{{ asset('storage/' . $image->path) }}" 
+                         alt="店舗画像 {{ $index + 1 }}" 
+                         class="gallery-image"
+                         data-image-index="{{ $index }}"
                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
                     </div>
                 @endforeach

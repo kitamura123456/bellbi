@@ -21,18 +21,18 @@
         <p class="page-lead">
             <a href="{{ route('mypage.reservations.index') }}" style="
                 padding: 8px 16px;
-                background: transparent;
-                color: #5D535E;
-                border: 1px solid #5D535E;
-                border-radius: 20px;
+                background: #1a1a1a;
+                color: #ffffff;
+                border: none;
+                border-radius: 4px;
                 font-size: 13px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 text-decoration: none;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.15s ease;
                 display: inline-block;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+            " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
                 一覧に戻る
             </a>
         </p>
@@ -117,18 +117,17 @@
         <form action="{{ route('mypage.reservations.cancel', $reservation) }}" method="POST" onsubmit="return confirm('予約をキャンセルしてもよろしいですか？')">
             @csrf
             <button type="submit" style="
-                padding: 12px 32px;
-                background: transparent;
-                color: #dc2626;
-                border: 1px solid #dc2626;
-                border-radius: 24px;
-                font-size: 14px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                padding: 8px 16px;
+                background: #dc2626;
+                color: #ffffff;
+                border: none;
+                border-radius: 4px;
+                font-size: 13px;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 cursor: pointer;
-                transition: all 0.2s ease;
-                position: relative;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#dc2626'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#dc2626';">
+                transition: all 0.15s ease;
+            " onmouseover="this.style.backgroundColor='#b91c1c';" onmouseout="this.style.backgroundColor='#dc2626';">
                 予約をキャンセルする
             </button>
         </form>

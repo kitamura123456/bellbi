@@ -3,16 +3,16 @@
 @section('title', 'マイページ | Bellbi')
 
 @section('sidebar')
-    <div class="sidebar-card">
-        <h3 class="sidebar-title">メニュー</h3>
-        <ul class="sidebar-menu">
-            <li><a href="{{ route('mypage') }}" class="sidebar-menu-link active">応募履歴</a></li>
-            <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link">スカウト受信</a></li>
-            <li><a href="{{ route('mypage.messages.index') }}" class="sidebar-menu-link">メッセージ</a></li>
-            <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
-            <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
-        </ul>
-    </div>
+<div class="sidebar-card">
+    <h3 class="sidebar-title">メニュー</h3>
+    <ul class="sidebar-menu">
+        <li><a href="{{ route('mypage') }}" class="sidebar-menu-link active">応募履歴</a></li>
+        <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link">スカウト受信</a></li>
+        <li><a href="{{ route('mypage.messages.index') }}" class="sidebar-menu-link">メッセージ</a></li>
+        <li><a href="{{ route('mypage.scout-profile.edit') }}" class="sidebar-menu-link">スカウト用プロフィール</a></li>
+        <li><a href="{{ route('mypage.reservations.index') }}" class="sidebar-menu-link">予約履歴</a></li>
+    </ul>
+</div>
     @if($upcomingInterviews->isNotEmpty())
     <div class="sidebar-card" style="margin-top: 16px;">
         <h3 class="sidebar-title">面接予定</h3>
@@ -61,86 +61,132 @@
         <p class="page-lead">あなたが応募した求人の一覧です。</p>
     </div>
 
-    @forelse($applications as $application)
-    <div class="job-card" style="margin-bottom: 16px;">
-        <div class="job-card-body">
-            <span class="job-card-tag" style="{{ $application->status === 5 ? 'background-color: #3b82f6; color: #ffffff;' : '' }}">
-                @if($application->status === 1) 応募済
-                @elseif($application->status === 2) 書類選考中
-                @elseif($application->status === 3) 面接中
-                @elseif($application->status === 4) 内定
-                @elseif($application->status === 5) 不採用
-                @elseif($application->status === 9) キャンセル
-                @endif
-            </span>
-            <h3 class="job-card-title">
-                <a href="{{ route('jobs.show', $application->jobPost) }}">{{ $application->jobPost->title }}</a>
-            </h3>
-            <p class="job-card-salon">{{ $application->jobPost->company->name }}</p>
-            <p class="job-card-location" style="margin-top: 8px;">応募日：{{ $application->created_at->format('Y年m月d日') }}</p>
-            @if($application->interview_date)
-                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E; font-weight: 600;">
-                    面接日：{{ $application->interview_date->format('Y年m月d日') }}
-                </p>
-            @endif
-            @if($application->status === 2)
-                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E;">
-                    ステータス：書類選考中
-                </p>
-            @elseif($application->status === 3)
-                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #5D535E;">
-                    ステータス：面接中
-                </p>
-            @elseif($application->status === 4)
-                <p class="job-card-location" style="margin-top: 4px; font-size: 13px; color: #10b981; font-weight: 600;">
-                    ステータス：内定
-                </p>
-            @endif
-            @if($application->message)
-                <p class="job-card-location" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
-                    メッセージ：{{ \Str::limit($application->message, 50) }}
-                </p>
-            @endif
+    <div style="background: #ffffff; border-radius: 0; padding: 0; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
+        @forelse($applications as $application)
+        <div style="
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.15s ease;
+        " onmouseover="this.style.backgroundColor='#fafafa';" onmouseout="this.style.backgroundColor='transparent';">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <span style="
+                            display: inline-block;
+                            padding: 5px 12px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                            font-weight: 600;
+                            background-color: {{ $application->status === 3 ? '#3b82f6' : ($application->status === 4 ? '#10b981' : ($application->status === 5 ? '#6b7280' : '#f5f5f5')) }};
+                            color: {{ $application->status === 3 || $application->status === 4 || $application->status === 5 ? '#ffffff' : '#1a1a1a' }};
+                            border: {{ $application->status === 3 || $application->status === 4 || $application->status === 5 ? 'none' : '1px solid #e0e0e0' }};
+                        ">
+                            @if($application->status === 1) 応募済
+                            @elseif($application->status === 2) 書類選考中
+                            @elseif($application->status === 3) 面接中
+                            @elseif($application->status === 4) 内定
+                            @elseif($application->status === 5) 不採用
+                            @elseif($application->status === 9) キャンセル
+                            @endif
+                        </span>
+                        <span style="font-size: 12px; color: #999;">応募日：{{ $application->created_at->format('Y年m月d日') }}</span>
+                    </div>
+                    <a href="{{ route('jobs.show', $application->jobPost) }}" style="
+                        display: block;
+                        margin-bottom: 8px;
+                        text-decoration: none;
+                        color: #1a1a1a;
+                    ">
+                        <h3 style="
+                            margin: 0 0 8px 0;
+                            font-size: 18px;
+                            font-weight: 600;
+                            color: #1a1a1a;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                            transition: color 0.15s ease;
+                        " onmouseover="this.style.color='#333333';" onmouseout="this.style.color='#1a1a1a';">
+                            {{ $application->jobPost->title }}
+                        </h3>
+                    </a>
+                    <p style="
+                        margin: 0 0 12px 0;
+                        font-size: 14px;
+                        color: #666;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    ">{{ $application->jobPost->company->name }}</p>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        @if($application->interview_date)
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 12px; color: #999; min-width: 60px;">面接日</span>
+                                <span style="font-size: 13px; color: #1a1a1a; font-weight: 500;">{{ $application->interview_date->format('Y年m月d日') }}</span>
+                            </div>
+                        @endif
+                        @if($application->message)
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <span style="font-size: 12px; color: #999; min-width: 60px;">メッセージ</span>
+                                <span style="font-size: 12px; color: #666; line-height: 1.5;">{{ \Str::limit($application->message, 80) }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 100px;">
+                    <a href="{{ route('mypage.messages.create-from-application', $application) }}" style="
+                        padding: 8px 16px;
+                        background: #1a1a1a;
+                        color: #ffffff;
+                        border: none;
+                        border-radius: 4px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        text-decoration: none;
+                        cursor: pointer;
+                        transition: all 0.15s ease;
+                        white-space: nowrap;
+                        text-align: center;
+                    " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
+                        メッセージ
+                    </a>
+                    <a href="{{ route('jobs.show', $application->jobPost) }}" style="
+                        padding: 8px 16px;
+                        background: transparent;
+                        color: #1a1a1a;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 4px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        text-decoration: none;
+                        cursor: pointer;
+                        transition: all 0.15s ease;
+                        white-space: nowrap;
+                        text-align: center;
+                    " onmouseover="this.style.backgroundColor='#f5f5f5'; this.style.borderColor='#1a1a1a';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#e0e0e0';">
+                        詳細を見る
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="job-card-footer">
-            <a href="{{ route('mypage.messages.create-from-application', $application) }}" style="
-                padding: 8px 16px;
-                background: transparent;
-                color: #5D535E;
-                border: 1px solid #5D535E;
-                border-radius: 20px;
+            @empty
+        <div style="padding: 40px 24px; text-align: center;">
+            <p style="margin: 0 0 16px 0; font-size: 14px; color: #666;">まだ応募した求人はありません。</p>
+            <a href="{{ route('jobs.index') }}" style="
+                padding: 10px 24px;
+                background: #1a1a1a;
+                color: #ffffff;
+                border: none;
+                border-radius: 4px;
                 font-size: 13px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 text-decoration: none;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.15s ease;
                 display: inline-block;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
-                メッセージを送る
+            " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
+                求人を探す
             </a>
         </div>
+        @endforelse
     </div>
-    @empty
-    <p class="empty-message">まだ応募した求人はありません。</p>
-    <p style="margin-top: 16px;">
-        <a href="{{ route('jobs.index') }}" style="
-            padding: 12px 32px;
-            background: #5D535E;
-            color: #ffffff;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            display: inline-block;
-        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
-            求人を探す
-        </a>
-    </p>
-    @endforelse
 @endsection

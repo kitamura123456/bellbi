@@ -166,8 +166,9 @@ body {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #ec4899;
+    color: #666;
     margin: 0 0 4px;
+    font-weight: 500;
 }
 
 .page-title {
@@ -226,8 +227,8 @@ body {
 .search-form select:focus,
 .job-apply textarea:focus {
     outline: none;
-    border-color: #ec4899;
-    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 1px rgba(26, 26, 26, 0.2);
 }
 
 .btn-primary,
@@ -245,26 +246,26 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #ec4899, #db2777);
+    background: #1a1a1a;
     color: #fff;
-    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    box-shadow: 0 2px 4px rgba(26, 26, 26, 0.2);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #db2777, #be185d);
-    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
+    background: #333333;
+    box-shadow: 0 4px 8px rgba(26, 26, 26, 0.3);
     transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: #ffffff;
-    color: #ec4899;
-    border: 1px solid rgba(236, 72, 153, 0.5);
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
 }
 
 .btn-secondary:hover {
-    background-color: #fdf2f8;
-    border-color: #ec4899;
+    background-color: #f5f5f5;
+    border-color: #1a1a1a;
 }
 
 .btn-block {
@@ -290,8 +291,8 @@ body {
 }
 
 .job-card:hover {
-    box-shadow: none;
-    border-color: rgba(236, 72, 153, 0.3);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    border-color: #1a1a1a;
 }
 
 .job-card-body {
@@ -303,9 +304,10 @@ body {
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 4px;
-    background-color: rgba(236, 72, 153, 0.15);
-    color: #db2777;
+    background-color: #f5f5f5;
+    color: #1a1a1a;
     margin: 0 0 6px;
+    border: 1px solid #e0e0e0;
 }
 
 .job-card-title {
@@ -362,11 +364,12 @@ body {
 
 .job-detail-card {
     background-color: #ffffff;
-    border-radius: 12px;
-    padding: 18px 20px;
+    border-radius: 0;
+    padding: 24px;
     box-shadow: none;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    margin-bottom: 20px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
 }
 
 .job-detail-header {
@@ -915,8 +918,8 @@ body {
 .company-form textarea:focus,
 .company-form select:focus {
     outline: none;
-    border-color: #ec4899;
-    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 1px rgba(26, 26, 26, 0.2);
 }
 
 .company-form textarea {
@@ -977,13 +980,13 @@ body {
 }
 
 .sidebar-menu-link:hover {
-    background-color: #fdf2f8;
-    color: #ec4899;
+    background-color: #f5f5f5;
+    color: #1a1a1a;
 }
 
 .sidebar-menu-link.active {
-    background-color: #fce7f3;
-    color: #db2777;
+    background-color: #1a1a1a;
+    color: #ffffff;
     font-weight: 500;
 }
 
@@ -1000,8 +1003,8 @@ body {
 }
 
 .scout-candidate-card:hover {
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
-    border-color: #ec4899;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    border-color: #1a1a1a;
 }
 
 .scout-candidate-body {

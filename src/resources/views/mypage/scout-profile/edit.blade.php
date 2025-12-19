@@ -93,18 +93,17 @@
 
             <div class="form-actions">
                 <button type="submit" style="
-                    padding: 12px 32px;
-                    background: #5D535E;
+                    padding: 10px 24px;
+                    background: #1a1a1a;
                     color: #ffffff;
                     border: none;
-                    border-radius: 24px;
-                    font-size: 14px;
-                    font-weight: 700;
-                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                     cursor: pointer;
-                    transition: all 0.2s ease;
-                    position: relative;
-                " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                    transition: all 0.15s ease;
+                " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
                     保存する
                 </button>
             </div>
