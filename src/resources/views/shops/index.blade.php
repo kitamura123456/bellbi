@@ -3,39 +3,45 @@
 @section('title', 'ショップ | Bellbi')
 
 @section('sidebar')
-    <div class="sidebar-card">
-        <h3 class="sidebar-title">条件でさがす</h3>
+    <div class="sidebar-card" style="background: #ffffff; border-radius: 0; padding: 32px 24px; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
+        <h3 class="sidebar-title" style="font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 24px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">条件でさがす</h3>
         <form class="search-form" method="GET" action="{{ route('shops.index') }}">
-            <div class="form-group">
-                <label for="keyword">キーワード</label>
-                <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="商品名・説明など">
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="keyword" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">キーワード</label>
+                <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="商品名・説明など" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; background: #ffffff; color: #1a1a1a; transition: all 0.3s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;" onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
             </div>
-            <div class="form-group">
-                <label for="category">カテゴリ</label>
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="category" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">カテゴリ</label>
                 <select id="category" name="category" style="
                     width: 100%;
-                    padding: 8px 12px;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 8px;
+                    padding: 12px 16px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 0;
                     font-size: 14px;
-                    background-color: #fff;
-                ">
+                    background-color: #ffffff;
+                    color: #1a1a1a;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    transition: all 0.3s ease;
+                " onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
                     <option value="">すべて</option>
                     <option value="1" {{ request('category') == '1' ? 'selected' : '' }}>美容用品</option>
                     <option value="2" {{ request('category') == '2' ? 'selected' : '' }}>医療用品</option>
                     <option value="3" {{ request('category') == '3' ? 'selected' : '' }}>その他</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="sort">並び替え</label>
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="sort" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">並び替え</label>
                 <select id="sort" name="sort" onchange="this.form.submit();" style="
                     width: 100%;
-                    padding: 8px 12px;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 8px;
+                    padding: 12px 16px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 0;
                     font-size: 14px;
-                    background-color: #fff;
-                ">
+                    background-color: #ffffff;
+                    color: #1a1a1a;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    transition: all 0.3s ease;
+                " onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
                     <option value="random" {{ request('sort', 'random') == 'random' ? 'selected' : '' }}>ランダム</option>
                     <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>価格：安い順</option>
                     <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>価格：高い順</option>
@@ -46,17 +52,19 @@
             </div>
             <button type="submit" style="
                 width: 100%;
-                padding: 12px 24px;
-                background: #5D535E;
+                padding: 14px 24px;
+                background: #1a1a1a;
                 color: #ffffff;
-                border: none;
-                border-radius: 24px;
-                font-size: 14px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                border: 1px solid #1a1a1a;
+                border-radius: 0;
+                font-size: 13px;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 cursor: pointer;
-                transition: all 0.2s ease;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                transition: all 0.3s ease;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            " onmouseover="this.style.background='#000000'; this.style.borderColor='#000000';" onmouseout="this.style.background='#1a1a1a'; this.style.borderColor='#1a1a1a';">
                 この条件で検索
             </button>
         </form>
@@ -64,138 +72,82 @@
 @endsection
 
 @section('content')
-    <header class="page-header">
-        <p class="page-label">Marketplace</p>
-        <h2 class="page-title">ショップ</h2>
-        <p class="page-lead">
+    <header class="page-header" style="margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0;">
+        <p class="page-label" style="font-size: 11px; color: #999; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 12px 0; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">Marketplace</p>
+        <h2 class="page-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 16px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">ショップ</h2>
+        <p class="page-lead" style="font-size: 14px; color: #666; line-height: 1.7; margin: 0; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
             美容・医療・歯科関連の商品を探せます。
         </p>
     </header>
 
     @if ($products->isEmpty())
-        <p class="empty-message">商品が見つかりませんでした。</p>
+        <p class="empty-message" style="font-size: 14px; color: #999; text-align: center; padding: 64px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">商品が見つかりませんでした。</p>
     @else
-        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px 24px;">
             @foreach ($products as $product)
                 <article class="job-card" style="
                     background: #ffffff;
-                    border: 1px solid {{ ($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0) ? '#dc2626' : '#e5e7eb' }};
-                    border-radius: 12px;
-                    overflow: hidden;
-                    transition: all 0.2s ease;
+                    border: 1px solid transparent;
+                    padding: 0;
+                    transition: border-color 0.3s ease;
                     display: flex;
                     flex-direction: column;
                     position: relative;
-                " onmouseover="this.style.boxShadow='0 4px 12px rgba(93, 83, 94, 0.15)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';">
+                " onmouseover="this.style.borderColor='#1a1a1a';" onmouseout="this.style.borderColor='transparent';">
                     @if($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0)
                     <div style="
                         position: absolute;
                         top: 12px;
                         right: 12px;
-                        background: #dc2626;
+                        background-color: rgba(0, 0, 0, 0.7);
                         color: #ffffff;
-                        padding: 6px 16px;
-                        border-radius: 20px;
-                        font-size: 12px;
-                        font-weight: 700;
-                        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                        padding: 4px 8px;
+                        font-size: 9px;
+                        font-weight: 400;
                         z-index: 10;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        letter-spacing: 0.1em;
                     ">在庫切れ</div>
                     @endif
-                    <div class="job-card-body" style="padding: 16px; flex: 1; display: flex; flex-direction: column;">
-                        <div style="width: 100%; height: 200px; background: {{ ($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0) ? '#fee2e2' : '#f3f4f6' }}; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: {{ ($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0) ? '#dc2626' : '#9ca3af' }}; font-size: 14px; position: relative;">
-                            @if($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0)
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                                    <div style="font-size: 48px; opacity: 0.3; margin-bottom: 8px;">×</div>
-                                    <div style="font-size: 14px; font-weight: 700;">在庫切れ</div>
-                                </div>
-                            @else
-                                商品画像
-                            @endif
-                        </div>
-                        <h3 class="job-card-title" style="
-                            margin: 0 0 8px 0;
-                            font-size: 16px;
-                            font-weight: 700;
-                            color: #2A3132;
-                            line-height: 1.4;
-                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                        ">
-                            <a href="{{ route('shops.show', $product) }}" style="color: #2A3132; text-decoration: none;">
-                                {{ $product->name }}
-                            </a>
-                        </h3>
-                        <p style="
-                            margin: 0 0 8px 0;
-                            font-size: 13px;
-                            color: #6b7280;
-                            line-height: 1.5;
-                            flex: 1;
-                        ">
-                            @if($product->shop && $product->shop->company)
-                                {{ $product->shop->company->name }}
-                            @endif
-                        </p>
-                        <p style="
-                            margin: 0;
-                            font-size: 20px;
-                            font-weight: 700;
-                            color: #5D535E;
-                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                        ">
-                            ¥{{ number_format($product->price) }}
-                        </p>
-                        @if($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0)
-                            <div style="
-                                margin: 12px 0 0 0;
-                                padding: 8px 12px;
-                                background: #fee2e2;
-                                border: 2px solid #dc2626;
-                                border-radius: 8px;
-                                text-align: center;
-                            ">
-                                <p style="
-                                    margin: 0;
-                                    font-size: 14px;
-                                    color: #dc2626;
-                                    font-weight: 700;
-                                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                                ">在庫切れ</p>
+                    <a href="{{ route('shops.show', $product) }}" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="job-card-body" style="padding: 0;">
+                            <div style="width: 100%; height: 280px; overflow: hidden; background: #fafafa; position: relative;">
+                                @if($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0)
+                                    <div style="width: 100%; height: 100%; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 48px; opacity: 0.3; margin-bottom: 8px;">×</div>
+                                            <div style="font-size: 12px; font-weight: 400;">在庫切れ</div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div style="width: 100%; height: 100%; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                                        商品画像
+                                    </div>
+                                @endif
                             </div>
-                        @elseif($product->stock < 10)
-                            <p style="
-                                margin: 8px 0 0 0;
-                                font-size: 12px;
-                                color: #f59e0b;
-                                font-weight: 600;
-                            ">残り{{ $product->stock }}点</p>
-                        @endif
-                    </div>
-                    <div class="job-card-footer" style="padding: 16px; border-top: 1px solid #f3f4f6;">
-                        <a href="{{ route('shops.show', $product) }}" style="
-                            display: block;
-                            padding: 12px 24px;
-                            background: {{ ($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0) ? '#9ca3af' : '#5D535E' }};
-                            color: #ffffff;
-                            border: none;
-                            border-radius: 24px;
-                            font-size: 14px;
-                            font-weight: 700;
-                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                            text-decoration: none;
-                            text-align: center;
-                            cursor: pointer;
-                            transition: all 0.2s ease;
-                        " onmouseover="if({{ ($product->status === \App\Models\Product::STATUS_OUT_OF_STOCK || $product->stock <= 0) ? 'false' : 'true' }}) this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
-                            詳細を見る
-                        </a>
-                    </div>
+                            <div style="padding: 20px 12px 0 12px;">
+                                <h3 class="job-card-title" style="margin: 0 0 6px 0; font-size: 15px; font-weight: 400; color: #1a1a1a; line-height: 1.5; letter-spacing: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                                    {{ $product->name }}
+                                </h3>
+                                <p style="margin: 0 0 8px 0; font-size: 12px; color: #999; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                                    @if($product->shop && $product->shop->company)
+                                        {{ $product->shop->company->name }}
+                                    @endif
+                                </p>
+                                <p style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a1a; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                                    ¥{{ number_format($product->price) }}
+                                </p>
+                                @if($product->stock < 10 && $product->stock > 0)
+                                    <p style="margin: 0; font-size: 11px; color: #999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">残り{{ $product->stock }}点</p>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
                 </article>
             @endforeach
         </div>
 
-        <div class="pagination-wrapper" style="margin-top: 32px;">
+        <div class="pagination-wrapper" style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #f0f0f0;">
             {{ $products->links() }}
         </div>
     @endif

@@ -3,19 +3,20 @@
 @section('title', $job->title . ' | Bellbi')
 
 @section('content')
-    <article class="job-detail-card">
-        <header class="job-detail-header">
-            <p class="page-label">求人詳細</p>
-            <h2 class="job-detail-title">{{ $job->title }}</h2>
-            <p class="job-detail-salon">
-                @if ($job->company)
-                    {{ $job->company->name }}
-                @endif
-                @if ($job->store)
-                    <span class="job-card-separator">/</span>{{ $job->store->name }}
-                @endif
-            </p>
-        </header>
+    <header class="page-header" style="margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0;">
+        <p class="page-label" style="font-size: 11px; color: #999; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 12px 0; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">求人詳細</p>
+        <h2 class="job-detail-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 12px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{{ $job->title }}</h2>
+        <p class="job-detail-salon" style="font-size: 14px; color: #666; line-height: 1.7; margin: 0; font-weight: 400; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+            @if ($job->company)
+                {{ $job->company->name }}
+            @endif
+            @if ($job->store)
+                <span class="job-card-separator" style="margin: 0 6px; color: #ccc;">/</span>{{ $job->store->name }}
+            @endif
+        </p>
+    </header>
+
+    <article class="job-detail-card" style="background: #ffffff; border: none; padding: 0; margin-bottom: 32px;">
 
         @php
             // 画像を統合：imagesの最初の1枚をメイン画像として使用
@@ -31,15 +32,16 @@
         @endphp
 
         @if($mainImage)
-        <section class="job-images-gallery" style="margin-top: 24px; margin-bottom: 24px;">
+        <section class="job-images-gallery" style="margin-bottom: 32px;">
             {{-- メイン画像（最初の1枚を大きく表示） --}}
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 16px;">
                 <img src="{{ $mainImage->is_template ?? false ? asset('images/' . $mainImage->path) : asset('storage/' . $mainImage->path) }}" 
                      alt="求人画像" 
                      id="mainJobImage"
                      class="gallery-image"
                      data-image-index="0"
-                     style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 12px; cursor: pointer; background: #f9fafb;"
+                     style="width: 100%; max-height: 500px; object-fit: contain; cursor: pointer; background: #fafafa; transition: opacity 0.3s ease;"
+                     onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"
                      onclick="openImageModal(0)">
             </div>
             
@@ -47,9 +49,9 @@
             @if($thumbnailImages->count() > 0)
             <div class="thumbnail-images" style="
                 display: flex;
-                gap: 8px;
+                gap: 12px;
                 overflow-x: auto;
-                padding: 8px 0;
+                padding: 0;
             ">
                 @foreach($thumbnailImages as $index => $image)
                     <img src="{{ $image->is_template ?? false ? asset('images/' . $image->path) : asset('storage/' . $image->path) }}" 
@@ -60,14 +62,13 @@
                              width: 120px;
                              height: 120px;
                              object-fit: cover;
-                             border-radius: 8px;
                              cursor: pointer;
-                             border: 3px solid transparent;
-                             transition: all 0.2s;
+                             border: 2px solid transparent;
+                             transition: all 0.3s ease;
                              flex-shrink: 0;
                          "
-                         onmouseover="this.style.borderColor='#90AFC5'; this.style.transform='scale(1.05)'"
-                         onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'"
+                         onmouseover="this.style.borderColor='#1a1a1a'; this.style.opacity='0.9';"
+                         onmouseout="this.style.borderColor='transparent'; this.style.opacity='1';"
                          onclick="changeMainImage({{ $index + 1 }}, '{{ $image->is_template ?? false ? asset('images/' . $image->path) : asset('storage/' . $image->path) }}')">
                 @endforeach
             </div>
@@ -75,11 +76,11 @@
         </section>
         @endif
 
-        <div class="job-detail-meta">
+        <div class="job-detail-meta" style="border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; padding: 20px 0; margin-bottom: 32px;">
             @if ($job->prefecture_code || $job->work_location)
-                <p>
-                    <span class="meta-label">勤務地</span>
-                    <span class="meta-value">
+                <p style="margin: 0 0 12px 0; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                    <span class="meta-label" style="display: inline-block; min-width: 80px; font-weight: 500; color: #666;">勤務地</span>
+                    <span class="meta-value" style="color: #1a1a1a;">
                         @if($job->prefecture_code)
                             @php
                                 $prefecture = \App\Enums\Todofuken::tryFrom($job->prefecture_code);
@@ -98,9 +99,9 @@
             @endif
 
             @if (!is_null($job->min_salary) || !is_null($job->max_salary))
-                <p>
-                    <span class="meta-label">給与</span>
-                    <span class="meta-value">
+                <p style="margin: 0; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+                    <span class="meta-label" style="display: inline-block; min-width: 80px; font-weight: 500; color: #666;">給与</span>
+                    <span class="meta-value" style="color: #1a1a1a;">
                         @if (!is_null($job->min_salary))
                             {{ number_format($job->min_salary) }}円
                         @endif
@@ -113,9 +114,9 @@
             @endif
         </div>
 
-        <section class="job-description">
-            <h3>お仕事内容</h3>
-            <p>{!! nl2br(e($job->description)) !!}</p>
+        <section class="job-description" style="margin-bottom: 32px;">
+            <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">お仕事内容</h3>
+            <p style="white-space: pre-wrap; line-height: 1.8; font-size: 14px; color: #666; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{!! nl2br(e($job->description)) !!}</p>
         </section>
     </article>
 
@@ -195,7 +196,7 @@
             document.querySelectorAll('.thumbnail-image').forEach(thumb => {
                 thumb.style.borderColor = 'transparent';
             });
-            event.target.style.borderColor = '#90AFC5';
+            event.target.style.borderColor = '#1a1a1a';
         }
 
         function openImageModal(index) {
@@ -235,119 +236,126 @@
     </script>
     @endif
 
-    <section class="job-apply">
+    <section class="job-apply" style="background: #ffffff; border: none; padding: 0; margin-top: 48px; padding-top: 32px; border-top: 1px solid #f0f0f0;">
         @if($isExpired)
             {{-- 公開期間終了のメッセージ --}}
             <div style="
                 padding: 24px;
-                background: #e0f2fe;
-                border: 2px solid #90AFC5;
-                border-radius: 12px;
+                background: #fafafa;
+                border: 1px solid #e0e0e0;
                 text-align: center;
-                margin-bottom: 24px;
+                margin-bottom: 32px;
             ">
                 <p style="
                     margin: 0;
-                    color: #0c4a6e;
+                    color: #1a1a1a;
                     font-size: 16px;
-                    font-weight: 700;
-                    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                    font-weight: 400;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 ">求人掲載期間は終了しました</p>
                 <p style="
                     margin: 8px 0 0 0;
-                    color: #075985;
+                    color: #666;
                     font-size: 13px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 ">この求人への応募は受け付けておりません。</p>
             </div>
         @else
-            <h3 class="job-apply-title">この求人に応募する</h3>
+            <h3 class="job-apply-title" style="margin: 0 0 24px 0; font-size: 18px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">この求人に応募する</h3>
 
             @if(session('status'))
             <div style="
                 padding: 12px 16px;
-                background: #d1fae5;
-                color: #065f46;
-                border-radius: 8px;
+                background: #fafafa;
+                color: #1a1a1a;
+                border: 1px solid #e0e0e0;
                 margin-bottom: 16px;
                 font-size: 14px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
             ">{{ session('status') }}</div>
         @endif
 
         @if(session('error'))
             <div style="
                 padding: 12px 16px;
-                background: #fee2e2;
-                color: #991b1b;
-                border-radius: 8px;
+                background: #fafafa;
+                color: #dc2626;
+                border: 1px solid #e0e0e0;
                 margin-bottom: 16px;
                 font-size: 14px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
             ">{{ session('error') }}</div>
         @endif
 
         @guest
-            <p class="job-apply-note">応募するにはログインが必要です。</p>
+            <p class="job-apply-note" style="font-size: 14px; color: #666; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">応募するにはログインが必要です。</p>
             <p><a href="{{ route('login') }}" style="
-                padding: 12px 24px;
+                padding: 14px 32px;
                 background: transparent;
-                color: #5D535E;
-                border: 1px solid #5D535E;
-                border-radius: 24px;
-                font-size: 14px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                color: #1a1a1a;
+                border: 1px solid #1a1a1a;
+                border-radius: 0;
+                font-size: 13px;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 text-decoration: none;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
                 position: relative;
                 display: inline-block;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)'; this.style.background='#5D535E'; this.style.color='#ffffff';" onmouseout="this.style.boxShadow='none'; this.style.background='transparent'; this.style.color='#5D535E';">
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            " onmouseover="this.style.background='#1a1a1a'; this.style.color='#ffffff';" onmouseout="this.style.background='transparent'; this.style.color='#1a1a1a';">
                 ログインページへ
             </a></p>
         @else
             @if($hasApplied)
                 <div style="
-                    padding: 16px;
-                    background: #f3f4f6;
-                    border: 1px solid #d1d5db;
-                    border-radius: 8px;
+                    padding: 20px;
+                    background: #fafafa;
+                    border: 1px solid #e0e0e0;
                     text-align: center;
                 ">
                     <p style="
                         margin: 0;
-                        color: #374151;
+                        color: #1a1a1a;
                         font-size: 14px;
-                        font-weight: 500;
+                        font-weight: 400;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                     ">この求人には既に応募済みです。</p>
                     <p style="
                         margin: 8px 0 0 0;
-                        color: #6b7280;
-                        font-size: 12px;
-                    "><a href="{{ route('mypage') }}" style="color: #5D535E; text-decoration: underline;">応募履歴を確認する</a></p>
+                        color: #666;
+                        font-size: 13px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    "><a href="{{ route('mypage') }}" style="color: #1a1a1a; text-decoration: none; border-bottom: 1px solid #1a1a1a; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">応募履歴を確認する</a></p>
                 </div>
             @else
                 <form method="post" action="{{ route('jobs.apply', $job) }}" class="job-apply-form">
                     @csrf
-                    <div class="form-group">
-                        <label for="message">応募メッセージ（任意）</label>
-                        <textarea id="message" name="message" rows="5">{{ old('message') }}</textarea>
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label for="message" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">応募メッセージ（任意）</label>
+                        <textarea id="message" name="message" rows="5" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; background: #ffffff; color: #1a1a1a; transition: all 0.3s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; box-sizing: border-box; resize: vertical;" onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">{{ old('message') }}</textarea>
                         @error('message')
-                            <div class="error">{{ $message }}</div>
+                            <div class="error" style="color: #dc2626; font-size: 12px; margin-top: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-actions">
                         <button type="submit" style="
-                            padding: 12px 32px;
-                            background: #5D535E;
+                            padding: 14px 32px;
+                            background: #1a1a1a;
                             color: #ffffff;
-                            border: none;
-                            border-radius: 24px;
-                            font-size: 14px;
-                            font-weight: 700;
-                            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+                            border: 1px solid #1a1a1a;
+                            border-radius: 0;
+                            font-size: 13px;
+                            font-weight: 500;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                             cursor: pointer;
-                            transition: all 0.2s ease;
+                            transition: all 0.3s ease;
                             position: relative;
-                        " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
+                            letter-spacing: 0.05em;
+                            text-transform: uppercase;
+                        " onmouseover="this.style.background='#000000'; this.style.borderColor='#000000';" onmouseout="this.style.background='#1a1a1a'; this.style.borderColor='#1a1a1a';">
                             応募する
                         </button>
                     </div>
