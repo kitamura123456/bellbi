@@ -7,7 +7,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\CompanyRegisterController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanies;
+use App\Http\Controllers\Admin\JobPostController as AdminJobPosts;
 use App\Http\Controllers\Admin\PlanController as AdminPlans;
+use App\Http\Controllers\Admin\SubsidyController as AdminSubsidies;
+use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettings;
 use App\Http\Controllers\Company\DashboardController as CompanyDashboard;
 use App\Http\Controllers\Company\CompanyController as CompanyInfo;
 use App\Http\Controllers\Company\StoreController as CompanyStores;
@@ -27,12 +31,9 @@ use App\Http\Controllers\Company\ReservationController as CompanyReservations;
 use App\Http\Controllers\Company\AccountItemController as CompanyAccountItems;
 use App\Http\Controllers\Company\TransactionController as CompanyTransactions;
 use App\Http\Controllers\Company\PlanController as CompanyPlans;
+use App\Http\Controllers\Company\SubsidyController as CompanySubsidies;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
-use App\Http\Controllers\ShopController;
-use App\Http\Controllers\Company\ShopController as CompanyShops;
-use App\Http\Controllers\Company\ProductController as CompanyProducts;
-use App\Http\Controllers\Company\OrderController as CompanyOrders;
 
 // API
 Route::get('/api/business-categories/{industry_type}', [BusinessCategoryController::class, 'getCategories'])->name('api.business-categories');
@@ -49,10 +50,6 @@ Route::get('/reservations/search', [ReservationController::class, 'search'])->na
 Route::get('/reservations/store/{store}', [ReservationController::class, 'store'])->name('reservations.store');
 Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking');
 Route::post('/reservations/store/{store}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
-
-// ショップ（フロントエンド）
-Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
-Route::get('/shops/{product}', [ShopController::class, 'show'])->name('shops.show');
 
 // 認証
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -170,6 +167,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/company/plans/{plan}/update', [CompanyPlans::class, 'update'])->name('company.plans.update');
     Route::post('/company/plans/cancel', [CompanyPlans::class, 'cancel'])->name('company.plans.cancel');
 
+    // 補助金情報機能
+    Route::get('/company/subsidies', [CompanySubsidies::class, 'index'])->name('company.subsidies.index');
+    Route::get('/company/subsidies/{subsidy}', [CompanySubsidies::class, 'show'])->name('company.subsidies.show');
+
     // ECモール機能
     Route::get('/company/shops', [CompanyShops::class, 'index'])->name('company.shops.index');
     Route::get('/company/shops/create', [CompanyShops::class, 'create'])->name('company.shops.create');
@@ -207,6 +208,30 @@ Route::middleware('auth')->group(function () {
         ]
     ]);
 
+    // 管理画面 - 事業者管理
+    Route::resource('admin/companies', AdminCompanies::class, [
+        'as' => 'admin',
+        'names' => [
+            'index' => 'admin.companies.index',
+            'edit' => 'admin.companies.edit',
+            'update' => 'admin.companies.update',
+            'destroy' => 'admin.companies.destroy',
+        ],
+        'except' => ['create', 'show', 'store']
+    ]);
+
+    // 管理画面 - 求人管理
+    Route::resource('admin/job-posts', AdminJobPosts::class, [
+        'as' => 'admin',
+        'names' => [
+            'index' => 'admin.job-posts.index',
+            'edit' => 'admin.job-posts.edit',
+            'update' => 'admin.job-posts.update',
+            'destroy' => 'admin.job-posts.destroy',
+        ],
+        'except' => ['create', 'show', 'store']
+    ]);
+
     // 管理画面 - プラン管理
     Route::resource('admin/plans', AdminPlans::class, [
         'as' => 'admin',
@@ -219,4 +244,21 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'admin.plans.destroy',
         ]
     ]);
+
+    // 管理画面 - 補助金情報管理
+    Route::resource('admin/subsidies', AdminSubsidies::class, [
+        'as' => 'admin',
+        'names' => [
+            'index' => 'admin.subsidies.index',
+            'create' => 'admin.subsidies.create',
+            'store' => 'admin.subsidies.store',
+            'edit' => 'admin.subsidies.edit',
+            'update' => 'admin.subsidies.update',
+            'destroy' => 'admin.subsidies.destroy',
+        ]
+    ]);
+
+    // 管理画面 - システム設定
+    Route::get('/admin/system-settings', [AdminSystemSettings::class, 'index'])->name('admin.system-settings.index');
+    Route::put('/admin/system-settings', [AdminSystemSettings::class, 'update'])->name('admin.system-settings.update');
 });

@@ -207,6 +207,20 @@
             <p style="margin: 0; font-size: 13px; color: #666666; line-height: 1.5;">プランの選択・契約・変更</p>
         </a>
 
+        <a href="{{ route('company.subsidies.index') }}" style="
+            padding: 20px;
+            background: #ffffff;
+            border: none;
+            box-shadow: 0 1px 2px rgba(93, 83, 94, 0.1);
+            border-radius: 0;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: block;
+        " onmouseover="this.style.boxShadow='0 2px 4px rgba(93, 83, 94, 0.15)'; this.style.borderLeft='1px solid rgba(255,255,255,0.5)';" onmouseout="this.style.boxShadow='0 1px 2px rgba(93, 83, 94, 0.1)'; this.style.borderLeft='none';">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #5D535E; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">補助金情報</h3>
+            <p style="margin: 0; font-size: 13px; color: #666666; line-height: 1.5;">補助金情報の閲覧・検索</p>
+        </a>
+
         <div style="
             padding: 20px;
             background: #fafafa;

@@ -91,18 +91,6 @@
                     ">
                         予約する
                     </a>
-                    <a href="{{ route('shops.index') }}" class="nav-link-hover" style="
-                        color: #1a1a1a;
-                        text-decoration: none;
-                        font-size: 13px;
-                        font-weight: 400;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
-                        padding: 4px 0;
-                        transition: color 0.3s ease;
-                        letter-spacing: 0.02em;
-                    ">
-                        ショップ
-                    </a>
 
                     @auth
                         @php
