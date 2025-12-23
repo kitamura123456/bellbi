@@ -201,6 +201,15 @@ use App\Enums\Todofuken;
                     font-size: 10px !important;
                 }
             }
+            .filter-badge {
+                background-color: transparent;
+                border: 1px solid transparent;
+                transition: background-color 0.15s, border-color 0.15s;
+            }
+            .filter-badge.is-selected {
+                background-color: #f5f5f5;
+                border-color: #1a1a1a;
+            }
         </style>
         <form class="search-form" id="searchForm">
             <div class="form-group" style="margin-bottom: 24px;">
@@ -325,32 +334,38 @@ use App\Enums\Todofuken;
                                         $pref = $prefMap[$prefCode] ?? null;
                                         if(!$pref) continue;
                                         $isChecked = in_array($pref->value, $selectedAreas);
-                                        $bgColor = $isChecked ? '#f5f5f5' : 'transparent';
                                         $count = isset($areaCounts[$pref->value]) ? $areaCounts[$pref->value] : 0;
-                                        $badgeBgColor = $isChecked ? '#1a1a1a' : '#e0e0e0';
-                                        $badgeTextColor = $isChecked ? '#ffffff' : '#666';
+                                        // バッジは選択状態に関わらずグレーに統一
+                                        $badgeBgColor = '#e0e0e0';
+                                        $badgeTextColor = '#666';
                                     @endphp
-                                    <label style="
+                                    <label class="filter-badge {{ $isChecked ? 'is-selected' : '' }}" style="
                                         display: flex;
                                         align-items: center;
                                         padding: 4px 8px;
                                         margin-bottom: 1px;
                                         cursor: pointer;
                                         border-radius: 0;
-                                        transition: background-color 0.3s ease;
-                                        background-color: {{ $bgColor }};
-                                    " onmouseover="if(!this.querySelector('input[type=checkbox]').checked) this.style.backgroundColor='#fafafa';" onmouseout="if(!this.querySelector('input[type=checkbox]').checked) this.style.backgroundColor='{{ $bgColor }}';">
+                                    ">
                                         <input type="checkbox" 
                                             name="area[]" 
                                             value="{{ $pref->value }}" 
                                             {{ $isChecked ? 'checked' : ''}}
-                                            onchange="this.parentElement.style.backgroundColor = this.checked ? '#f5f5f5' : 'transparent'; var badge = this.parentElement.querySelector('span:last-child'); if(badge && badge.style) { badge.style.backgroundColor = this.checked ? '#1a1a1a' : '#e0e0e0'; badge.style.color = this.checked ? '#ffffff' : '#666'; } updateRegionCheckbox('{{ $regionKey }}');"
+                                            onchange="
+                                                const badge = this.parentElement;
+                                                if (badge) {
+                                                    badge.classList.toggle('is-selected', this.checked);
+                                                }
+                                                updateRegionCheckbox('{{ $regionKey }}');
+                                                "
+
                                             style="
                                                 margin-right: 8px;
                                                 cursor: pointer;
                                                 width: 14px;
                                                 height: 14px;
                                                 accent-color: #1a1a1a;
+                                                border-radius: 0;
                                             ">
                                         <span style="
                                             flex: 1;
@@ -395,12 +410,10 @@ use App\Enums\Todofuken;
                         const prefectureCheckboxes = prefectureDiv.querySelectorAll('input[type="checkbox"]');
                         prefectureCheckboxes.forEach(cb => {
                             cb.checked = false;
-                            const badge = cb.parentElement.querySelector('span:last-child');
-                            if(badge && badge.style) {
-                                badge.style.backgroundColor = '#e0e0e0';
-                                badge.style.color = '#666';
+                            const badge = cb.parentElement;
+                            if (badge) {
+                                badge.classList.toggle('is-selected', false);
                             }
-                            cb.parentElement.style.backgroundColor = 'transparent';
                         });
                     }
                 }
