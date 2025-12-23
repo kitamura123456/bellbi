@@ -7,8 +7,202 @@ use App\Enums\Todofuken;
 
 @section('sidebar')
     <div class="sidebar-card" style="background: #ffffff; border-radius: 0; padding: 32px 24px; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
-        <h3 class="sidebar-title" style="font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 24px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">条件でさがす</h3>
-        <form class="search-form">
+        <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;" onclick="if(window.innerWidth <= 768) toggleSearchForm()">
+            <div style="flex: 1; min-width: 0;">
+                <h3 class="sidebar-title" style="font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; text-transform: uppercase; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">条件でさがす</h3>
+                <div class="selected-conditions" id="selectedConditions" style="
+                    display: none;
+                    margin-top: 4px;
+                    font-size: 10px;
+                    color: #666;
+                    font-weight: 400;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                "></div>
+            </div>
+            <span class="toggle-icon" style="
+                display: none;
+                font-size: 16px;
+                color: #1a1a1a;
+                transition: transform 0.3s ease;
+                user-select: none;
+                cursor: pointer;
+                flex-shrink: 0;
+                margin-left: 8px;
+            ">▼</span>
+        </div>
+        <style>
+            /* スマホでサイドバーを固定 */
+            @media (max-width: 768px) {
+                .sidebar {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 50 !important;
+                    background: #ffffff !important;
+                    margin-bottom: 0 !important;
+                }
+                .sidebar-card {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 50 !important;
+                    background: #ffffff !important;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+                    margin-bottom: 0 !important;
+                    padding: 8px 12px !important;
+                }
+                .sidebar-header {
+                    margin-bottom: 0 !important;
+                    cursor: pointer !important;
+                    padding: 4px 0;
+                    align-items: flex-start !important;
+                }
+                .sidebar-title {
+                    margin-bottom: 0 !important;
+                    font-size: 11px !important;
+                }
+                .selected-conditions {
+                    display: block !important;
+                }
+                .toggle-icon {
+                    display: block !important;
+                    font-size: 14px !important;
+                }
+                .search-form {
+                    display: none;
+                    margin-top: 8px;
+                }
+                .search-form.active {
+                    display: block !important;
+                }
+                .toggle-icon.active {
+                    transform: rotate(180deg);
+                }
+                .container.main-inner {
+                    flex-direction: column !important;
+                }
+                .sidebar {
+                    order: -1 !important;
+                }
+            }
+            @media (max-width: 1024px) {
+                .sidebar-card {
+                    padding: 24px 20px !important;
+                }
+                .sidebar-title {
+                    font-size: 13px !important;
+                    margin-bottom: 20px !important;
+                }
+                .form-group {
+                    margin-bottom: 20px !important;
+                }
+                .form-group label {
+                    font-size: 11px !important;
+                    margin-bottom: 6px !important;
+                }
+                .form-group input[type="text"] {
+                    padding: 10px 14px !important;
+                    font-size: 13px !important;
+                }
+                .checkbox-list, .tag-checkbox-list {
+                    padding: 6px !important;
+                    max-height: 250px !important;
+                }
+                .checkbox-list label, .tag-checkbox-list label {
+                    padding: 6px 8px !important;
+                    font-size: 12px !important;
+                }
+                .checkbox-list label span, .tag-checkbox-list label span {
+                    font-size: 12px !important;
+                }
+                button[type="submit"] {
+                    padding: 12px 20px !important;
+                    font-size: 12px !important;
+                }
+            }
+            @media (max-width: 768px) {
+                .sidebar-card {
+                    padding: 20px 16px !important;
+                }
+                .sidebar-title {
+                    font-size: 12px !important;
+                    margin-bottom: 16px !important;
+                }
+                .form-group {
+                    margin-bottom: 16px !important;
+                }
+                .form-group label {
+                    font-size: 10px !important;
+                    margin-bottom: 6px !important;
+                }
+                .form-group input[type="text"] {
+                    padding: 10px 12px !important;
+                    font-size: 12px !important;
+                }
+                .checkbox-list, .tag-checkbox-list {
+                    padding: 6px !important;
+                    max-height: 200px !important;
+                }
+                .checkbox-list label, .tag-checkbox-list label {
+                    padding: 6px 8px !important;
+                    font-size: 11px !important;
+                }
+                .checkbox-list label span, .tag-checkbox-list label span {
+                    font-size: 11px !important;
+                }
+                .checkbox-list label input[type="checkbox"], .tag-checkbox-list label input[type="checkbox"] {
+                    width: 14px !important;
+                    height: 14px !important;
+                    margin-right: 8px !important;
+                }
+                button[type="submit"] {
+                    padding: 12px 16px !important;
+                    font-size: 11px !important;
+                }
+            }
+            @media (max-width: 480px) {
+                .sidebar-card {
+                    padding: 16px 12px !important;
+                }
+                .sidebar-title {
+                    font-size: 11px !important;
+                    margin-bottom: 12px !important;
+                }
+                .form-group {
+                    margin-bottom: 12px !important;
+                }
+                .form-group label {
+                    font-size: 9px !important;
+                    margin-bottom: 4px !important;
+                }
+                .form-group input[type="text"] {
+                    padding: 8px 10px !important;
+                    font-size: 11px !important;
+                }
+                .checkbox-list, .tag-checkbox-list {
+                    padding: 4px !important;
+                    max-height: 180px !important;
+                }
+                .checkbox-list label, .tag-checkbox-list label {
+                    padding: 4px 6px !important;
+                    font-size: 10px !important;
+                }
+                .checkbox-list label span, .tag-checkbox-list label span {
+                    font-size: 10px !important;
+                }
+                .checkbox-list label input[type="checkbox"], .tag-checkbox-list label input[type="checkbox"] {
+                    width: 12px !important;
+                    height: 12px !important;
+                    margin-right: 6px !important;
+                }
+                button[type="submit"] {
+                    padding: 10px 14px !important;
+                    font-size: 10px !important;
+                }
+            }
+        </style>
+        <form class="search-form" id="searchForm">
             <div class="form-group" style="margin-bottom: 24px;">
                 <label for="keyword" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">キーワード</label>
                 <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="エリア・サロン名・職種など" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; background: #ffffff; color: #1a1a1a; transition: all 0.3s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;" onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
@@ -409,6 +603,216 @@ use App\Enums\Todofuken;
             </button>
         </form>
     </div>
+    <script>
+        function toggleSearchForm() {
+            const form = document.getElementById('searchForm');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (form && icon) {
+                form.classList.toggle('active');
+                icon.classList.toggle('active');
+            }
+        }
+        
+        // 検索条件を取得して表示する関数
+        function updateSelectedConditions() {
+            if (window.innerWidth > 768) return; // スマホ版のみ
+            
+            const conditions = [];
+            const conditionsDiv = document.getElementById('selectedConditions');
+            
+            // キーワード
+            const keyword = document.getElementById('keyword')?.value?.trim();
+            if (keyword) {
+                conditions.push('キーワード: ' + keyword);
+            }
+            
+            // エリア
+            const areaCheckboxes = document.querySelectorAll('input[name="area[]"]:checked');
+            if (areaCheckboxes.length > 0) {
+                const areas = Array.from(areaCheckboxes).map(cb => {
+                    const label = cb.parentElement.querySelector('span').textContent.trim();
+                    return label;
+                });
+                if (areas.length > 0) {
+                    conditions.push('エリア: ' + (areas.length > 2 ? areas.slice(0, 2).join(', ') + '...' : areas.join(', ')));
+                }
+            }
+            
+            // 雇用形態
+            const employmentCheckboxes = document.querySelectorAll('input[name="employment_type[]"]:checked');
+            if (employmentCheckboxes.length > 0) {
+                const types = Array.from(employmentCheckboxes).map(cb => {
+                    return cb.parentElement.querySelector('span').textContent.trim();
+                });
+                if (types.length > 0) {
+                    conditions.push('雇用形態: ' + types.join(', '));
+                }
+            }
+            
+            // タグ
+            const tagCheckboxes = document.querySelectorAll('input[name="tags[]"]:checked');
+            if (tagCheckboxes.length > 0) {
+                const tags = Array.from(tagCheckboxes).map(cb => {
+                    return cb.parentElement.querySelector('span').textContent.trim();
+                });
+                if (tags.length > 0) {
+                    conditions.push('タグ: ' + (tags.length > 2 ? tags.slice(0, 2).join(', ') + '...' : tags.join(', ')));
+                }
+            }
+            
+            // 条件を表示
+            if (conditions.length > 0 && conditionsDiv) {
+                conditionsDiv.textContent = conditions.join(' / ');
+                conditionsDiv.style.display = 'block';
+            } else if (conditionsDiv) {
+                conditionsDiv.style.display = 'none';
+            }
+        }
+        
+        // 検索フォーム送信時に条件を表示して折りたたむ
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    if (window.innerWidth <= 768) {
+                        // 送信前に条件を更新
+                        updateSelectedConditions();
+                        // フォームを折りたたむ
+                        const form = document.getElementById('searchForm');
+                        const icon = document.querySelector('.toggle-icon');
+                        if (form && icon) {
+                            form.classList.remove('active');
+                            icon.classList.remove('active');
+                        }
+                    }
+                });
+            }
+            
+            // チェックボックスの変更を監視
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateSelectedConditions);
+            });
+            
+            // キーワード入力の変更を監視
+            const keywordInput = document.getElementById('keyword');
+            if (keywordInput) {
+                keywordInput.addEventListener('input', updateSelectedConditions);
+            }
+            
+            // ページ読み込み時に現在の検索条件を表示
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasSearchParams = urlParams.has('keyword') || 
+                                   urlParams.has('area') || 
+                                   urlParams.has('employment_type') || 
+                                   urlParams.has('tags');
+            
+            if (hasSearchParams && window.innerWidth <= 768) {
+                // 少し遅延させてから条件を更新（フォームが読み込まれた後）
+                setTimeout(function() {
+                    updateSelectedConditionsFromURL();
+                }, 300);
+            } else if (window.innerWidth <= 768) {
+                // 検索条件がない場合も、フォームの状態を確認
+                setTimeout(function() {
+                    updateSelectedConditions();
+                }, 200);
+            }
+        });
+        
+        // URLパラメータから検索条件を読み取って表示
+        function updateSelectedConditionsFromURL() {
+            if (window.innerWidth > 768) return; // スマホ版のみ
+            
+            const conditions = [];
+            const conditionsDiv = document.getElementById('selectedConditions');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 都道府県コードから都道府県名へのマッピング
+            const prefectureMap = {
+                1: '北海道', 2: '青森', 3: '岩手', 4: '宮城', 5: '秋田', 6: '山形', 7: '福島',
+                8: '茨城', 9: '栃木', 10: '群馬', 11: '埼玉', 12: '千葉', 13: '東京', 14: '神奈川',
+                15: '新潟', 16: '富山', 17: '石川', 18: '福井', 19: '山梨', 20: '長野', 21: '岐阜',
+                22: '静岡', 23: '愛知', 24: '三重', 25: '滋賀', 26: '京都', 27: '大阪', 28: '兵庫',
+                29: '奈良', 30: '和歌山', 31: '鳥取', 32: '島根', 33: '岡山', 34: '広島', 35: '山口',
+                36: '徳島', 37: '香川', 38: '愛媛', 39: '高知', 40: '福岡', 41: '佐賀', 42: '長崎',
+                43: '熊本', 44: '大分', 45: '宮崎', 46: '鹿児島', 47: '沖縄'
+            };
+            
+            // 雇用形態マッピング
+            const employmentTypeMap = {
+                1: '正社員',
+                2: 'パート・アルバイト',
+                3: '業務委託',
+                4: '契約社員'
+            };
+            
+            // キーワード
+            const keyword = urlParams.get('keyword');
+            if (keyword && keyword.trim()) {
+                conditions.push('キーワード: ' + keyword.trim());
+            }
+            
+            // エリア
+            const areas = urlParams.getAll('area[]');
+            if (areas.length > 0) {
+                const areaNames = areas.map(code => {
+                    const codeNum = parseInt(code);
+                    return prefectureMap[codeNum] || code;
+                }).filter(Boolean);
+                if (areaNames.length > 0) {
+                    conditions.push('エリア: ' + (areaNames.length > 2 ? areaNames.slice(0, 2).join(', ') + '...' : areaNames.join(', ')));
+                }
+            }
+            
+            // 雇用形態
+            const employmentTypes = urlParams.getAll('employment_type[]');
+            if (employmentTypes.length > 0) {
+                const typeNames = employmentTypes.map(type => {
+                    const typeNum = parseInt(type);
+                    return employmentTypeMap[typeNum] || type;
+                }).filter(Boolean);
+                if (typeNames.length > 0) {
+                    conditions.push('雇用形態: ' + typeNames.join(', '));
+                }
+            }
+            
+            // タグ（タグIDからタグ名を取得する必要があるが、ここではIDを表示）
+            const tags = urlParams.getAll('tags[]');
+            if (tags.length > 0) {
+                // タグ名を取得するため、チェックボックスから取得を試みる
+                setTimeout(function() {
+                    const tagCheckboxes = document.querySelectorAll('input[name="tags[]"]:checked');
+                    if (tagCheckboxes.length > 0) {
+                        const tagNames = Array.from(tagCheckboxes).map(cb => {
+                            return cb.parentElement.querySelector('span').textContent.trim();
+                        });
+                        if (tagNames.length > 0) {
+                            const existingIndex = conditions.findIndex(c => c.startsWith('タグ:'));
+                            if (existingIndex >= 0) {
+                                conditions[existingIndex] = 'タグ: ' + (tagNames.length > 2 ? tagNames.slice(0, 2).join(', ') + '...' : tagNames.join(', '));
+                            } else {
+                                conditions.push('タグ: ' + (tagNames.length > 2 ? tagNames.slice(0, 2).join(', ') + '...' : tagNames.join(', ')));
+                            }
+                            if (conditions.length > 0 && conditionsDiv) {
+                                conditionsDiv.textContent = conditions.join(' / ');
+                                conditionsDiv.style.display = 'block';
+                            }
+                        }
+                    }
+                }, 100);
+            }
+            
+            // 条件を表示
+            if (conditions.length > 0 && conditionsDiv) {
+                conditionsDiv.textContent = conditions.join(' / ');
+                conditionsDiv.style.display = 'block';
+            } else if (conditionsDiv) {
+                conditionsDiv.style.display = 'none';
+            }
+        }
+    </script>
 @endsection
 
 @section('content')
@@ -424,7 +828,7 @@ use App\Enums\Todofuken;
     @if ($jobs->isEmpty())
         <p class="empty-message" style="font-size: 14px; color: #999; text-align: center; padding: 64px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">現在公開中の求人はありません。</p>
     @else
-        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px 24px;">
+        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px 24px;">
             @foreach ($jobs as $job)
                 @php
                     $applicationStatus = $userApplications[$job->id] ?? null;
@@ -513,6 +917,133 @@ use App\Enums\Todofuken;
             {{ $jobs->links('vendor.pagination.tailwind') }}
         </div>
     @endif
+
+    <style>
+        /* レスポンシブ対応のスタイル */
+        @media (max-width: 1200px) {
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                gap: 24px 20px !important;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .page-header {
+                margin-bottom: 32px !important;
+                padding-bottom: 24px !important;
+            }
+            .page-title {
+                font-size: 28px !important;
+            }
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+                gap: 24px 16px !important;
+            }
+            .job-card > a > .job-card-body > div:first-child {
+                height: 240px !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding-top: 24px !important;
+            }
+            .page-header {
+                margin-bottom: 24px !important;
+                padding-bottom: 20px !important;
+            }
+            .page-label {
+                font-size: 10px !important;
+                margin-bottom: 8px !important;
+            }
+            .page-title {
+                font-size: 24px !important;
+                margin-bottom: 12px !important;
+            }
+            .page-lead {
+                font-size: 13px !important;
+            }
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+                gap: 20px 12px !important;
+            }
+            .job-card > a > .job-card-body > div:first-child {
+                height: 200px !important;
+            }
+            .job-card-title {
+                font-size: 14px !important;
+            }
+            .job-card-salon {
+                font-size: 11px !important;
+            }
+            .job-card-location {
+                font-size: 10px !important;
+            }
+            .job-card-salary {
+                font-size: 12px !important;
+            }
+            .pagination-wrapper {
+                margin-top: 48px !important;
+                padding-top: 24px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                margin-bottom: 20px !important;
+                padding-bottom: 16px !important;
+            }
+            .page-label {
+                font-size: 9px !important;
+                margin-bottom: 6px !important;
+            }
+            .page-title {
+                font-size: 20px !important;
+                margin-bottom: 10px !important;
+            }
+            .page-lead {
+                font-size: 12px !important;
+                line-height: 1.6 !important;
+            }
+            .job-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+            .job-card > a > .job-card-body > div:first-child {
+                height: 180px !important;
+            }
+            .job-card > a > .job-card-body > div:last-child {
+                padding: 16px 12px 0 12px !important;
+            }
+            .job-card-title {
+                font-size: 13px !important;
+            }
+            .job-card-salon {
+                font-size: 10px !important;
+            }
+            .job-card-location {
+                font-size: 9px !important;
+            }
+            .job-card-salary {
+                font-size: 11px !important;
+            }
+            .pagination-wrapper {
+                margin-top: 32px !important;
+                padding-top: 20px !important;
+            }
+            .empty-message {
+                padding: 48px 0 !important;
+                font-size: 13px !important;
+            }
+        }
+        
+        @media (min-width: 1400px) {
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                gap: 40px 32px !important;
+            }
+        }
+    </style>
 @endsection
 
 

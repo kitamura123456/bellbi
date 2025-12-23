@@ -238,8 +238,8 @@
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                     ">¥{{ number_format($total) }}</span>
                 </div>
-                <div style="display: flex; gap: 12px;">
-                    <a href="{{ route('shops.index') }}" style="
+                <div class="cart-buttons" style="display: flex; gap: 12px;">
+                    <a href="{{ route('shops.index') }}" class="cart-button-secondary" style="
                         flex: 1;
                         padding: 14px 24px;
                         background: transparent;
@@ -255,11 +255,12 @@
                         text-align: center;
                         letter-spacing: 0.05em;
                         text-transform: uppercase;
+                        white-space: nowrap;
                     " onmouseover="this.style.backgroundColor='#f5f5f5';" onmouseout="this.style.backgroundColor='transparent';">
                         買い物を続ける
                     </a>
                     @auth
-                        <a href="{{ route('orders.checkout') }}" style="
+                        <a href="{{ route('orders.checkout') }}" class="cart-button-primary" style="
                             flex: 1;
                             padding: 14px 24px;
                             background: #1a1a1a;
@@ -275,11 +276,12 @@
                             text-align: center;
                             letter-spacing: 0.05em;
                             text-transform: uppercase;
+                            white-space: nowrap;
                         " onmouseover="this.style.backgroundColor='#000000'; this.style.borderColor='#000000';" onmouseout="this.style.backgroundColor='#1a1a1a'; this.style.borderColor='#1a1a1a';">
                             注文に進む
                         </a>
                     @else
-                        <a href="{{ route('orders.checkout') }}" style="
+                        <a href="{{ route('orders.checkout') }}" class="cart-button-primary cart-button-login" style="
                             flex: 1;
                             padding: 14px 24px;
                             background: #1a1a1a;
@@ -296,12 +298,53 @@
                             letter-spacing: 0.05em;
                             text-transform: uppercase;
                         " onmouseover="this.style.backgroundColor='#000000'; this.style.borderColor='#000000';" onmouseout="this.style.backgroundColor='#1a1a1a'; this.style.borderColor='#1a1a1a';">
-                            ログインして注文
+                            <span class="button-text-line1">ログインして</span><span class="button-text-line2">注文</span>
                         </a>
                     @endauth
                 </div>
             </div>
         </div>
     @endif
+
+    <style>
+        /* スマホ版のボタンデザイン最適化 */
+        @media (max-width: 768px) {
+            .cart-buttons {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+            .cart-button-secondary,
+            .cart-button-primary {
+                width: 100% !important;
+                padding: 14px 20px !important;
+                font-size: 12px !important;
+            }
+            .cart-button-login {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                line-height: 1.4 !important;
+                padding: 14px 20px !important;
+            }
+            .cart-button-login .button-text-line1 {
+                display: block !important;
+                margin-bottom: 2px !important;
+            }
+            .cart-button-login .button-text-line2 {
+                display: block !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .cart-button-secondary,
+            .cart-button-primary {
+                padding: 12px 16px !important;
+                font-size: 11px !important;
+            }
+            .cart-button-login {
+                padding: 12px 16px !important;
+            }
+        }
+    </style>
 @endsection
 

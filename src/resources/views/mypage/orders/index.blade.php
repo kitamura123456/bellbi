@@ -4,8 +4,19 @@
 
 @section('sidebar')
 <div class="sidebar-card">
-    <h3 class="sidebar-title">メニュー</h3>
-    <ul class="sidebar-menu">
+    <div class="mypage-menu-header" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="if(window.innerWidth <= 768) toggleMypageMenu()">
+        <h3 class="sidebar-title" style="margin: 0;">メニュー</h3>
+        <span class="mypage-toggle-icon" style="
+            display: none;
+            font-size: 16px;
+            color: #1a1a1a;
+            transition: transform 0.3s ease;
+            user-select: none;
+            flex-shrink: 0;
+            margin-left: 8px;
+        ">▼</span>
+    </div>
+    <ul class="sidebar-menu mypage-menu-list" id="mypageMenuList">
         <li><a href="{{ route('mypage') }}" class="sidebar-menu-link">応募履歴</a></li>
         <li><a href="{{ route('mypage.scouts.index') }}" class="sidebar-menu-link">スカウト受信</a></li>
         <li><a href="{{ route('mypage.messages.index') }}" class="sidebar-menu-link">メッセージ</a></li>
@@ -14,6 +25,143 @@
         <li><a href="{{ route('mypage.orders.index') }}" class="sidebar-menu-link active">注文履歴</a></li>
     </ul>
 </div>
+<style>
+    /* デスクトップ版の固定メニュー */
+    .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+        align-self: flex-start !important;
+        z-index: 40 !important;
+        max-height: 100vh !important;
+        overflow-y: auto !important;
+    }
+    .sidebar-card {
+        position: sticky !important;
+        top: 0 !important;
+    }
+    .sidebar-menu,
+    .mypage-menu-list {
+        position: relative !important;
+    }
+    
+    @media (max-width: 768px) {
+        .sidebar {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 50 !important;
+            background: #ffffff !important;
+            margin-bottom: 0 !important;
+        }
+        .sidebar-card {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 50 !important;
+            background: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+            margin-bottom: 0 !important;
+            padding: 8px 12px !important;
+        }
+        .sidebar-menu,
+        .mypage-menu-list {
+            position: relative !important;
+        }
+        .mypage-menu-header {
+            padding: 4px 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .sidebar-title {
+            font-size: 11px !important;
+            margin-bottom: 0 !important;
+        }
+        .mypage-toggle-icon {
+            display: block !important;
+            font-size: 14px !important;
+        }
+        .mypage-menu-list {
+            display: none;
+            margin-top: 8px;
+        }
+        .mypage-menu-list.active {
+            display: block !important;
+        }
+        .mypage-toggle-icon.active {
+            transform: rotate(180deg);
+        }
+        .container.main-inner {
+            flex-direction: column !important;
+        }
+        .sidebar {
+            order: -1 !important;
+        }
+        .page-header {
+            margin-top: 24px !important;
+        }
+        .order-item {
+            position: relative !important;
+            padding: 16px 12px 60px 12px !important;
+        }
+        .order-item-inner {
+            flex-direction: column !important;
+            gap: 12px !important;
+            align-items: center !important;
+        }
+        .order-status-badge {
+            display: block !important;
+            left: 12px !important;
+            right: auto !important;
+        }
+        .order-status-badge-desktop {
+            display: none !important;
+        }
+        .order-content {
+            text-align: left !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            padding-left: 80px !important;
+            box-sizing: border-box !important;
+        }
+        .order-content > div[style*="display: flex"] {
+            justify-content: flex-start !important;
+        }
+        .order-content > div[style*="display: flex"] > span[style*="font-size: 12px"]:not(.order-date-mobile) {
+            display: none !important;
+        }
+        .order-date-mobile {
+            display: inline-block !important;
+        }
+        .order-content > h3,
+        .order-content > p {
+            text-align: left !important;
+            width: 100% !important;
+        }
+        .order-button-wrapper {
+            position: absolute !important;
+            bottom: 20px !important;
+            right: 12px !important;
+            min-width: auto !important;
+        }
+        .order-detail-button {
+            padding: 8px 16px !important;
+            font-size: 12px !important;
+        }
+        .order-status-text {
+            display: block;
+            line-height: 1.2;
+        }
+    }
+</style>
+<script>
+    function toggleMypageMenu() {
+        const menu = document.getElementById('mypageMenuList');
+        const icon = document.querySelector('.mypage-toggle-icon');
+        
+        if (menu && icon) {
+            menu.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+    }
+</script>
 @endsection
 
 @section('content')
@@ -25,15 +173,39 @@
 
     <div style="background: #ffffff; border-radius: 0; padding: 0; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
         @forelse($orders as $order)
-        <div style="
+        <div class="order-item" style="
             padding: 20px 24px;
             border-bottom: 1px solid #f0f0f0;
             transition: all 0.15s ease;
         " onmouseover="this.style.backgroundColor='#fafafa';" onmouseout="this.style.backgroundColor='transparent';">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
-                <div style="flex: 1;">
+            <div class="order-status-badge" style="
+                position: absolute;
+                top: 16px;
+                left: 12px;
+                display: none;
+            ">
+                <span style="
+                    display: inline-block;
+                    padding: 5px 12px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    background-color: {{ $order->status === 1 ? '#f5f5f5' : ($order->status === 2 ? '#3b82f6' : ($order->status === 3 ? '#10b981' : ($order->status === 4 ? '#10b981' : '#6b7280'))) }};
+                    color: {{ $order->status === 1 ? '#1a1a1a' : '#ffffff' }};
+                    border: {{ $order->status === 1 ? '1px solid #e0e0e0' : 'none' }};
+                ">
+                    @if($order->status === 1) 新規
+                    @elseif($order->status === 2) <span class="order-status-text">入金確認</span><span class="order-status-text">済</span>
+                    @elseif($order->status === 3) 発送済
+                    @elseif($order->status === 4) 完了
+                    @elseif($order->status === 9) キャンセル
+                    @endif
+                </span>
+            </div>
+            <div class="order-item-inner" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div class="order-content" style="flex: 1;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <span style="
+                        <span class="order-status-badge-desktop" style="
                             display: inline-block;
                             padding: 5px 12px;
                             border-radius: 4px;
@@ -44,12 +216,13 @@
                             border: {{ $order->status === 1 ? '1px solid #e0e0e0' : 'none' }};
                         ">
                             @if($order->status === 1) 新規
-                            @elseif($order->status === 2) 入金確認済
+                            @elseif($order->status === 2) <span class="order-status-text">入金確認</span><span class="order-status-text">済</span>
                             @elseif($order->status === 3) 発送済
                             @elseif($order->status === 4) 完了
                             @elseif($order->status === 9) キャンセル
                             @endif
                         </span>
+                        <span class="order-date-mobile" style="font-size: 12px; color: #999; display: none;">注文日：{{ $order->created_at->format('Y年m月d日') }}</span>
                         <span style="font-size: 12px; color: #999;">注文日：{{ $order->created_at->format('Y年m月d日') }}</span>
                         <span style="font-size: 12px; color: #999;">注文番号：{{ $order->id }}</span>
                     </div>
@@ -87,8 +260,8 @@
                         合計: ¥{{ number_format($order->total_amount) }}
                     </p>
                 </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 100px;">
-                    <a href="{{ route('mypage.orders.show', $order) }}" style="
+                <div class="order-button-wrapper" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 100px;">
+                    <a href="{{ route('mypage.orders.show', $order) }}" class="order-detail-button" style="
                         padding: 8px 16px;
                         background: #1a1a1a;
                         color: #ffffff;

@@ -13,14 +13,14 @@
     </header>
 
     <div style="max-width: 1200px; margin: 0 auto;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px;">
-            <div>
-                <div style="width: 100%; height: 500px; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
+        <div class="product-detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px;">
+            <div class="product-image-wrapper">
+                <div class="product-image" style="width: 100%; height: 500px; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
                     商品画像
                 </div>
             </div>
-            <div>
-                <p style="
+            <div class="product-info">
+                <p class="product-price" style="
                     margin: 0 0 32px 0;
                     font-size: 28px;
                     font-weight: 400;
@@ -111,7 +111,7 @@
                 @endif
             </div>
         </div>
-        <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #f0f0f0;">
+        <div class="product-description" style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #f0f0f0;">
             <h2 style="
                 margin: 0 0 24px 0;
                 font-size: 18px;
@@ -132,5 +132,150 @@
             </div>
         </div>
     </div>
+
+    <style>
+        /* スマホ版の最適化 */
+        @media (max-width: 768px) {
+            .page-header {
+                margin-bottom: 24px !important;
+                padding-bottom: 20px !important;
+            }
+            .page-title {
+                font-size: 24px !important;
+                margin-bottom: 8px !important;
+            }
+            .page-lead {
+                font-size: 12px !important;
+            }
+            .product-detail-grid {
+                grid-template-columns: 1fr !important;
+                gap: 24px !important;
+                margin-bottom: 32px !important;
+            }
+            .product-image {
+                height: 300px !important;
+            }
+            .product-price {
+                font-size: 24px !important;
+                margin-bottom: 20px !important;
+            }
+            .product-info > div[style*="margin: 0 0 32px"] {
+                margin-bottom: 20px !important;
+            }
+            .product-info > div[style*="padding: 20px"] {
+                padding: 16px !important;
+            }
+            .product-info > div[style*="padding: 20px"] p[style*="font-size: 16px"] {
+                font-size: 14px !important;
+            }
+            .product-info > div[style*="padding: 20px"] p[style*="font-size: 13px"] {
+                font-size: 12px !important;
+            }
+            .product-info > p[style*="padding: 12px 16px"] {
+                padding: 10px 12px !important;
+                font-size: 12px !important;
+                margin-bottom: 20px !important;
+            }
+            .product-info form {
+                margin-bottom: 0 !important;
+            }
+            .product-info form > div[style*="margin-bottom: 24px"] {
+                margin-bottom: 16px !important;
+            }
+            .product-info form label {
+                font-size: 11px !important;
+                margin-bottom: 6px !important;
+            }
+            .product-info form input[type="number"] {
+                width: 100px !important;
+                padding: 10px 12px !important;
+                font-size: 13px !important;
+            }
+            .product-info form button[type="submit"] {
+                padding: 12px 24px !important;
+                font-size: 12px !important;
+            }
+            .product-description {
+                margin-top: 32px !important;
+                padding-top: 24px !important;
+            }
+            .product-description h2 {
+                font-size: 16px !important;
+                margin-bottom: 16px !important;
+            }
+            .product-description > div {
+                font-size: 13px !important;
+                line-height: 1.7 !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .page-header {
+                margin-bottom: 20px !important;
+                padding-bottom: 16px !important;
+            }
+            .page-title {
+                font-size: 20px !important;
+                margin-bottom: 6px !important;
+            }
+            .page-lead {
+                font-size: 11px !important;
+            }
+            .product-detail-grid {
+                gap: 16px !important;
+                margin-bottom: 24px !important;
+            }
+            .product-image {
+                height: 250px !important;
+            }
+            .product-price {
+                font-size: 22px !important;
+                margin-bottom: 16px !important;
+            }
+            .product-info > div[style*="margin: 0 0 32px"] {
+                margin-bottom: 16px !important;
+                padding: 12px !important;
+            }
+            .product-info > div[style*="padding: 20px"] p[style*="font-size: 16px"] {
+                font-size: 13px !important;
+            }
+            .product-info > div[style*="padding: 20px"] p[style*="font-size: 13px"] {
+                font-size: 11px !important;
+                margin-top: 6px !important;
+            }
+            .product-info > p[style*="padding: 12px 16px"] {
+                padding: 8px 10px !important;
+                font-size: 11px !important;
+                margin-bottom: 16px !important;
+            }
+            .product-info form > div[style*="margin-bottom: 24px"] {
+                margin-bottom: 12px !important;
+            }
+            .product-info form label {
+                font-size: 10px !important;
+                margin-bottom: 4px !important;
+            }
+            .product-info form input[type="number"] {
+                width: 90px !important;
+                padding: 8px 10px !important;
+                font-size: 12px !important;
+            }
+            .product-info form button[type="submit"] {
+                padding: 10px 20px !important;
+                font-size: 11px !important;
+            }
+            .product-description {
+                margin-top: 24px !important;
+                padding-top: 20px !important;
+            }
+            .product-description h2 {
+                font-size: 15px !important;
+                margin-bottom: 12px !important;
+            }
+            .product-description > div {
+                font-size: 12px !important;
+                line-height: 1.6 !important;
+            }
+        }
+    </style>
 @endsection
 

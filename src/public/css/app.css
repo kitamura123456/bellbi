@@ -167,7 +167,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: #666;
-    margin: 0 0 4px;
+    margin: 0 0 12px;
     font-weight: 500;
 }
 
@@ -192,8 +192,27 @@ body {
     border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
+/* マイページ専用: サイドバーとサブメニューを固定 */
+body:has(.mypage-menu-list) .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    align-self: flex-start !important;
+    z-index: 40 !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+}
+
+body:has(.mypage-menu-list) .sidebar-card {
+    position: sticky !important;
+    top: 0 !important;
+}
+
+body:has(.mypage-menu-list) .sidebar-menu {
+    position: relative !important;
+}
+
 .sidebar-title {
-    margin: 0 0 12px;
+    margin: 0 0 20px;
     font-size: 16px;
     color: #0f172a;
 }
@@ -966,12 +985,12 @@ body {
 }
 
 .sidebar-menu li {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .sidebar-menu-link {
     display: block;
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 8px;
     text-decoration: none;
     color: #374151;

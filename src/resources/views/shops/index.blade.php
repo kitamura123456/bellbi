@@ -4,8 +4,162 @@
 
 @section('sidebar')
     <div class="sidebar-card" style="background: #ffffff; border-radius: 0; padding: 32px 24px; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
-        <h3 class="sidebar-title" style="font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 24px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">条件でさがす</h3>
-        <form class="search-form" method="GET" action="{{ route('shops.index') }}">
+        <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;" onclick="if(window.innerWidth <= 768) toggleSearchForm()">
+            <div style="flex: 1; min-width: 0;">
+                <h3 class="sidebar-title" style="font-size: 14px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; text-transform: uppercase; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">条件でさがす</h3>
+                <div class="selected-conditions" id="selectedConditions" style="
+                    display: none;
+                    margin-top: 4px;
+                    font-size: 10px;
+                    color: #666;
+                    font-weight: 400;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                "></div>
+            </div>
+            <span class="toggle-icon" style="
+                display: none;
+                font-size: 16px;
+                color: #1a1a1a;
+                transition: transform 0.3s ease;
+                user-select: none;
+                cursor: pointer;
+                flex-shrink: 0;
+                margin-left: 8px;
+            ">▼</span>
+        </div>
+        <style>
+            /* スマホでサイドバーを固定 */
+            @media (max-width: 768px) {
+                .sidebar {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 50 !important;
+                    background: #ffffff !important;
+                    margin-bottom: 0 !important;
+                }
+                .sidebar-card {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 50 !important;
+                    background: #ffffff !important;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+                    margin-bottom: 0 !important;
+                    padding: 8px 12px !important;
+                }
+                .sidebar-header {
+                    margin-bottom: 0 !important;
+                    cursor: pointer !important;
+                    padding: 4px 0;
+                    align-items: flex-start !important;
+                }
+                .sidebar-title {
+                    margin-bottom: 0 !important;
+                    font-size: 11px !important;
+                }
+                .selected-conditions {
+                    display: block !important;
+                }
+                .toggle-icon {
+                    display: block !important;
+                    font-size: 14px !important;
+                }
+                .search-form {
+                    display: none;
+                    margin-top: 8px;
+                }
+                .search-form.active {
+                    display: block !important;
+                }
+                .toggle-icon.active {
+                    transform: rotate(180deg);
+                }
+                .container.main-inner {
+                    flex-direction: column !important;
+                }
+                .sidebar {
+                    order: -1 !important;
+                }
+            }
+            @media (max-width: 1024px) {
+                .sidebar-card {
+                    padding: 24px 20px !important;
+                }
+                .sidebar-title {
+                    font-size: 13px !important;
+                    margin-bottom: 20px !important;
+                }
+                .form-group {
+                    margin-bottom: 20px !important;
+                }
+                .form-group label {
+                    font-size: 11px !important;
+                    margin-bottom: 6px !important;
+                }
+                .form-group input[type="text"],
+                .form-group select {
+                    padding: 10px 14px !important;
+                    font-size: 13px !important;
+                }
+                button[type="submit"] {
+                    padding: 12px 20px !important;
+                    font-size: 12px !important;
+                }
+            }
+            @media (max-width: 768px) {
+                .sidebar-card {
+                    padding: 20px 16px !important;
+                }
+                .sidebar-title {
+                    font-size: 12px !important;
+                    margin-bottom: 16px !important;
+                }
+                .form-group {
+                    margin-bottom: 16px !important;
+                }
+                .form-group label {
+                    font-size: 10px !important;
+                    margin-bottom: 6px !important;
+                }
+                .form-group input[type="text"],
+                .form-group select {
+                    padding: 10px 12px !important;
+                    font-size: 12px !important;
+                }
+                button[type="submit"] {
+                    padding: 12px 16px !important;
+                    font-size: 11px !important;
+                }
+            }
+            @media (max-width: 480px) {
+                .sidebar-card {
+                    padding: 16px 12px !important;
+                }
+                .sidebar-title {
+                    font-size: 11px !important;
+                    margin-bottom: 12px !important;
+                }
+                .form-group {
+                    margin-bottom: 12px !important;
+                }
+                .form-group label {
+                    font-size: 9px !important;
+                    margin-bottom: 4px !important;
+                }
+                .form-group input[type="text"],
+                .form-group select {
+                    padding: 8px 10px !important;
+                    font-size: 11px !important;
+                }
+                button[type="submit"] {
+                    padding: 10px 14px !important;
+                    font-size: 10px !important;
+                }
+            }
+        </style>
+        <form class="search-form" id="searchForm" method="GET" action="{{ route('shops.index') }}">
             <div class="form-group" style="margin-bottom: 24px;">
                 <label for="keyword" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">キーワード</label>
                 <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="商品名・説明など" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; background: #ffffff; color: #1a1a1a; transition: all 0.3s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;" onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
@@ -69,9 +223,163 @@
             </button>
         </form>
     </div>
+    <script>
+        function toggleSearchForm() {
+            const form = document.getElementById('searchForm');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (form && icon) {
+                form.classList.toggle('active');
+                icon.classList.toggle('active');
+            }
+        }
+        
+        // 検索条件を取得して表示する関数
+        function updateSelectedConditions() {
+            if (window.innerWidth > 768) return; // スマホ版のみ
+            
+            const conditions = [];
+            const conditionsDiv = document.getElementById('selectedConditions');
+            
+            // キーワード
+            const keyword = document.getElementById('keyword')?.value?.trim();
+            if (keyword) {
+                conditions.push('キーワード: ' + keyword);
+            }
+            
+            // カテゴリ
+            const category = document.getElementById('category')?.value;
+            if (category) {
+                const categoryText = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+                conditions.push('カテゴリ: ' + categoryText);
+            }
+            
+            // 並び替え
+            const sort = document.getElementById('sort')?.value;
+            if (sort && sort !== 'random') {
+                const sortText = document.getElementById('sort').options[document.getElementById('sort').selectedIndex].text;
+                conditions.push('並び替え: ' + sortText);
+            }
+            
+            // 条件を表示
+            if (conditions.length > 0 && conditionsDiv) {
+                conditionsDiv.textContent = conditions.join(' / ');
+                conditionsDiv.style.display = 'block';
+            } else if (conditionsDiv) {
+                conditionsDiv.style.display = 'none';
+            }
+        }
+        
+        // 検索フォーム送信時に条件を表示して折りたたむ
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function() {
+                    if (window.innerWidth <= 768) {
+                        // 送信前に条件を更新
+                        updateSelectedConditions();
+                        // フォームを折りたたむ
+                        const form = document.getElementById('searchForm');
+                        const icon = document.querySelector('.toggle-icon');
+                        if (form && icon) {
+                            form.classList.remove('active');
+                            icon.classList.remove('active');
+                        }
+                    }
+                });
+            }
+            
+            // 入力の変更を監視
+            const keywordInput = document.getElementById('keyword');
+            if (keywordInput) {
+                keywordInput.addEventListener('input', updateSelectedConditions);
+            }
+            
+            const categorySelect = document.getElementById('category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', updateSelectedConditions);
+            }
+            
+            const sortSelect = document.getElementById('sort');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    updateSelectedConditions();
+                    // 並び替えは自動送信されるので、折りたたむ
+                    if (window.innerWidth <= 768) {
+                        const form = document.getElementById('searchForm');
+                        const icon = document.querySelector('.toggle-icon');
+                        if (form && icon) {
+                            form.classList.remove('active');
+                            icon.classList.remove('active');
+                        }
+                    }
+                });
+            }
+            
+            // ページ読み込み時に現在の検索条件を表示
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasSearchParams = urlParams.has('keyword') || urlParams.has('category') || urlParams.has('sort');
+            
+            if (hasSearchParams && window.innerWidth <= 768) {
+                // 少し遅延させてから条件を更新（フォームが読み込まれた後）
+                setTimeout(function() {
+                    updateSelectedConditionsFromURL();
+                }, 300);
+            } else if (window.innerWidth <= 768) {
+                // 検索条件がない場合も、フォームの状態を確認
+                setTimeout(function() {
+                    updateSelectedConditions();
+                }, 200);
+            }
+        });
+        
+        // URLパラメータから検索条件を読み取って表示
+        function updateSelectedConditionsFromURL() {
+            if (window.innerWidth > 768) return; // スマホ版のみ
+            
+            const conditions = [];
+            const conditionsDiv = document.getElementById('selectedConditions');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // キーワード
+            const keyword = urlParams.get('keyword');
+            if (keyword && keyword.trim()) {
+                conditions.push('キーワード: ' + keyword.trim());
+            }
+            
+            // カテゴリ
+            const category = urlParams.get('category');
+            if (category) {
+                const categorySelect = document.getElementById('category');
+                if (categorySelect) {
+                    const categoryText = categorySelect.options[categorySelect.selectedIndex]?.text || category;
+                    conditions.push('カテゴリ: ' + categoryText);
+                }
+            }
+            
+            // 並び替え
+            const sort = urlParams.get('sort');
+            if (sort && sort !== 'random') {
+                const sortSelect = document.getElementById('sort');
+                if (sortSelect) {
+                    const sortText = sortSelect.options[sortSelect.selectedIndex]?.text || sort;
+                    conditions.push('並び替え: ' + sortText);
+                }
+            }
+            
+            // 条件を表示
+            if (conditions.length > 0 && conditionsDiv) {
+                conditionsDiv.textContent = conditions.join(' / ');
+                conditionsDiv.style.display = 'block';
+            } else if (conditionsDiv) {
+                conditionsDiv.style.display = 'none';
+            }
+        }
+    </script>
 @endsection
 
 @section('content')
+    <div style="margin-top: 24px;">
     <header class="page-header" style="margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0;">
         <p class="page-label" style="font-size: 11px; color: #999; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 12px 0; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">Marketplace</p>
         <h2 class="page-title" style="font-size: 32px; font-weight: 400; color: #1a1a1a; margin: 0 0 16px 0; letter-spacing: -0.02em; line-height: 1.3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">ショップ</h2>
@@ -151,5 +459,6 @@
             {{ $products->links() }}
         </div>
     @endif
+    </div>
 @endsection
 
