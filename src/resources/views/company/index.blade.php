@@ -124,6 +124,21 @@
             <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">補助金情報</h3>
             <p style="margin: 0; font-size: 13px; color: #666; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">補助金情報の閲覧・検索</p>
         </a>
+
+        <a href="{{ route('company.shops.index') }}" class="dashboard-menu-card">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">ECショップ管理</h3>
+            <p style="margin: 0; font-size: 13px; color: #666; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">ショップの開設・編集・削除</p>
+        </a>
+
+        <a href="{{ route('company.products.index') }}" class="dashboard-menu-card">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">商品管理</h3>
+            <p style="margin: 0; font-size: 13px; color: #666; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">商品の登録・編集・削除</p>
+        </a>
+
+        <a href="{{ route('company.orders.index') }}" class="dashboard-menu-card">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 400; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">受注管理</h3>
+            <p style="margin: 0; font-size: 13px; color: #666; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif; transition: color 0.3s ease;">注文一覧・ステータス管理</p>
+        </a>
     </div>
     @else
     <div style="

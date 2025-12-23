@@ -35,7 +35,15 @@ class LoginController extends Controller
             $user = Auth::user();
 
             // ロールに応じてリダイレクト先を出し分け
+            // intended()は、認証が必要なページにアクセスしようとしたときに保存されたURLを優先的に使用する
             if ($user->role === User::ROLE_PERSONAL) {
+                // カートや注文確認ページから来た場合は、そのURLに戻る
+                // カートページから来た場合は、カートページに戻る
+                $intendedUrl = $request->session()->get('url.intended');
+                if ($intendedUrl && str_contains($intendedUrl, route('orders.checkout'))) {
+                    // 注文確認ページから来た場合は、カートページに戻す
+                    return redirect()->route('cart.index');
+                }
                 return redirect()->intended('/mypage');
             }
 

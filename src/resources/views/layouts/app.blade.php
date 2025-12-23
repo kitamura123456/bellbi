@@ -91,6 +91,30 @@
                     ">
                         予約する
                     </a>
+                    <a href="{{ route('shops.index') }}" class="nav-link-hover" style="
+                        color: #1a1a1a;
+                        text-decoration: none;
+                        font-size: 13px;
+                        font-weight: 400;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        padding: 4px 0;
+                        transition: color 0.3s ease;
+                        letter-spacing: 0.02em;
+                    ">
+                        ショップ
+                    </a>
+                    <a href="{{ route('cart.index') }}" class="nav-link-hover" style="
+                        color: #1a1a1a;
+                        text-decoration: none;
+                        font-size: 13px;
+                        font-weight: 400;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        padding: 4px 0;
+                        transition: color 0.3s ease;
+                        letter-spacing: 0.02em;
+                    ">
+                        カート
+                    </a>
 
                     @auth
                         @php
@@ -197,7 +221,7 @@
                 </aside>
 
                     <section class="content" style="flex: 1; min-width: 0;">
-                        @if (session('status'))
+                        @if (session('status') && !request()->routeIs('cart.index') && !request()->routeIs('orders.complete'))
                             <div style="
                                 background-color: #5D535E;
                                 border-radius: 8px;

@@ -1,4 +1,3 @@
--- Active: 1765333928509@@127.0.0.1@3306@bellbi
 @php
 use App\Enums\Todofuken;
 @endphp

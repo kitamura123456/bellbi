@@ -84,4 +84,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Conversation::class);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class)->where('delete_flg', 0);
+    }
 }

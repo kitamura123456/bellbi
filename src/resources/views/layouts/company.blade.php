@@ -130,6 +130,9 @@
                     <a href="{{ route('company.plans.index') }}" class="nav-link {{ request()->routeIs('company.plans*') ? 'active' : '' }}">
                         プラン管理
                     </a>
+                    <a href="{{ route('company.shops.index') }}" class="nav-link {{ request()->routeIs('company.shops*') || request()->routeIs('company.products*') || request()->routeIs('company.orders*') ? 'active' : '' }}">
+                        ECショップ
+                    </a>
                     <a href="{{ route('jobs.index') }}" target="_blank" class="nav-link nav-link-external">
                         フロントを見る
                     </a>

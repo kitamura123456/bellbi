@@ -73,8 +73,9 @@
                     ">在庫あり</p>
                 @endif
                 @if($product->status !== \App\Models\Product::STATUS_OUT_OF_STOCK && $product->stock > 0)
-                    <form method="POST" action="#" style="margin-bottom: 0;">
+                    <form method="POST" action="{{ route('cart.add') }}" style="margin-bottom: 0;">
                         @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <div style="margin-bottom: 24px;">
                             <label for="quantity" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">数量</label>
                             <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}" style="

@@ -32,6 +32,12 @@ use App\Http\Controllers\Company\AccountItemController as CompanyAccountItems;
 use App\Http\Controllers\Company\TransactionController as CompanyTransactions;
 use App\Http\Controllers\Company\PlanController as CompanyPlans;
 use App\Http\Controllers\Company\SubsidyController as CompanySubsidies;
+use App\Http\Controllers\Company\ShopController as CompanyShops;
+use App\Http\Controllers\Company\ProductController as CompanyProducts;
+use App\Http\Controllers\Company\OrderController as CompanyOrders;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Api\BusinessCategoryController;
 
@@ -50,6 +56,17 @@ Route::get('/reservations/search', [ReservationController::class, 'search'])->na
 Route::get('/reservations/store/{store}', [ReservationController::class, 'store'])->name('reservations.store');
 Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking');
 Route::post('/reservations/store/{store}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
+
+// ECショップ（エンドユーザ向け）
+Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
+Route::get('/shops/product/{product}', [ShopController::class, 'show'])->name('shops.show');
+
+// カート機能
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::put('/cart/update/{product}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 // 認証
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -75,6 +92,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/mypage/reservations', [MypageReservations::class, 'index'])->name('mypage.reservations.index');
     Route::get('/mypage/reservations/{reservation}', [MypageReservations::class, 'show'])->name('mypage.reservations.show');
     Route::post('/mypage/reservations/{reservation}/cancel', [MypageReservations::class, 'cancel'])->name('mypage.reservations.cancel');
+    
+    // 注文機能
+    Route::get('/orders/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
+    Route::post('/orders/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
+    Route::get('/orders/complete/{order}', [OrderController::class, 'complete'])->name('orders.complete');
+    Route::get('/mypage/orders', [OrderController::class, 'index'])->name('mypage.orders.index');
+    Route::get('/mypage/orders/{order}', [OrderController::class, 'show'])->name('mypage.orders.show');
     
     // メッセージ機能
     Route::get('/mypage/messages', [MypageMessages::class, 'index'])->name('mypage.messages.index');
