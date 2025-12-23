@@ -27,10 +27,13 @@
             transition: width 0.3s ease;
         }
         .nav-link-hover:hover {
-            color: #666 !important;
+            color: #1a1a1a !important;
         }
         .nav-link-hover:hover::after {
             width: 100%;
+        }
+        .main-nav a::after {
+            background-color: #1a1a1a !important;
         }
     </style>
 </head>
@@ -45,9 +48,7 @@
             color: #1a1a1a;
         ">
             <div style="
-                max-width: 1080px;
-                margin: 0 auto;
-                padding: 16px 24px;
+                padding: 16px 48px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -248,7 +249,7 @@
         </header>
 
         <main class="site-main" style="background: #ffffff; min-height: calc(100vh - 200px);">
-            <div class="container main-inner" style="max-width: 1400px; padding: 48px 24px; display: flex; gap: 48px;">
+            <div class="container main-inner" style="padding: 48px 48px; display: flex; gap: 48px; justify-content: flex-start; align-items: flex-start; max-width: none; margin: 0;">
                 <aside class="sidebar" style="min-width: 320px; flex-shrink: 0; position: relative;">
                     @yield('sidebar')
                 </aside>
@@ -372,6 +373,9 @@
             }
             
             @media (max-width: 1024px) {
+                .header-inner {
+                    padding: 16px 24px !important;
+                }
                 .container.main-inner {
                     flex-direction: column !important;
                     gap: 32px !important;
@@ -531,9 +535,7 @@
             padding: 32px 0;
         ">
             <div style="
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 0 24px;
+                padding: 0 48px;
                 text-align: center;
             ">
                 <p style="

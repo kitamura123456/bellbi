@@ -86,11 +86,11 @@ body {
     content: "";
     position: absolute;
     left: 0;
-    bottom: -4px;
+    bottom: -2px;
     width: 0;
-    height: 2px;
-    background-color: #ec4899;
-    transition: width 0.2s ease;
+    height: 1px;
+    background-color: #1a1a1a;
+    transition: width 0.3s ease;
 }
 
 .main-nav a:hover::after {
@@ -120,7 +120,7 @@ body {
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: #ec4899;
+    background-color: #1a1a1a;
     transition: width 0.2s ease;
 }
 

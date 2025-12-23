@@ -272,26 +272,77 @@ use App\Enums\Todofuken;
                             <label style="
                                 display: flex;
                                 align-items: center;
-                                padding: 8px 10px;
+                                padding: 8px 12px;
                                 margin-bottom: 2px;
                                 cursor: pointer;
                                 border-radius: 0;
-                                transition: background-color 0.3s ease;
-                                background-color: {{ $hasSelectedInRegion ? '#f5f5f5' : 'transparent' }};
-                            " class="region-label-{{ $regionKey }}" onmouseover="if(!document.getElementById('region-{{ $regionKey }}') || !document.getElementById('region-{{ $regionKey }}').checked) this.style.backgroundColor='#fafafa';" onmouseout="if(!document.getElementById('region-{{ $regionKey }}') || !document.getElementById('region-{{ $regionKey }}').checked) this.style.backgroundColor='{{ $hasSelectedInRegion ? '#f5f5f5' : 'transparent' }}';">
-                                <input type="checkbox" 
-                                    id="region-{{ $regionKey }}"
-                                    class="region-checkbox"
-                                    data-region="{{ $regionKey }}"
-                                    {{ $hasSelectedInRegion ? 'checked' : ''}}
-                                    onchange="toggleRegion('{{ $regionKey }}')"
-                                    style="
-                                        margin-right: 10px;
-                                        cursor: pointer;
+                                transition: all 0.2s ease;
+                                background-color: {{ $hasSelectedInRegion ? '#f0f0f0' : 'transparent' }};
+                                border: 1px solid {{ $hasSelectedInRegion ? '#1a1a1a' : 'transparent' }};
+                            " class="region-label-{{ $regionKey }}" onmouseover="if(!document.getElementById('region-{{ $regionKey }}') || !document.getElementById('region-{{ $regionKey }}').checked) { this.style.backgroundColor='#f8f8f8'; this.style.borderColor='#e0e0e0'; }" onmouseout="if(!document.getElementById('region-{{ $regionKey }}') || !document.getElementById('region-{{ $regionKey }}').checked) { this.style.backgroundColor='{{ $hasSelectedInRegion ? '#f0f0f0' : 'transparent' }}'; this.style.borderColor='transparent'; }">
+                                <div style="
+                                    position: relative;
+                                    margin-right: 10px;
+                                    width: 16px;
+                                    height: 16px;
+                                    flex-shrink: 0;
+                                ">
+                                    <input type="checkbox" 
+                                        id="region-{{ $regionKey }}"
+                                        class="region-checkbox"
+                                        data-region="{{ $regionKey }}"
+                                        {{ $hasSelectedInRegion ? 'checked' : ''}}
+                                        onchange="toggleRegion('{{ $regionKey }}')"
+                                        style="
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            opacity: 0;
+                                            cursor: pointer;
+                                            width: 16px;
+                                            height: 16px;
+                                            margin: 0;
+                                            z-index: 1;
+                                        ">
+                                    <div class="region-checkbox-custom" style="
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
                                         width: 16px;
                                         height: 16px;
-                                        accent-color: #1a1a1a;
-                                    ">
+                                        border: 2px solid {{ $hasSelectedInRegion ? '#1a1a1a' : '#d0d0d0' }};
+                                        background-color: {{ $hasSelectedInRegion ? '#1a1a1a' : '#ffffff' }};
+                                        border-radius: 0;
+                                        transition: all 0.2s ease;
+                                        pointer-events: none;
+                                    "></div>
+                                    @if($hasSelectedInRegion)
+                                    <svg class="region-check-icon" style="
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: 12px;
+                                        height: 12px;
+                                        pointer-events: none;
+                                    " viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2 6L5 9L10 2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    @else
+                                    <svg class="region-check-icon" style="
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: 12px;
+                                        height: 12px;
+                                        pointer-events: none;
+                                        display: none;
+                                    " viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2 6L5 9L10 2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    @endif
+                                </div>
                                 <span style="
                                     flex: 1;
                                     font-size: 13px;
@@ -333,43 +384,83 @@ use App\Enums\Todofuken;
                                     <label style="
                                         display: flex;
                                         align-items: center;
-                                        padding: 4px 8px;
-                                        margin-bottom: 1px;
+                                        padding: 6px 10px;
+                                        margin-bottom: 2px;
                                         cursor: pointer;
-                                        border-radius: 6px;
-                                        transition: background-color 0.15s ease;
+                                        border-radius: 0;
+                                        transition: all 0.2s ease;
                                         background-color: {{ $bgColor }};
-                                    " onmouseover="if(!this.querySelector('input[type=checkbox]').checked) this.style.backgroundColor='#fafafa';" onmouseout="if(!this.querySelector('input[type=checkbox]').checked) this.style.backgroundColor='{{ $bgColor }}';">
-                                        <input type="checkbox" 
-                                            name="area[]" 
-                                            value="{{ $pref->value }}" 
-                                            {{ $isChecked ? 'checked' : ''}}
-                                            onchange="this.parentElement.style.backgroundColor = this.checked ? '#f5f5f5' : 'transparent'; var badge = this.parentElement.querySelector('span:last-child'); if(badge && badge.style) { badge.style.backgroundColor = this.checked ? '#1a1a1a' : '#e0e0e0'; badge.style.color = this.checked ? '#ffffff' : '#666'; } updateRegionCheckbox('{{ $regionKey }}');"
-                                            style="
-                                                margin-right: 8px;
-                                                cursor: pointer;
-                                                width: 14px;
-                                                height: 14px;
-                                                accent-color: #1a1a1a;
-                                            ">
+                                        border: 1px solid {{ $isChecked ? '#1a1a1a' : 'transparent' }};
+                                    " onmouseover="if(!this.querySelector('input[type=checkbox]').checked) { this.style.backgroundColor='#f8f8f8'; this.style.borderColor='#e0e0e0'; }" onmouseout="if(!this.querySelector('input[type=checkbox]').checked) { this.style.backgroundColor='{{ $bgColor }}'; this.style.borderColor='transparent'; }">
+                                        <div style="
+                                            position: relative;
+                                            margin-right: 10px;
+                                            width: 16px;
+                                            height: 16px;
+                                            flex-shrink: 0;
+                                        ">
+                                            <input type="checkbox" 
+                                                name="area[]" 
+                                                value="{{ $pref->value }}" 
+                                                {{ $isChecked ? 'checked' : ''}}
+                                                onchange="var label = this.closest('label'); var isChecked = this.checked; label.style.backgroundColor = isChecked ? '#f0f0f0' : 'transparent'; label.style.borderColor = isChecked ? '#1a1a1a' : 'transparent'; var textSpan = label.querySelector('span:nth-of-type(1)'); if(textSpan) { textSpan.style.color = isChecked ? '#1a1a1a' : '#333333'; textSpan.style.fontWeight = isChecked ? '500' : '400'; } var customCheckbox = label.querySelector('div[style*=\"position: absolute\"]'); if(customCheckbox) { customCheckbox.style.borderColor = isChecked ? '#1a1a1a' : '#d0d0d0'; customCheckbox.style.backgroundColor = isChecked ? '#1a1a1a' : '#ffffff'; } var checkIcon = label.querySelector('svg'); if(checkIcon) { checkIcon.style.display = isChecked ? 'block' : 'none'; } var badge = label.querySelector('span:last-child'); if(badge && badge.style) { badge.style.backgroundColor = isChecked ? '#1a1a1a' : '#e0e0e0'; badge.style.color = isChecked ? '#ffffff' : '#666'; } updateRegionCheckbox('{{ $regionKey }}');"
+                                                style="
+                                                    position: absolute;
+                                                    top: 0;
+                                                    left: 0;
+                                                    opacity: 0;
+                                                    cursor: pointer;
+                                                    width: 16px;
+                                                    height: 16px;
+                                                    margin: 0;
+                                                    z-index: 1;
+                                                ">
+                                            <div style="
+                                                position: absolute;
+                                                top: 0;
+                                                left: 0;
+                                                width: 16px;
+                                                height: 16px;
+                                                border: 2px solid {{ $isChecked ? '#1a1a1a' : '#d0d0d0' }};
+                                                background-color: {{ $isChecked ? '#1a1a1a' : '#ffffff' }};
+                                                border-radius: 0;
+                                                transition: all 0.2s ease;
+                                                pointer-events: none;
+                                            "></div>
+                                            <svg style="
+                                                position: absolute;
+                                                top: 50%;
+                                                left: 50%;
+                                                transform: translate(-50%, -50%);
+                                                width: 12px;
+                                                height: 12px;
+                                                pointer-events: none;
+                                                display: {{ $isChecked ? 'block' : 'none' }};
+                                            " viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2 6L5 9L10 2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
                                         <span style="
                                             flex: 1;
-                                            font-size: 12px;
-                                            color: #1a1a1a;
+                                            font-size: 13px;
+                                            color: {{ $isChecked ? '#1a1a1a' : '#333333' }};
+                                            font-weight: {{ $isChecked ? '500' : '400' }};
                                             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                                            transition: all 0.2s ease;
                                         ">{{ $pref->label() }}</span>
                                         @if($count > 0)
                                         <span style="
                                             display: inline-block;
-                                            padding: 1px 6px;
+                                            padding: 2px 8px;
                                             background-color: {{ $badgeBgColor }};
                                             color: {{ $badgeTextColor }};
                                             border-radius: 0;
                                             font-size: 10px;
-                                            font-weight: 500;
-                                            min-width: 20px;
+                                            font-weight: 600;
+                                            min-width: 22px;
                                             text-align: center;
                                             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                                            transition: all 0.2s ease;
                                         ">{{ $count }}</span>
                                         @endif
                                     </label>
@@ -387,20 +478,59 @@ use App\Enums\Todofuken;
                     
                     if (checkbox.checked) {
                         prefectureDiv.style.display = 'block';
-                        if (label) label.style.backgroundColor = '#f5f5f5';
+                        if (label) {
+                            label.style.backgroundColor = '#f5f5f5';
+                            label.style.borderColor = '#1a1a1a';
+                        }
+                        // カスタムチェックボックスのスタイルを更新
+                        const customCheckbox = label.querySelector('.region-checkbox-custom');
+                        if (customCheckbox) {
+                            customCheckbox.style.borderColor = '#1a1a1a';
+                            customCheckbox.style.backgroundColor = '#1a1a1a';
+                        }
+                        const checkIcon = label.querySelector('.region-check-icon');
+                        if (checkIcon) {
+                            checkIcon.style.display = 'block';
+                        }
                     } else {
                         prefectureDiv.style.display = 'none';
-                        if (label) label.style.backgroundColor = 'transparent';
+                        if (label) {
+                            label.style.backgroundColor = 'transparent';
+                            label.style.borderColor = 'transparent';
+                        }
+                        // カスタムチェックボックスのスタイルを更新
+                        const customCheckbox = label.querySelector('.region-checkbox-custom');
+                        if (customCheckbox) {
+                            customCheckbox.style.borderColor = '#d0d0d0';
+                            customCheckbox.style.backgroundColor = '#ffffff';
+                        }
+                        const checkIcon = label.querySelector('.region-check-icon');
+                        if (checkIcon) {
+                            checkIcon.style.display = 'none';
+                        }
                         // 地域のチェックを外したら、その地域の都道府県もすべて外す
                         const prefectureCheckboxes = prefectureDiv.querySelectorAll('input[type="checkbox"]');
                         prefectureCheckboxes.forEach(cb => {
                             cb.checked = false;
-                            const badge = cb.parentElement.querySelector('span:last-child');
+                            const prefLabel = cb.closest('label');
+                            if (prefLabel) {
+                                prefLabel.style.backgroundColor = 'transparent';
+                                prefLabel.style.borderColor = 'transparent';
+                                const customCheckbox = prefLabel.querySelector('div[style*="position: absolute"]');
+                                if (customCheckbox) {
+                                    customCheckbox.style.borderColor = '#d0d0d0';
+                                    customCheckbox.style.backgroundColor = '#ffffff';
+                                }
+                                const checkIcon = prefLabel.querySelector('svg');
+                                if (checkIcon) {
+                                    checkIcon.style.display = 'none';
+                                }
+                            }
+                            const badge = prefLabel ? prefLabel.querySelector('span:last-child') : null;
                             if(badge && badge.style) {
                                 badge.style.backgroundColor = '#e0e0e0';
                                 badge.style.color = '#666';
                             }
-                            cb.parentElement.style.backgroundColor = 'transparent';
                         });
                     }
                 }
@@ -828,7 +958,7 @@ use App\Enums\Todofuken;
     @if ($jobs->isEmpty())
         <p class="empty-message" style="font-size: 14px; color: #999; text-align: center; padding: 64px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">現在公開中の求人はありません。</p>
     @else
-        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px 24px;">
+        <div class="job-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 32px 24px;">
             @foreach ($jobs as $job)
                 @php
                     $applicationStatus = $userApplications[$job->id] ?? null;
@@ -922,7 +1052,7 @@ use App\Enums\Todofuken;
         /* レスポンシブ対応のスタイル */
         @media (max-width: 1200px) {
             .job-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
                 gap: 24px 20px !important;
             }
         }
@@ -936,7 +1066,7 @@ use App\Enums\Todofuken;
                 font-size: 28px !important;
             }
             .job-grid {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
                 gap: 24px 16px !important;
             }
             .job-card > a > .job-card-body > div:first-child {
@@ -1039,8 +1169,22 @@ use App\Enums\Todofuken;
         
         @media (min-width: 1400px) {
             .job-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
                 gap: 40px 32px !important;
+            }
+        }
+        
+        @media (min-width: 1600px) {
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                gap: 48px 40px !important;
+            }
+        }
+        
+        @media (min-width: 1920px) {
+            .job-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+                gap: 48px 40px !important;
             }
         }
     </style>
