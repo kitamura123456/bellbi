@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JobApplication;
 use App\Models\JobPost;
 use App\Models\Tag;
+use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -48,7 +49,13 @@ class JobPostController extends Controller
 
         if($request->filled('area') && !empty(array_filter((array)$request->input('area')))){
             $areas = (array)$request->input('area');
+            $areas = array_map('intval', $areas);
             $query->whereIn('prefecture_code', $areas);
+        }
+
+        if($request->filled('city') && !empty(array_filter((array)$request->input('city')))){
+            $cityCodes = (array)$request->input('city');
+            $query->whereIn('city_code', $cityCodes);
         }
 
         if($request->filled('employment_type') && !empty(array_filter((array)$request->input('employment_type')))){
@@ -127,7 +134,43 @@ class JobPostController extends Controller
             ->pluck('count', 'employment_type')
             ->toArray();
 
-        return view('jobs.index', compact('jobs', 'tags', 'areaCounts', 'employmentTypeCounts', 'userApplications'));
+        // 選択された都道府県の市区町村を取得（areaパラメータと同じロジックを使用）
+        $selectedPrefectures = [];
+        if($request->filled('area') && !empty(array_filter((array)$request->input('area')))){
+            $areas = (array)$request->input('area');
+            $selectedPrefectures = array_map('intval', $areas);
+        }
+        
+        $cities = collect();
+        if (!empty($selectedPrefectures)) {
+            $cities = City::whereIn('prefecture_code', $selectedPrefectures)
+                ->orderBy('prefecture_code')
+                ->orderBy('name')
+                ->get();
+        }
+
+        // 各市区町村の件数を取得
+        $cityCounts = [];
+        if (!empty($selectedPrefectures)) {
+            $cityCounts = JobPost::where('status', 1)
+                ->where('delete_flg', 0)
+                ->whereIn('prefecture_code', $selectedPrefectures)
+                ->whereNotNull('city_code')
+                ->where(function($q) use ($now) {
+                    $q->whereNull('publish_start_at')
+                      ->orWhere('publish_start_at', '<=', $now);
+                })
+                ->where(function($q) use ($now) {
+                    $q->whereNull('publish_end_at')
+                      ->orWhere('publish_end_at', '>', $now);
+                })
+                ->selectRaw('city_code, count(*) as count')
+                ->groupBy('city_code')
+                ->pluck('count', 'city_code')
+                ->toArray();
+        }
+
+        return view('jobs.index', compact('jobs', 'tags', 'areaCounts', 'employmentTypeCounts', 'userApplications', 'cities', 'cityCounts', 'selectedPrefectures'));
     }
 
     /**

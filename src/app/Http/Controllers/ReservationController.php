@@ -62,7 +62,7 @@ class ReservationController extends Controller
             }
         }
 
-        $stores = $query->with('images')->paginate(20)->withQueryString();
+        $stores = $query->paginate(20)->withQueryString();
 
         // 各都道府県の件数を取得（予約可能な店舗のみ）
         $areaCounts = [];
@@ -93,9 +93,6 @@ class ReservationController extends Controller
         if (!$store->accepts_reservations) {
             abort(404);
         }
-
-        // 画像を読み込む
-        $store->load('images');
 
         $menus = $store->serviceMenus()
             ->where('is_active', 1)

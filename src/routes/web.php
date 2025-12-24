@@ -43,6 +43,8 @@ use App\Http\Controllers\Api\BusinessCategoryController;
 
 // API
 Route::get('/api/business-categories/{industry_type}', [BusinessCategoryController::class, 'getCategories'])->name('api.business-categories');
+Route::get('/api/cities/by-prefecture', [\App\Http\Controllers\Api\CityController::class, 'getCitiesByPrefecture'])->name('api.cities.by-prefecture');
+Route::post('/api/cities/by-location', [\App\Http\Controllers\Api\CityController::class, 'getCitiesByLocation'])->name('api.cities.by-location');
 
 // トップ・求人
 Route::get('/', [JobPostController::class, 'index'])->name('home');

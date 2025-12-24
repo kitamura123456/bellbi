@@ -216,6 +216,7 @@ use App\Enums\Todofuken;
                 <label for="keyword" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">キーワード</label>
                 <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="エリア・サロン名・職種など" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 0; font-size: 14px; background: #ffffff; color: #1a1a1a; transition: all 0.3s ease; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;" onfocus="this.style.borderColor='#1a1a1a'; this.style.outline='none';" onblur="this.style.borderColor='#e0e0e0';">
             </div>
+            
             @php
                 $regions = [
                     'hokkaido' => [
@@ -254,6 +255,34 @@ use App\Enums\Todofuken;
             @endphp
             <div class="form-group" style="margin-bottom: 24px;">
                 <label for="area" style="display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;">エリア</label>
+                <button type="button" id="getCurrentLocationBtn" onclick="getCurrentLocation()" style="
+                    width: 100%;
+                    padding: 10px 16px;
+                    margin-bottom: 12px;
+                    background-color: #1a1a1a;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 0;
+                    font-size: 12px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                " onmouseover="this.style.backgroundColor='#333'" onmouseout="this.style.backgroundColor='#1a1a1a'">
+                    現在地から検索(位置情報を取得)
+                </button>
+                <div id="currentLocationInfo" style="
+                    display: none;
+                    padding: 8px 12px;
+                    margin-bottom: 12px;
+                    background-color: #f0f8ff;
+                    border: 1px solid #b0d4f1;
+                    border-radius: 0;
+                    font-size: 11px;
+                    color: #0066cc;
+                "></div>
+                {{-- 現在地から取得した市区町村セクション（動的に追加される） --}}
+                <div id="currentLocationCitiesContainer"></div>
                 <div class="checkbox-list" style="
                     max-height: 300px;
                     overflow-y: auto;
@@ -339,6 +368,7 @@ use App\Enums\Todofuken;
                                         $badgeBgColor = '#e0e0e0';
                                         $badgeTextColor = '#666';
                                     @endphp
+                                    <div style="display: flex; align-items: center;">
                                     <label class="filter-badge {{ $isChecked ? 'is-selected' : '' }}" style="
                                         display: flex;
                                         align-items: center;
@@ -346,6 +376,7 @@ use App\Enums\Todofuken;
                                         margin-bottom: 1px;
                                         cursor: pointer;
                                         border-radius: 0;
+                                            flex: 1;
                                     ">
                                         <input type="checkbox" 
                                             name="area[]" 
@@ -357,6 +388,7 @@ use App\Enums\Todofuken;
                                                     badge.classList.toggle('is-selected', this.checked);
                                                 }
                                                 updateRegionCheckbox('{{ $regionKey }}');
+                                                    updateCitiesForPrefecture({{ $pref->value }}, this.checked);
                                                 "
 
                                             style="
@@ -388,6 +420,36 @@ use App\Enums\Todofuken;
                                         ">{{ $count }}</span>
                                         @endif
                                     </label>
+                                        {{-- 市区町村を閉じるボタン（市区町村が表示されている時だけ表示） --}}
+                                        <button type="button" 
+                                            id="collapse-cities-{{ $pref->value }}"
+                                            onclick="collapseCitiesForPrefecture({{ $pref->value }})"
+                                            style="
+                                                padding: 2px 6px;
+                                                margin-right: 4px;
+                                                background: transparent;
+                                                border: none;
+                                                cursor: pointer;
+                                                font-size: 14px;
+                                                color: #666;
+                                                transition: color 0.3s ease;
+                                                display: none;
+                                                align-items: center;
+                                                justify-content: center;
+                                            "
+                                            onmouseover="this.style.color='#1a1a1a';"
+                                            onmouseout="this.style.color='#666';"
+                                            title="市区町村を閉じる">
+                                            ▲
+                                        </button>
+                                    </div>
+                                    {{-- 市区町村コンテナ（都道府県の下に表示） --}}
+                                    <div id="cities-{{ $pref->value }}" style="
+                                        display: none;
+                                        margin-left: 32px;
+                                        margin-top: 4px;
+                                        margin-bottom: 4px;
+                                    "></div>
                                 @endforeach
                             </div>
                         </div>
@@ -403,6 +465,14 @@ use App\Enums\Todofuken;
                     if (checkbox.checked) {
                         prefectureDiv.style.display = 'block';
                         if (label) label.style.backgroundColor = '#f5f5f5';
+                        // チェックされている都道府県の市区町村を表示
+                        const checkedPrefs = prefectureDiv.querySelectorAll('input[name="area[]"]:checked');
+                        checkedPrefs.forEach(prefCheckbox => {
+                            const prefCode = parseInt(prefCheckbox.value);
+                            if (prefCode > 0 && prefCode <= 47) {
+                                updateCitiesForPrefecture(prefCode, true);
+                            }
+                        });
                     } else {
                         prefectureDiv.style.display = 'none';
                         if (label) label.style.backgroundColor = 'transparent';
@@ -414,9 +484,15 @@ use App\Enums\Todofuken;
                             if (badge) {
                                 badge.classList.toggle('is-selected', false);
                             }
+                            // 市区町村も非表示
+                            const prefCode = parseInt(cb.value);
+                            if (prefCode > 0 && prefCode <= 47) {
+                                updateCitiesForPrefecture(prefCode, false);
+                            }
                         });
                     }
                 }
+                
                 
                 function updateRegionCheckbox(regionKey) {
                     const prefectureDiv = document.getElementById('prefectures-' + regionKey);
@@ -435,8 +511,433 @@ use App\Enums\Todofuken;
                     }
                 }
                 
-                // ページ読み込み時に選択されている地域を展開
+                // 特定の都道府県の市区町村を表示/非表示
+                function updateCitiesForPrefecture(prefCode, isChecked) {
+                    const citiesContainer = document.getElementById('cities-' + prefCode);
+                    const collapseButton = document.getElementById('collapse-cities-' + prefCode);
+                    
+                    if (!citiesContainer) return;
+                    
+                    if (!isChecked) {
+                        // チェックが外れたら市区町村を非表示
+                        citiesContainer.style.display = 'none';
+                        // データをクリアして、次回読み込み時に再取得できるようにする
+                        citiesContainer.innerHTML = '';
+                        citiesContainer.dataset.loaded = 'false';
+                        if (collapseButton) {
+                            collapseButton.style.display = 'none';
+                        }
+                        return;
+                    }
+                    
+                    // 既に読み込み済みで内容がある場合は表示のみ
+                    if (citiesContainer.dataset.loaded === 'true' && citiesContainer.innerHTML.trim() !== '') {
+                        citiesContainer.style.display = 'block';
+                        if (collapseButton) {
+                            collapseButton.style.display = 'flex';
+                        }
+                        return;
+                    }
+                    
+                    // 市区町村を取得
+                    fetch(`{{ url('/api/cities/by-prefecture') }}?prefecture_code=${prefCode}`, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (!result.success || !result.cities || result.cities.length === 0) {
+                            citiesContainer.style.display = 'none';
+                            if (collapseButton) {
+                                collapseButton.style.display = 'none';
+                            }
+                            return;
+                        }
+                        
+                        citiesContainer.innerHTML = '';
+                        
+                        // 市区町村を追加
+                        result.cities.forEach(city => {
+                            const labelEl = document.createElement('label');
+                            labelEl.className = 'filter-badge';
+                            labelEl.style.cssText = 'display: flex; align-items: center; padding: 4px 8px; margin-bottom: 1px; cursor: pointer; border-radius: 0;';
+                            
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.name = 'city[]';
+                            checkbox.value = city.city_code;
+                            checkbox.style.cssText = 'margin-right: 8px; cursor: pointer; width: 14px; height: 14px; accent-color: #1a1a1a; border-radius: 0;';
+                            checkbox.onchange = function() {
+                                const badge = this.parentElement;
+                                if (badge) {
+                                    badge.classList.toggle('is-selected', this.checked);
+                                }
+                                // 他の同じ市区町村のチェックも連動
+                                syncCityCheckboxes(city.city_code, this.checked);
+                            };
+                            
+                            const span = document.createElement('span');
+                            span.textContent = city.name;
+                            span.style.cssText = 'flex: 1; font-size: 12px; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;';
+                            
+                            if (city.count > 0) {
+                                const countSpan = document.createElement('span');
+                                countSpan.textContent = city.count;
+                                countSpan.style.cssText = 'display: inline-block; padding: 1px 6px; background-color: #e0e0e0; color: #666; border-radius: 0; font-size: 10px; font-weight: 500; min-width: 20px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;';
+                                labelEl.appendChild(checkbox);
+                                labelEl.appendChild(span);
+                                labelEl.appendChild(countSpan);
+                            } else {
+                                labelEl.appendChild(checkbox);
+                                labelEl.appendChild(span);
+                            }
+                            
+                            citiesContainer.appendChild(labelEl);
+                        });
+                        
+                        citiesContainer.dataset.loaded = 'true';
+                        citiesContainer.style.display = 'block';
+                        if (collapseButton) {
+                            collapseButton.style.display = 'flex';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('市区町村の取得に失敗しました:', error);
+                        citiesContainer.style.display = 'none';
+                        if (collapseButton) {
+                            collapseButton.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // 都道府県の市区町村を閉じる
+                function collapseCitiesForPrefecture(prefCode) {
+                    const citiesContainer = document.getElementById('cities-' + prefCode);
+                    const collapseButton = document.getElementById('collapse-cities-' + prefCode);
+                    
+                    if (citiesContainer) {
+                        citiesContainer.style.display = 'none';
+                    }
+                    if (collapseButton) {
+                        collapseButton.style.display = 'none';
+                    }
+                }
+                
+                // 選択された都道府県に基づいて市区町村を動的に表示（初期表示用）
+                function updateCitiesByPrefecture() {
+                    const checkedPrefs = Array.from(document.querySelectorAll('input[name="area[]"]:checked'))
+                        .map(cb => parseInt(cb.value))
+                        .filter(v => v > 0 && v <= 47);
+                    
+                    checkedPrefs.forEach(prefCode => {
+                        updateCitiesForPrefecture(prefCode, true);
+                    });
+                }
+                
+                // 現在地を取得して市区町村を検索
+                function getCurrentLocation() {
+                    const btn = document.getElementById('getCurrentLocationBtn');
+                    const info = document.getElementById('currentLocationInfo');
+                    
+                    if (!navigator.geolocation) {
+                        info.style.display = 'block';
+                        info.style.backgroundColor = '#fff3cd';
+                        info.style.borderColor = '#ffc107';
+                        info.style.color = '#856404';
+                        info.textContent = 'お使いのブラウザは位置情報をサポートしていません。';
+                        return;
+                    }
+                    
+                    // HTTPSでない場合の警告
+                    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                        info.style.display = 'block';
+                        info.style.backgroundColor = '#fff3cd';
+                        info.style.borderColor = '#ffc107';
+                        info.style.color = '#856404';
+                        info.textContent = '位置情報を取得するにはHTTPS接続が必要です。';
+                        return;
+                    }
+                    
+                    btn.disabled = true;
+                    btn.textContent = '位置情報を取得中...';
+                    info.style.display = 'block';
+                    info.style.backgroundColor = '#f0f8ff';
+                    info.style.borderColor = '#b0d4f1';
+                    info.style.color = '#0066cc';
+                    info.textContent = '位置情報を取得しています...';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            console.log('位置情報取得成功:', lat, lng);
+                            
+                            // サーバー側で逆ジオコーディングを実行（CORS回避）
+                            fetch('{{ url("/api/cities/by-location") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    latitude: lat,
+                                    longitude: lng
+                                })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('HTTP error! status: ' + response.status);
+                                }
+                                return response.json();
+                            })
+                            .then(result => {
+                                console.log('API結果:', result);
+                                
+                                if (result.success && result.cities && result.cities.length > 0) {
+                                    // 都道府県を自動選択
+                                    selectPrefectureByCode(result.prefecture_code);
+                                    
+                                    // 市区町村を表示（最初の1つだけ）
+                                    // 少し待ってから市区町村を選択（市区町村が表示されるのを待つ）
+                                    setTimeout(() => {
+                                        displayCitiesFromLocation(result.cities, result.prefecture_code, result.prefecture_name);
+                                    }, 300);
+                                    
+                                    info.style.backgroundColor = '#d4edda';
+                                    info.style.borderColor = '#c3e6cb';
+                                    info.style.color = '#155724';
+                                    info.textContent = `現在地: ${result.prefecture_name}${result.city_name ? ' ' + result.city_name : ''}`;
+                                } else {
+                                    info.style.backgroundColor = '#fff3cd';
+                                    info.style.borderColor = '#ffc107';
+                                    info.style.color = '#856404';
+                                    info.textContent = result.message || '市区町村データが見つかりませんでした。';
+                                }
+                                btn.disabled = false;
+                                btn.textContent = '現在地から検索(位置情報を取得)';
+                            })
+                            .catch(error => {
+                                console.error('API Error:', error);
+                                info.style.backgroundColor = '#f8d7da';
+                                info.style.borderColor = '#f5c6cb';
+                                info.style.color = '#721c24';
+                                info.textContent = 'エラーが発生しました: ' + error.message;
+                                btn.disabled = false;
+                                btn.textContent = '現在地から検索(位置情報を取得)';
+                            });
+                        },
+                        function(error) {
+                            btn.disabled = false;
+                            btn.textContent = '現在地から検索(位置情報を取得)';
+                            info.style.display = 'block';
+                            info.style.backgroundColor = '#f8d7da';
+                            info.style.borderColor = '#f5c6cb';
+                            info.style.color = '#721c24';
+                            
+                            let errorMsg = '位置情報の取得に失敗しました。';
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMsg = '位置情報の使用が拒否されました。ブラウザの設定で位置情報の許可を確認してください。';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMsg = '位置情報が利用できません。GPSがオフになっている可能性があります。';
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMsg = '位置情報の取得がタイムアウトしました。もう一度お試しください。';
+                                    break;
+                            }
+                            info.textContent = errorMsg;
+                            console.error('位置情報取得エラー:', error);
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 15000,
+                            maximumAge: 60000
+                        }
+                    );
+                }
+                
+                // 都道府県コードから都道府県を自動選択
+                function selectPrefectureByCode(prefectureCode) {
+                    // 都道府県コードに対応するチェックボックスを探す
+                    const prefCheckbox = document.querySelector(`input[name="area[]"][value="${prefectureCode}"]`);
+                    if (!prefCheckbox) return;
+                    
+                    // チェックボックスをチェック
+                    prefCheckbox.checked = true;
+                    
+                    // バッジのスタイルを更新
+                    const badge = prefCheckbox.parentElement;
+                    if (badge) {
+                        badge.classList.add('is-selected');
+                    }
+                    
+                    // 地域を探す
+                    const prefectureDiv = prefCheckbox.closest('[id^="prefectures-"]');
+                    if (prefectureDiv) {
+                        const regionKey = prefectureDiv.id.replace('prefectures-', '');
+                        
+                        // 地域のチェックボックスを更新
+                        const regionCheckbox = document.getElementById('region-' + regionKey);
+                        if (regionCheckbox) {
+                            regionCheckbox.checked = true;
+                            updateRegionCheckbox(regionKey);
+                        }
+                        
+                        // 地域を展開
+                        prefectureDiv.style.display = 'block';
+                        const label = document.querySelector('.region-label-' + regionKey);
+                        if (label) {
+                            label.style.backgroundColor = '#f5f5f5';
+                        }
+                        
+                        // 市区町村を表示
+                        updateCitiesForPrefecture(prefectureCode, true);
+                    }
+                }
+                
+                // 現在地から取得した市区町村を表示（1つだけ）
+                let currentLocationPrefectureCode = null; // 現在地の都道府県コードを保持
+                function displayCitiesFromLocation(cities, prefectureCode, prefectureName) {
+                    currentLocationPrefectureCode = prefectureCode; // 都道府県コードを保存
+                    // コンテナを取得
+                    const container = document.getElementById('currentLocationCitiesContainer');
+                    if (!container) return;
+                    
+                    // 既存の内容をクリア
+                    container.innerHTML = '';
+                    
+                    if (cities.length === 0) return;
+                    
+                    // 最初の市区町村のみを表示
+                    const city = cities[0];
+                    
+                    // 新しい市区町村セクションを作成
+                    const citySection = document.createElement('div');
+                    citySection.className = 'form-group current-location-cities';
+                    citySection.style.marginBottom = '24px';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = '現在地の市区町村';
+                    label.style.cssText = 'display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.02em;';
+                    
+                    const checkboxList = document.createElement('div');
+                    checkboxList.style.cssText = 'max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 0; padding: 8px; background-color: #ffffff;';
+                    
+                    // 市区町村を1つだけ表示（自動的にチェック）
+                    const labelEl = document.createElement('label');
+                    labelEl.className = 'filter-badge is-selected';
+                    labelEl.style.cssText = 'display: flex; align-items: center; padding: 4px 8px; margin-bottom: 1px; cursor: pointer; border-radius: 0;';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = 'city[]';
+                    checkbox.value = city.city_code;
+                    checkbox.checked = true; // 自動的にチェック
+                    checkbox.style.cssText = 'margin-right: 8px; cursor: pointer; width: 14px; height: 14px; accent-color: #1a1a1a; border-radius: 0;';
+                    checkbox.onchange = function() {
+                        const badge = this.parentElement;
+                        if (badge) {
+                            badge.classList.toggle('is-selected', this.checked);
+                        }
+                        // エリアセクションの同じ市区町村のチェックも連動
+                        syncCityCheckboxes(city.city_code, this.checked);
+                        
+                        // 都道府県のチェックも連動
+                        if (currentLocationPrefectureCode) {
+                            if (this.checked) {
+                                // チェックが付けられた場合、都道府県も選択
+                                selectPrefectureByCode(currentLocationPrefectureCode);
+                            } else {
+                                // チェックが外された場合、都道府県のチェックも確認
+                                checkAndUncheckPrefectureIfNoCities(currentLocationPrefectureCode);
+                            }
+                        }
+                    };
+                    
+                    const span = document.createElement('span');
+                    span.textContent = city.name;
+                    span.style.cssText = 'flex: 1; font-size: 12px; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;';
+                    
+                    labelEl.appendChild(checkbox);
+                    labelEl.appendChild(span);
+                    checkboxList.appendChild(labelEl);
+                    
+                    citySection.appendChild(label);
+                    citySection.appendChild(checkboxList);
+                    container.appendChild(citySection);
+                    
+                    // エリアセクションの市区町村も選択状態にする（少し待ってから実行）
+                    setTimeout(() => {
+                        syncCityCheckboxes(city.city_code, true);
+                    }, 500);
+                }
+                
+                // 市区町村のチェックボックスを連動させる
+                function syncCityCheckboxes(cityCode, isChecked) {
+                    const allCityCheckboxes = document.querySelectorAll(`input[name="city[]"][value="${cityCode}"]`);
+                    allCityCheckboxes.forEach(cb => {
+                        if (cb.checked !== isChecked) {
+                            cb.checked = isChecked;
+                            const badge = cb.parentElement;
+                            if (badge) {
+                                badge.classList.toggle('is-selected', isChecked);
+                            }
+                        }
+                    });
+                }
+                
+                // 都道府県の市区町村がすべて選択されていない場合、都道府県のチェックを外す
+                function checkAndUncheckPrefectureIfNoCities(prefectureCode) {
+                    // その都道府県の市区町村のチェックボックスを取得
+                    const citiesContainer = document.getElementById('cities-' + prefectureCode);
+                    let hasCheckedCity = false;
+                    
+                    if (citiesContainer) {
+                        const cityCheckboxes = citiesContainer.querySelectorAll('input[name="city[]"]');
+                        hasCheckedCity = Array.from(cityCheckboxes).some(cb => cb.checked);
+                    }
+                    
+                    // 現在地の市区町村も確認
+                    const currentLocationCheckboxes = document.querySelectorAll('#currentLocationCitiesContainer input[name="city[]"]');
+                    const hasCheckedCurrentLocation = Array.from(currentLocationCheckboxes).some(cb => cb.checked);
+                    
+                    // その都道府県の市区町村が1つも選択されていない場合
+                    if (!hasCheckedCity && !hasCheckedCurrentLocation) {
+                        const prefCheckbox = document.querySelector(`input[name="area[]"][value="${prefectureCode}"]`);
+                        if (prefCheckbox && prefCheckbox.checked) {
+                            prefCheckbox.checked = false;
+                            const badge = prefCheckbox.parentElement;
+                            if (badge) {
+                                badge.classList.remove('is-selected');
+                            }
+                            // 地域のチェックボックスも更新
+                            const prefectureDiv = prefCheckbox.closest('[id^="prefectures-"]');
+                            if (prefectureDiv) {
+                                const regionKey = prefectureDiv.id.replace('prefectures-', '');
+                                updateRegionCheckbox(regionKey);
+                            }
+                        }
+                    }
+                }
+                
+                // ページ読み込み時に選択されている地域を展開し、市区町村を表示
                 document.addEventListener('DOMContentLoaded', function() {
+                    // 初期表示時に市区町村を更新
+                    updateCitiesByPrefecture();
+                    
+                    // チェックされている都道府県の市区町村を表示
+                    const allCheckedPrefs = document.querySelectorAll('input[name="area[]"]:checked');
+                    allCheckedPrefs.forEach(prefCheckbox => {
+                        const prefCode = parseInt(prefCheckbox.value);
+                        if (prefCode > 0 && prefCode <= 47) {
+                            updateCitiesForPrefecture(prefCode, true);
+                        }
+                    });
+                    
                     @foreach($regions as $regionKey => $region)
                         @php
                             $selectedAreasInit = is_array(request('area')) ? request('area', []) : [];

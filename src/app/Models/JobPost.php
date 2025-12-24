@@ -18,6 +18,7 @@ class JobPost extends Model
         'employment_type',
         'prefecture_code',
         'city',
+        'city_code',
         'min_salary',
         'max_salary',
         'work_location',
