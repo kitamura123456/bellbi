@@ -241,8 +241,25 @@
 </div>
 
 <div style="padding: 0; border: none; box-shadow: 0 1px 2px rgba(93, 83, 94, 0.1); background: #ffffff;">
-    <div style="padding: 20px 24px; border-bottom: 1px solid #e8e8e8; background: #ffffff;">
+    <div style="padding: 20px 24px; border-bottom: 1px solid #e8e8e8; background: #ffffff; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">メッセージを送信</h3>
+        <button type="button" id="startVideoCallBtn" style="
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        " onmouseover="this.style.backgroundColor='#45a049';" onmouseout="this.style.backgroundColor='#4CAF50';">
+            <span>ビデオ通話</span>
+        </button>
     </div>
     
     <form action="{{ route('company.messages.store', $conversation) }}" method="POST" class="company-form" enctype="multipart/form-data" style="padding: 24px; background: #ffffff;">
@@ -351,5 +368,151 @@
         </div>
     </form>
 </div>
+
+<!-- ビデオ通話モーダル -->
+<div id="videoCallModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+">
+    <div style="position: relative; width: 100%; height: 100%; max-width: 1200px; max-height: 800px; display: flex; align-items: center; justify-content: center;">
+        <!-- リモートビデオ（相手の画面） -->
+        <video id="remoteVideo" autoplay playsinline style="
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        "></video>
+        
+        <!-- ローカルビデオ（自分の画面） -->
+        <video id="localVideo" autoplay playsinline style="
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            background: #000;
+        "></video>
+    </div>
+    
+    <!-- コントロールボタン -->
+    <div style="
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    ">
+        <button id="toggleVideoBtn" style="
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        " title="ビデオON/OFF">
+            <img id="videoIcon" src="{{ asset('images/カメラ.png') }}" alt="ビデオON/OFF" style="width: 24px; height: 24px; object-fit: contain; object-position: center;">
+        </button>
+        
+        <button id="toggleMuteBtn" style="
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        " title="ミュート">
+            <img id="muteIcon" src="{{ asset('images/スピーカー.png') }}" alt="ミュート" style="width: 24px; height: 24px; object-fit: contain; object-position: center;">
+        </button>
+        
+        <button id="endCallBtn" style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: #f44336;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        " title="通話終了">
+            <img src="{{ asset('images/call.png') }}" alt="通話終了" style="width: 28px; height: 28px; object-fit: contain;">
+        </button>
+    </div>
+</div>
+
+@vite(['resources/js/app.js'])
+<meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key', env('PUSHER_APP_KEY', '')) }}">
+<meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster', env('PUSHER_APP_CLUSTER', 'mt1')) }}">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const conversationId = {{ $conversation->id }};
+        const currentUserId = {{ Auth::id() }};
+        // ベースパスを取得（Laravelのassetヘルパーから）
+        const basePath = '{{ url("") }}'.replace(window.location.origin, '') || '';
+        // グローバルに設定（Echoの初期化でも使用）
+        window.BASE_PATH = basePath;
+        // 画像パスを設定
+        window.SPEAKER_IMAGE = '{{ asset("images/スピーカー.png") }}';
+        window.SPEAKER_OFF_IMAGE = '{{ asset("images/スピーカーオフ.png") }}';
+        window.CAMERA_IMAGE = '{{ asset("images/カメラ.png") }}';
+        
+        console.log('Initializing VideoCallManager:', { conversationId, currentUserId, basePath });
+        
+        // VideoCallManagerを初期化
+        try {
+            const videoCallManager = new window.VideoCallManager(conversationId, currentUserId, basePath);
+        
+        // ビデオ通話開始ボタン
+        document.getElementById('startVideoCallBtn').addEventListener('click', function() {
+            videoCallManager.startCall();
+        });
+        
+        // コントロールボタン
+        document.getElementById('endCallBtn').addEventListener('click', function() {
+            videoCallManager.endCall();
+        });
+        
+        document.getElementById('toggleMuteBtn').addEventListener('click', function() {
+            videoCallManager.toggleMute();
+        });
+        
+        document.getElementById('toggleVideoBtn').addEventListener('click', function() {
+            videoCallManager.toggleVideo();
+        });
+        } catch (error) {
+            console.error('Failed to initialize VideoCallManager:', error);
+            alert('ビデオ通話機能の初期化に失敗しました。コンソールを確認してください。');
+        }
+    });
+</script>
 @endsection
 

@@ -195,7 +195,26 @@
     </div>
 
     <div class="job-detail-card" style="margin-top: 24px;">
-        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">メッセージを送信</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">メッセージを送信</h3>
+            <button type="button" id="startVideoCallBtn" style="
+                padding: 8px 16px;
+                background: #1a1a1a;
+                color: #ffffff;
+                border: none;
+                border-radius: 4px;
+                font-size: 13px;
+                font-weight: 500;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.15s ease;
+            " onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='#1a1a1a';">
+                <span>ビデオ通話を開始する</span>
+            </button>
+        </div>
         <form action="{{ route('mypage.messages.store', $conversation) }}" method="POST" class="company-form" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
@@ -208,7 +227,7 @@
             <div class="form-group">
                 <label for="attachments">ファイル添付（最大10MB、複数選択可）</label>
                 <input type="file" id="attachments" name="attachments[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
-                <small style="display: block; margin-top: 4px; color: #666; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">対応形式: PDF, Word, 画像ファイル</small>
+                <small style="display: block; margin-top: 4px; color: #333333; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">対応形式: PDF, Word, 画像ファイル</small>
                 @error('attachments.*')
                     <span class="error">{{ $message }}</span>
                 @enderror
@@ -231,5 +250,151 @@
             </div>
         </form>
     </div>
+
+    <!-- ビデオ通話モーダル -->
+    <div id="videoCallModal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    ">
+        <div style="position: relative; width: 100%; height: 100%; max-width: 1200px; max-height: 800px; display: flex; align-items: center; justify-content: center;">
+            <!-- リモートビデオ（相手の画面） -->
+            <video id="remoteVideo" autoplay playsinline style="
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background: #000;
+            "></video>
+            
+            <!-- ローカルビデオ（自分の画面） -->
+            <video id="localVideo" autoplay playsinline style="
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                width: 200px;
+                height: 150px;
+                object-fit: cover;
+                border: 2px solid #fff;
+                border-radius: 8px;
+                background: #000;
+            "></video>
+        </div>
+        
+        <!-- コントロールボタン -->
+        <div style="
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        ">
+            <button id="toggleVideoBtn" style="
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+            " title="ビデオON/OFF">
+                <img id="videoIcon" src="{{ asset('images/カメラ.png') }}" alt="ビデオON/OFF" style="width: 24px; height: 24px; object-fit: contain; object-position: center;">
+            </button>
+            
+            <button id="toggleMuteBtn" style="
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+            " title="ミュート">
+                <img id="muteIcon" src="{{ asset('images/スピーカー.png') }}" alt="ミュート" style="width: 24px; height: 24px; object-fit: contain; object-position: center;">
+            </button>
+            
+            <button id="endCallBtn" style="
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: none;
+                background: #f44336;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+            " title="通話終了">
+                <img src="{{ asset('images/call.png') }}" alt="通話終了" style="width: 28px; height: 28px; object-fit: contain;">
+            </button>
+        </div>
+    </div>
+
+    @vite(['resources/js/app.js'])
+    <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key', env('PUSHER_APP_KEY', '')) }}">
+    <meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster', env('PUSHER_APP_CLUSTER', 'mt1')) }}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const conversationId = {{ $conversation->id }};
+            const currentUserId = {{ Auth::id() }};
+            // ベースパスを取得（Laravelのassetヘルパーから）
+            const basePath = '{{ url("") }}'.replace(window.location.origin, '') || '';
+            // グローバルに設定（Echoの初期化でも使用）
+            window.BASE_PATH = basePath;
+            // 画像パスを設定
+            window.SPEAKER_IMAGE = '{{ asset("images/スピーカー.png") }}';
+            window.SPEAKER_OFF_IMAGE = '{{ asset("images/スピーカーオフ.png") }}';
+            window.CAMERA_IMAGE = '{{ asset("images/カメラ.png") }}';
+            
+            console.log('Initializing VideoCallManager:', { conversationId, currentUserId, basePath });
+            
+            // VideoCallManagerを初期化
+            try {
+                const videoCallManager = new window.VideoCallManager(conversationId, currentUserId, basePath);
+            
+            // ビデオ通話開始ボタン
+            document.getElementById('startVideoCallBtn').addEventListener('click', function() {
+                videoCallManager.startCall();
+            });
+            
+            // コントロールボタン
+            document.getElementById('endCallBtn').addEventListener('click', function() {
+                videoCallManager.endCall();
+            });
+            
+            document.getElementById('toggleMuteBtn').addEventListener('click', function() {
+                videoCallManager.toggleMute();
+            });
+            
+            document.getElementById('toggleVideoBtn').addEventListener('click', function() {
+                videoCallManager.toggleVideo();
+            });
+            } catch (error) {
+                console.error('Failed to initialize VideoCallManager:', error);
+                alert('ビデオ通話機能の初期化に失敗しました。コンソールを確認してください。');
+            }
+        });
+    </script>
 @endsection
 

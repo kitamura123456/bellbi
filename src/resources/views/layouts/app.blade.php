@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>@yield('title', 'Bellbi')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- MAMP 環境で /bellbi/ 配下から確実に読み込めるように、パスを明示的に指定 --}}
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>@yield('title', '事業者ダッシュボード') - Bellbi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <style>

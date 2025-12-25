@@ -1,8 +1,17 @@
+- [ ] サーバにもstripeSDK入れる　
+```
+composer require stripe/stripe-php
+```
+npm install simple-peer
+composer require pusher/pusher-php-server
+npm install laravel-echo pusher-js
+
+.envファイルに以下を追加:
+BROADCAST_DRIVER=pusherPUSHER_APP_ID=your-app-idPUSHER_APP_KEY=your-app-keyPUSHER_APP_SECRET=your-app-secretPUSHER_APP_CLUSTER=mt1
 
 - [ ] 利用者の支払いページを追加
-- [ ] ビデオ通話機能も追加して欲しいです。
-RTCのライブラリを読み込めば比較的工数少なくいけると思います。
-- [ ] 市区町村更新をリモートで
+- [ ] 市区町村更新をサーバーで
+- [x] ビデオ通話機能を追加
 - [x] エリア検索は市区町村まで絞れるように
 
 # 利用者

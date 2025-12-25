@@ -55,6 +55,16 @@ class Conversation extends Model
         return $this->hasOne(ConversationMessage::class)->where('delete_flg', 0)->latestOfMany();
     }
 
+    public function videoCalls()
+    {
+        return $this->hasMany(VideoCall::class)->orderBy('created_at', 'desc');
+    }
+
+    public function activeVideoCall()
+    {
+        return $this->hasOne(VideoCall::class)->where('status', 'active')->latestOfMany();
+    }
+
     /**
      * 応募またはスカウトに関連する会話を取得または作成
      */

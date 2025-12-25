@@ -24,6 +24,7 @@ use App\Http\Controllers\Mypage\ScoutProfileController;
 use App\Http\Controllers\Mypage\ScoutController as MypageScouts;
 use App\Http\Controllers\Mypage\ReservationController as MypageReservations;
 use App\Http\Controllers\Mypage\MessageController as MypageMessages;
+use App\Http\Controllers\VideoCallController;
 use App\Http\Controllers\Company\StaffController as CompanyStaffs;
 use App\Http\Controllers\Company\MenuController as CompanyMenus;
 use App\Http\Controllers\Company\ScheduleController as CompanySchedules;
@@ -108,6 +109,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/mypage/messages/{conversation}', [MypageMessages::class, 'store'])->name('mypage.messages.store');
     Route::get('/mypage/applications/{application}/messages', [MypageMessages::class, 'createFromApplication'])->name('mypage.messages.create-from-application');
     Route::get('/mypage/scouts/{scout}/messages', [MypageMessages::class, 'createFromScout'])->name('mypage.messages.create-from-scout');
+
+    // ビデオ通話機能
+    Route::post('/conversations/{conversation}/video-calls', [VideoCallController::class, 'store'])->name('video-calls.store');
+    Route::post('/video-calls/{videoCall}/accept', [VideoCallController::class, 'accept'])->name('video-calls.accept');
+    Route::post('/video-calls/{videoCall}/reject', [VideoCallController::class, 'reject'])->name('video-calls.reject');
+    Route::post('/video-calls/{videoCall}/end', [VideoCallController::class, 'end'])->name('video-calls.end');
+    Route::post('/video-calls/{videoCall}/signal', [VideoCallController::class, 'signal'])->name('video-calls.signal');
 
     // 事業者管理画面
     Route::get('/company', [CompanyDashboard::class, 'index'])->name('company.dashboard');
