@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\CompanyRegisterController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanies;
 use App\Http\Controllers\Admin\JobPostController as AdminJobPosts;
 use App\Http\Controllers\Admin\PlanController as AdminPlans;
@@ -241,9 +242,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/company/orders/mark-viewed', [CompanyOrders::class, 'markMultipleAsViewed'])->name('company.orders.mark-multiple-viewed');
 
     // 管理画面 - ダッシュボード
-    Route::get('/admin', function () {
-        return view('admin.index');
-    })->name('admin.index');
+    Route::get('/admin', [AdminDashboard::class, 'index'])->name('admin.index');
 
     // 管理画面 - ユーザー管理
     Route::resource('admin/users', UserController::class, [
