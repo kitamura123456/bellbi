@@ -13,6 +13,8 @@ class Subscription extends Model
     protected $fillable = [
         'company_id',
         'plan_id',
+        'stripe_subscription_id',
+        'stripe_customer_id',
         'status',
         'started_at',
         'ended_at',

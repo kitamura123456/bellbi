@@ -9,7 +9,8 @@ npm install laravel-echo pusher-js
 .envファイルに以下を追加:
 BROADCAST_DRIVER=pusherPUSHER_APP_ID=your-app-idPUSHER_APP_KEY=your-app-keyPUSHER_APP_SECRET=your-app-secretPUSHER_APP_CLUSTER=mt1
 
-- [ ] 利用者の支払いページを追加
+- [ ] コード確認してgithubに上げる
+- [x] 利用者の支払いページを追加
 - [ ] 市区町村更新をサーバーで
 - [x] ビデオ通話機能を追加
 - [x] エリア検索は市区町村まで絞れるように

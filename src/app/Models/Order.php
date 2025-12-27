@@ -14,6 +14,8 @@ class Order extends Model
         'user_id',
         'total_amount',
         'status',
+        'stripe_payment_intent_id',
+        'stripe_checkout_session_id',
         'delete_flg',
     ];
 

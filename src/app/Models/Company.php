@@ -20,6 +20,7 @@ class Company extends Model
         'tel',
         'plan_id',
         'plan_status',
+        'stripe_customer_id',
         'delete_flg',
     ];
 

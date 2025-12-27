@@ -217,6 +217,62 @@
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 ">¥{{ number_format($order->total_amount) }}</span>
             </div>
+            
+            @if($paymentUrl && ($order->status === 1 || $order->status === 2))
+            <div style="
+                padding: 16px;
+                margin-top: 20px;
+                background: #fffbf0;
+                border: 1px solid #fef3c7;
+                border-radius: 4px;
+            ">
+                <p style="
+                    margin: 0 0 12px 0;
+                    font-size: 14px;
+                    color: #92400e;
+                    font-weight: 500;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                ">
+                    @if($paymentMethodType === 'konbini')
+                        コンビニ決済の支払い情報
+                    @elseif($paymentMethodType === 'bank_transfer')
+                        銀行振込の支払い情報
+                    @else
+                        支払い情報
+                    @endif
+                </p>
+                <p style="
+                    margin: 0 0 12px 0;
+                    font-size: 13px;
+                    color: #92400e;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                ">
+                    @if($paymentMethodType === 'konbini')
+                        コンビニ決済の支払い情報を確認するには、以下のリンクをクリックしてください。
+                    @elseif($paymentMethodType === 'bank_transfer')
+                        銀行振込の振込先情報を確認するには、以下のリンクをクリックしてください。
+                    @else
+                        支払い情報を確認するには、以下のリンクをクリックしてください。
+                    @endif
+                </p>
+                <a href="{{ $paymentUrl }}" target="_blank" rel="noopener noreferrer" style="
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background: #635BFF;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                " onmouseover="this.style.backgroundColor='#5851EA';" onmouseout="this.style.backgroundColor='#635BFF';">
+                    支払い情報を確認する
+                </a>
+            </div>
+            @endif
         </div>
 
         <div style="

@@ -171,6 +171,36 @@
         <p class="page-lead">あなたが注文した商品の一覧です。</p>
     </div>
 
+    @if(session('status'))
+    <div style="
+        padding: 16px;
+        margin-bottom: 24px;
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        border-radius: 4px;
+        color: #065f46;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+    ">
+        {{ session('status') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div style="
+        padding: 16px;
+        margin-bottom: 24px;
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        border-radius: 4px;
+        color: #991b1b;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+    ">
+        {{ session('error') }}
+    </div>
+    @endif
+
     <div style="background: #ffffff; border-radius: 0; padding: 0; box-shadow: none; border: none; border-bottom: 1px solid #f0f0f0;">
         @forelse($orders as $order)
         <div class="order-item" style="
@@ -259,6 +289,32 @@
                     ">
                         合計: ¥{{ number_format($order->total_amount) }}
                     </p>
+                    @if(isset($paymentUrls[$order->id]) && ($order->status === 1 || $order->status === 2))
+                    <div style="margin-top: 12px;">
+                        <a href="{{ $paymentUrls[$order->id]['url'] }}" target="_blank" rel="noopener noreferrer" style="
+                            display: inline-block;
+                            padding: 6px 12px;
+                            background: #fffbf0;
+                            color: #92400e;
+                            border: 1px solid #fef3c7;
+                            border-radius: 4px;
+                            font-size: 12px;
+                            font-weight: 500;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                            text-decoration: none;
+                            cursor: pointer;
+                            transition: all 0.15s ease;
+                        " onmouseover="this.style.backgroundColor='#fef3c7';" onmouseout="this.style.backgroundColor='#fffbf0';">
+                            @if($paymentUrls[$order->id]['type'] === 'konbini')
+                                コンビニ決済情報
+                            @elseif($paymentUrls[$order->id]['type'] === 'bank_transfer')
+                                銀行振込情報
+                            @else
+                                支払い情報
+                            @endif
+                        </a>
+                    </div>
+                    @endif
                 </div>
                 <div class="order-button-wrapper" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 100px;">
                     <a href="{{ route('mypage.orders.show', $order) }}" class="order-detail-button" style="

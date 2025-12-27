@@ -47,6 +47,9 @@ Route::get('/api/business-categories/{industry_type}', [BusinessCategoryControll
 Route::get('/api/cities/by-prefecture', [\App\Http\Controllers\Api\CityController::class, 'getCitiesByPrefecture'])->name('api.cities.by-prefecture');
 Route::post('/api/cities/by-location', [\App\Http\Controllers\Api\CityController::class, 'getCitiesByLocation'])->name('api.cities.by-location');
 
+// Stripe Webhook
+Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle'])->name('stripe.webhook');
+
 // トップ・求人
 Route::get('/', [JobPostController::class, 'index'])->name('home');
 Route::get('/jobs', [JobPostController::class, 'index'])->name('jobs.index');
@@ -98,6 +101,8 @@ Route::middleware('auth')->group(function () {
     
     // 注文機能
     Route::get('/orders/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
+    Route::post('/orders/stripe/session', [OrderController::class, 'createStripeSession'])->name('orders.stripe.session');
+    Route::get('/orders/stripe/success', [OrderController::class, 'stripeSuccess'])->name('orders.stripe.success');
     Route::post('/orders/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
     Route::get('/orders/complete/{order}', [OrderController::class, 'complete'])->name('orders.complete');
     Route::get('/mypage/orders', [OrderController::class, 'index'])->name('mypage.orders.index');
@@ -196,6 +201,8 @@ Route::middleware('auth')->group(function () {
     // プラン・課金管理
     Route::get('/company/plans', [CompanyPlans::class, 'index'])->name('company.plans.index');
     Route::get('/company/plans/{plan}', [CompanyPlans::class, 'show'])->name('company.plans.show');
+    Route::post('/company/plans/{plan}/stripe/session', [CompanyPlans::class, 'createStripeSubscriptionSession'])->name('company.plans.stripe.session');
+    Route::get('/company/plans/stripe/success', [CompanyPlans::class, 'stripeSuccess'])->name('company.plans.stripe.success');
     Route::post('/company/plans/{plan}/subscribe', [CompanyPlans::class, 'subscribe'])->name('company.plans.subscribe');
     Route::get('/company/plans/{plan}/change', [CompanyPlans::class, 'change'])->name('company.plans.change');
     Route::post('/company/plans/{plan}/update', [CompanyPlans::class, 'update'])->name('company.plans.update');

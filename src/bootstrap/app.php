@@ -16,7 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../routes/channels.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Stripe WebhookをCSRF保護から除外
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
     })
     ->withSchedule(function (Schedule $schedule): void {
         // 市区町村データを毎月1日に自動更新

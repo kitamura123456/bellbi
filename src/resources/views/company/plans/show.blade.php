@@ -116,61 +116,31 @@
             </a>
         </div>
         @else
-        <form method="POST" action="{{ route('company.plans.subscribe', $plan) }}">
-            @csrf
-            <div style="margin-bottom: 20px;">
-                <label style="
-                    display: block;
-                    margin-bottom: 8px;
-                    font-size: 14px;
+        <div style="margin-bottom: 24px;">
+            <h4 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 700; color: #5D535E; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">
+                お支払い方法を選択
+            </h4>
+            
+            <form method="POST" action="{{ route('company.plans.stripe.session', $plan) }}" style="margin-bottom: 16px;">
+                @csrf
+                <button type="submit" style="
+                    width: 100%;
+                    padding: 14px 32px;
+                    background: #635BFF;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 24px;
+                    font-size: 16px;
                     font-weight: 700;
-                    color: #5D535E;
                     font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                ">契約タイプ</label>
-                <div style="display: flex; gap: 16px;">
-                    <label style="
-                        display: flex;
-                        align-items: center;
-                        padding: 12px 16px;
-                        background: #f9fafb;
-                        border: 2px solid #e5e7eb;
-                        border-radius: 0;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    " onmouseover="this.style.borderColor='#5D535E';" onmouseout="this.style.borderColor='#e5e7eb';">
-                        <input type="radio" name="status" value="1" checked style="margin-right: 8px;">
-                        <span style="font-size: 14px; color: #5D535E; font-weight: 600; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">有効</span>
-                    </label>
-                    <label style="
-                        display: flex;
-                        align-items: center;
-                        padding: 12px 16px;
-                        background: #f9fafb;
-                        border: 2px solid #e5e7eb;
-                        border-radius: 0;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    " onmouseover="this.style.borderColor='#5D535E';" onmouseout="this.style.borderColor='#e5e7eb';">
-                        <input type="radio" name="status" value="2" style="margin-right: 8px;">
-                        <span style="font-size: 14px; color: #5D535E; font-weight: 600; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">トライアル</span>
-                    </label>
-                </div>
-            </div>
-            <button type="submit" style="
-                padding: 14px 32px;
-                background: #5D535E;
-                color: #ffffff;
-                border: none;
-                border-radius: 24px;
-                font-size: 16px;
-                font-weight: 700;
-                font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            " onmouseover="this.style.boxShadow='inset 0 0 0 1px rgba(255,255,255,0.3)';" onmouseout="this.style.boxShadow='none';">
-                このプランを契約する
-            </button>
-        </form>
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                " onmouseover="this.style.backgroundColor='#5851EA';" onmouseout="this.style.backgroundColor='#635BFF';">
+                    オンライン決済で契約する
+                </button>
+            </form>
+
+        </div>
         @endif
     </div>
 </div>
