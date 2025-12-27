@@ -3,7 +3,7 @@
 @section('title', 'プラン詳細: ' . $plan->name)
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">プラン詳細</h1>
     <a href="{{ route('company.plans.index') }}" style="
         padding: 12px 24px;
@@ -35,6 +35,22 @@
         font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
     ">
         {{ session('error') }}
+    </div>
+@endif
+
+@if (request('canceled'))
+    <div style="
+        background-color: #fffbf0;
+        border: 1px solid #fef3c7;
+        border-radius: 8px;
+        color: #92400e;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+    ">
+        決済がキャンセルされました。再度お試しください。
     </div>
 @endif
 
@@ -121,9 +137,9 @@
                 お支払い方法を選択
             </h4>
             
-            <form method="POST" action="{{ route('company.plans.stripe.session', $plan) }}" style="margin-bottom: 16px;">
+            <form id="stripe-subscription-form" method="POST" action="{{ route('company.plans.stripe.session', $plan) }}" style="margin-bottom: 16px;">
                 @csrf
-                <button type="submit" style="
+                <button type="submit" id="stripe-submit-btn" style="
                     width: 100%;
                     padding: 14px 32px;
                     background: #635BFF;
@@ -135,6 +151,7 @@
                     font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
                     cursor: pointer;
                     transition: all 0.2s ease;
+                    box-sizing: border-box;
                 " onmouseover="this.style.backgroundColor='#5851EA';" onmouseout="this.style.backgroundColor='#635BFF';">
                     オンライン決済で契約する
                 </button>
@@ -144,5 +161,88 @@
         @endif
     </div>
 </div>
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 48px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        margin-top: 24px !important;
+    }
+
+    div[style*="margin-top: 48px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-top: 48px"] > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    #stripe-submit-btn {
+        padding: 12px 24px !important;
+        font-size: 15px !important;
+    }
+
+    h4[style*="font-size: 20px"] {
+        font-size: 18px !important;
+    }
+
+    span[style*="font-size: 32px"] {
+        font-size: 28px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="margin-top: 48px"] {
+        margin-top: 24px !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    #stripe-submit-btn {
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+    }
+
+    span[style*="font-size: 32px"] {
+        font-size: 24px !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('stripe-subscription-form');
+    const submitBtn = document.getElementById('stripe-submit-btn');
+    
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            // フォーム送信を確認
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.textContent = '処理中...';
+            
+            // フォームは通常通り送信される
+        });
+    }
+});
+</script>
 @endsection
 

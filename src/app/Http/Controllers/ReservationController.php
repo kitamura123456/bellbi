@@ -109,10 +109,17 @@ class ReservationController extends Controller
         return view('reservations.store', compact('store', 'menus', 'staffs'));
     }
 
-    // 予約フォーム（日時選択）
+    // 予約フォーム（日時選択） - POST処理
     public function booking(Request $request, Store $store)
     {
         if (!Auth::check()) {
+            // セッションにフォームデータを一時保存
+            $request->session()->put('reservation.form_data', [
+                'menu_ids' => $request->input('menu_ids', []),
+                'staff_id' => $request->input('staff_id'),
+            ]);
+            // ログイン後にGETのURLに戻れるようにする
+            $request->session()->put('url.intended', route('reservations.booking', $store));
             return redirect()->route('login')->with('error', '予約にはログインが必要です。');
         }
 
@@ -136,10 +143,61 @@ class ReservationController extends Controller
             return back()->with('error', 'メニューを選択してください。');
         }
 
+        // セッションにデータを保存
+        $request->session()->put('reservation.booking', [
+            'menu_ids' => $validated['menu_ids'],
+            'staff_id' => $validated['staff_id'] ?? null,
+        ]);
+
+        // GETリクエストにリダイレクト
+        return redirect()->route('reservations.booking', $store);
+    }
+
+    // 予約フォーム（日時選択） - GET表示
+    public function showBooking(Request $request, Store $store)
+    {
+        if (!Auth::check()) {
+            // ログイン後に元のページに戻れるようにする
+            return redirect()->guest(route('login'))->with('error', '予約にはログインが必要です。');
+        }
+
+        if (!$store->accepts_reservations) {
+            abort(404);
+        }
+
+        // セッションからデータを取得（ログイン前のフォームデータも確認）
+        $bookingData = $request->session()->get('reservation.booking');
+        $formData = $request->session()->get('reservation.form_data');
+        
+        // ログイン前のフォームデータがある場合は、それを処理してセッションに保存
+        if ($formData && !empty($formData['menu_ids'])) {
+            $request->session()->put('reservation.booking', [
+                'menu_ids' => $formData['menu_ids'],
+                'staff_id' => $formData['staff_id'] ?? null,
+            ]);
+            $request->session()->forget('reservation.form_data');
+            $bookingData = $request->session()->get('reservation.booking');
+        }
+
+        if (!$bookingData || !isset($bookingData['menu_ids'])) {
+            return redirect()->route('reservations.store', $store)->with('error', 'メニューを選択してください。');
+        }
+
+        $menus = ServiceMenu::whereIn('id', $bookingData['menu_ids'])
+            ->where('store_id', $store->id)
+            ->where('is_active', 1)
+            ->where('delete_flg', 0)
+            ->get();
+
+        if ($menus->isEmpty()) {
+            $request->session()->forget('reservation.booking');
+            return redirect()->route('reservations.store', $store)->with('error', 'メニューを選択してください。');
+        }
+
         $totalDuration = $menus->sum('duration_minutes');
         $totalPrice = $menus->sum('price');
 
-        $staffId = $validated['staff_id'] ?? null;
+        $staffId = $bookingData['staff_id'] ?? null;
         $staff = $staffId ? $store->staffs()->find($staffId) : null;
 
         // 今日から2週間分の日付と空き枠を取得
@@ -222,6 +280,9 @@ class ReservationController extends Controller
                 }
             });
 
+            // セッションをクリア
+            $request->session()->forget('reservation.booking');
+            
             return redirect()->route('mypage.reservations.index')->with('status', '予約が完了しました。');
         } catch (\Exception $e) {
             return back()->with('error', '予約に失敗しました。別の時間帯をお試しください。');

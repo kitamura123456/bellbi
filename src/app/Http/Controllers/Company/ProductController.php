@@ -80,10 +80,14 @@ class ProductController extends Controller
             return redirect()->back()->withErrors(['shop_id' => '選択されたショップが見つかりません。'])->withInput();
         }
 
-        // 在庫数が0の場合は自動的に在庫切れステータスに
+        // 在庫数に応じてステータスを自動設定
         $status = $validated['status'];
         if ($validated['stock'] <= 0) {
+            // 在庫が0以下の場合は在庫切れステータスに
             $status = Product::STATUS_OUT_OF_STOCK;
+        } elseif ($validated['stock'] > 0 && $status === Product::STATUS_OUT_OF_STOCK) {
+            // 在庫が0より大きいのに在庫切れステータスの場合は販売中に戻す
+            $status = Product::STATUS_ON_SALE;
         }
 
         $data = [
@@ -153,10 +157,23 @@ class ProductController extends Controller
             return redirect()->back()->withErrors(['shop_id' => '選択されたショップが見つかりません。'])->withInput();
         }
 
-        // 在庫数が0の場合は自動的に在庫切れステータスに
+        // 在庫数に応じてステータスを自動設定
         $status = $validated['status'];
         if ($validated['stock'] <= 0) {
+            // 在庫が0以下の場合は在庫切れステータスに
             $status = Product::STATUS_OUT_OF_STOCK;
+        } elseif ($validated['stock'] > 0) {
+            // 在庫が0より大きい場合は、ステータスが在庫切れまたは非公開でない限り販売中にする
+            if ($status === Product::STATUS_OUT_OF_STOCK) {
+                // 在庫切れから在庫が復活した場合は販売中に戻す
+                $status = Product::STATUS_ON_SALE;
+            } elseif ($status === Product::STATUS_PRIVATE) {
+                // 非公開の場合はそのまま
+                $status = Product::STATUS_PRIVATE;
+            } else {
+                // その他の場合は販売中
+                $status = Product::STATUS_ON_SALE;
+            }
         }
 
         $data = [
@@ -169,7 +186,15 @@ class ProductController extends Controller
             'status' => $status,
         ];
 
-        $product->update($data);
+        // 在庫とステータスを確実に更新
+        $product->stock = $validated['stock'];
+        $product->status = $status;
+        $product->shop_id = $validated['shop_id'];
+        $product->name = $validated['name'];
+        $product->description = $validated['description'] ?? null;
+        $product->price = $validated['price'];
+        $product->category = $validated['category'] ?? null;
+        $product->save();
 
         return redirect()->route('company.products.index')->with('status', '商品情報を更新しました。');
     }

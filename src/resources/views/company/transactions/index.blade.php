@@ -3,7 +3,7 @@
 @section('title', '売上・経費管理')
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+<div style="margin-bottom: 24px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">売上・経費管理</h1>
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="{{ route('company.account-items.index') }}" style="
@@ -227,6 +227,59 @@
             </table>
         </div>
 
+        <!-- スマホ用カードレイアウト -->
+        <div class="transactions-cards">
+            @foreach ($transactions as $transaction)
+                <div class="transaction-card">
+                    <div class="transaction-card-header">
+                        <div>
+                            <div class="transaction-card-date">{{ $transaction->date->format('Y年m月d日') }}</div>
+                            <div class="transaction-card-store">{{ $transaction->store->name }}</div>
+                        </div>
+                        <span class="badge badge-{{ $transaction->transaction_type == 1 ? 'success' : 'warning' }}">
+                            {{ $transaction->type_name }}
+                        </span>
+                    </div>
+                    <div class="transaction-card-body">
+                        <div class="transaction-card-row">
+                            <span class="transaction-card-label">科目</span>
+                            <span class="transaction-card-value">{{ $transaction->accountItem->name }}</span>
+                        </div>
+                        <div class="transaction-card-row">
+                            <span class="transaction-card-label">金額</span>
+                            <span class="transaction-card-value">¥{{ number_format($transaction->amount) }}</span>
+                        </div>
+                        <div class="transaction-card-row">
+                            <span class="transaction-card-label">税額</span>
+                            <span class="transaction-card-value">¥{{ number_format($transaction->tax_amount) }}</span>
+                        </div>
+                        <div class="transaction-card-row highlight">
+                            <span class="transaction-card-label">合計</span>
+                            <span class="transaction-card-value amount-highlight">¥{{ number_format($transaction->total_amount) }}</span>
+                        </div>
+                        @if($transaction->note)
+                        <div class="transaction-card-row">
+                            <span class="transaction-card-label">備考</span>
+                            <span class="transaction-card-value">{{ Str::limit($transaction->note, 50) }}</span>
+                        </div>
+                        @endif
+                    </div>
+                    <div class="transaction-card-actions">
+                        <a href="{{ route('company.transactions.edit', $transaction) }}" class="transaction-card-btn transaction-card-btn-edit">
+                            編集
+                        </a>
+                        <form action="{{ route('company.transactions.destroy', $transaction) }}" method="POST" class="transaction-card-form" onsubmit="return confirm('この取引を削除してもよろしいですか？');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="transaction-card-btn transaction-card-btn-delete">
+                                削除
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
         <!-- ページネーション -->
         <div class="pagination-container">
             {{ $transactions->appends(request()->query())->links() }}
@@ -438,6 +491,231 @@
     margin-top: 24px;
     display: flex;
     justify-content: center;
+}
+
+/* スマホ用カードレイアウト（デフォルトは非表示） */
+.transactions-cards {
+    display: none;
+}
+
+.transaction-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.transaction-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.transaction-card-date {
+    font-size: 16px;
+    font-weight: 700;
+    color: #5D535E;
+    margin-bottom: 4px;
+}
+
+.transaction-card-store {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.transaction-card-body {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.transaction-card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+}
+
+.transaction-card-row.highlight {
+    padding-top: 8px;
+    border-top: 1px solid #e8e8e8;
+    margin-top: 4px;
+}
+
+.transaction-card-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.transaction-card-value {
+    color: #111827;
+    font-weight: 600;
+    text-align: right;
+}
+
+.transaction-card-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.transaction-card-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.transaction-card-btn-edit {
+    background: transparent;
+    color: #5D535E;
+    border: 1px solid #5D535E;
+}
+
+.transaction-card-btn-delete {
+    background: #763626;
+    color: #ffffff;
+}
+
+.transaction-card-form {
+    flex: 1;
+    margin: 0;
+}
+
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    .transactions-list {
+        padding: 16px !important;
+    }
+
+    .filter-container {
+        padding: 16px !important;
+    }
+
+    .filter-row {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .filter-item {
+        width: 100%;
+    }
+
+    .filter-item .form-control {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .filter-item button,
+    .filter-item a {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    .export-action {
+        text-align: left;
+        margin-top: 12px;
+    }
+
+    .export-action a {
+        width: 100%;
+        text-align: center;
+        display: block;
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    .transactions-table {
+        display: none;
+    }
+
+    .transactions-cards {
+        display: block;
+    }
+
+    .transaction-card {
+        margin-bottom: 16px;
+    }
+
+    .transaction-card-date {
+        font-size: 18px;
+    }
+
+    .transaction-card-store {
+        font-size: 14px;
+    }
+
+    .transaction-card-row {
+        font-size: 15px;
+    }
+
+    .transaction-card-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .pagination-container {
+        margin-top: 16px;
+    }
+
+    /* ヘッダー部分の調整 */
+    div[style*="margin-top: 48px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-top: 48px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-top: 48px"] > div {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    div[style*="margin-top: 48px"] > div > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .transaction-card {
+        padding: 12px;
+    }
+
+    .transaction-card-date {
+        font-size: 16px;
+    }
+
+    .transaction-card-row {
+        font-size: 14px;
+    }
+
+    .transaction-card-btn {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
 }
 </style>
 @endsection

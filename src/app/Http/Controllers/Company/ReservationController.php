@@ -78,5 +78,48 @@ class ReservationController extends Controller
 
         return redirect()->route('company.reservations.show', $reservation)->with('status', '予約ステータスを更新しました。');
     }
+
+    public function markAsViewed(Request $request, Reservation $reservation)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company || $reservation->store->company_id !== $company->id) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
+        $reservation->viewed_at = now();
+        $reservation->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function markMultipleAsViewed(Request $request)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'reservation_ids' => ['required', 'array'],
+            'reservation_ids.*' => ['integer', 'exists:reservations,id'],
+        ]);
+
+        $reservations = Reservation::whereIn('id', $validated['reservation_ids'])
+            ->whereHas('store', function($q) use ($company) {
+                $q->where('company_id', $company->id);
+            })
+            ->get();
+
+        foreach ($reservations as $reservation) {
+            $reservation->viewed_at = now();
+            $reservation->save();
+        }
+
+        return response()->json(['success' => true, 'count' => $reservations->count()]);
+    }
 }
 

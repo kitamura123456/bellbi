@@ -3,7 +3,7 @@
 @section('title', '科目マスタ管理')
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">科目マスタ管理</h1>
     <div>
         <a href="{{ route('company.account-items.create') }}" style="
@@ -44,7 +44,7 @@
         
         @if ($revenueItems->count() > 0)
             <div class="table-wrapper">
-                <table class="account-items-table">
+                <table class="account-items-table revenue-items-table">
                     <thead>
                         <tr>
                             <th class="col-name">科目名</th>
@@ -100,6 +100,39 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- スマホ用カードレイアウト -->
+            <div class="account-items-cards revenue-items-cards">
+                @foreach ($revenueItems as $item)
+                <div class="account-item-card">
+                    <div class="account-item-card-header">
+                        <div class="account-item-card-name">{{ $item->name }}</div>
+                    </div>
+                    <div class="account-item-card-body">
+                        <div class="account-item-card-row">
+                            <span class="account-item-card-label">デフォルト税率</span>
+                            <span class="account-item-card-value">{{ $item->default_tax_rate ? $item->default_tax_rate . '%' : '-' }}</span>
+                        </div>
+                        <div class="account-item-card-row">
+                            <span class="account-item-card-label">登録日</span>
+                            <span class="account-item-card-value">{{ $item->created_at->format('Y年m月d日') }}</span>
+                        </div>
+                    </div>
+                    <div class="account-item-card-actions">
+                        <a href="{{ route('company.account-items.edit', $item) }}" class="account-item-card-btn account-item-card-btn-edit">
+                            編集
+                        </a>
+                        <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="account-item-card-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="account-item-card-btn account-item-card-btn-delete">
+                                削除
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         @else
             <p class="empty-message">売上科目が登録されていません。</p>
         @endif
@@ -111,7 +144,7 @@
         
         @if ($expenseItems->count() > 0)
             <div class="table-wrapper">
-                <table class="account-items-table">
+                <table class="account-items-table expense-items-table">
                     <thead>
                         <tr>
                             <th class="col-name">科目名</th>
@@ -166,6 +199,39 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- スマホ用カードレイアウト -->
+            <div class="account-items-cards expense-items-cards">
+                @foreach ($expenseItems as $item)
+                <div class="account-item-card">
+                    <div class="account-item-card-header">
+                        <div class="account-item-card-name">{{ $item->name }}</div>
+                    </div>
+                    <div class="account-item-card-body">
+                        <div class="account-item-card-row">
+                            <span class="account-item-card-label">デフォルト税率</span>
+                            <span class="account-item-card-value">{{ $item->default_tax_rate ? $item->default_tax_rate . '%' : '-' }}</span>
+                        </div>
+                        <div class="account-item-card-row">
+                            <span class="account-item-card-label">登録日</span>
+                            <span class="account-item-card-value">{{ $item->created_at->format('Y年m月d日') }}</span>
+                        </div>
+                    </div>
+                    <div class="account-item-card-actions">
+                        <a href="{{ route('company.account-items.edit', $item) }}" class="account-item-card-btn account-item-card-btn-edit">
+                            編集
+                        </a>
+                        <form action="{{ route('company.account-items.destroy', $item) }}" method="POST" class="account-item-card-form" onsubmit="return confirm('この科目を削除してもよろしいですか？');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="account-item-card-btn account-item-card-btn-delete">
+                                削除
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
             </div>
         @else
             <p class="empty-message">経費科目が登録されていません。</p>
@@ -275,6 +341,160 @@
 .inline-form {
     display: inline;
     margin-left: 6px;
+}
+
+/* スマホ用カードレイアウト（デフォルトは非表示） */
+.account-items-cards {
+    display: none;
+}
+
+.account-item-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.account-item-card-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.account-item-card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #5D535E;
+}
+
+.account-item-card-body {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.account-item-card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+}
+
+.account-item-card-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.account-item-card-value {
+    color: #111827;
+    font-weight: 600;
+    text-align: right;
+    flex: 1;
+    margin-left: 12px;
+}
+
+.account-item-card-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.account-item-card-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.account-item-card-btn-edit {
+    background: transparent;
+    color: #5D535E;
+    border: 1px solid #5D535E;
+}
+
+.account-item-card-btn-delete {
+    background: transparent;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+}
+
+.account-item-card-form {
+    flex: 1;
+    margin: 0;
+}
+
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 48px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-top: 48px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-top: 48px"] > div > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .account-items-table {
+        display: none;
+    }
+
+    .account-items-cards {
+        display: block;
+    }
+
+    .account-item-card {
+        margin-bottom: 16px;
+    }
+
+    .account-item-card-name {
+        font-size: 20px;
+    }
+
+    .account-item-card-row {
+        font-size: 15px;
+    }
+
+    .account-item-card-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-item-card {
+        padding: 12px;
+    }
+
+    .account-item-card-name {
+        font-size: 18px;
+    }
+
+    .account-item-card-row {
+        font-size: 14px;
+    }
+
+    .account-item-card-btn {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
 }
 </style>
 @endsection

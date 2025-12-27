@@ -57,13 +57,13 @@
                 <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: #6b7280;">ステータス</p>
                 <p style="margin: 0;">
                     @if($order->status === \App\Models\Order::STATUS_NEW)
-                        <span style="padding: 4px 12px; background: #dbeafe; color: #1e40af; border-radius: 12px; font-size: 14px; font-weight: 600;">新規</span>
+                        <span style="padding: 4px 12px; background: #dbeafe; color: #1e40af; border-radius: 12px; font-size: 14px; font-weight: 600;">注文完了</span>
                     @elseif($order->status === \App\Models\Order::STATUS_PAID)
                         <span style="padding: 4px 12px; background: #d1fae5; color: #059669; border-radius: 12px; font-size: 14px; font-weight: 600;">入金確認済</span>
                     @elseif($order->status === \App\Models\Order::STATUS_SHIPPED)
                         <span style="padding: 4px 12px; background: #fef3c7; color: #d97706; border-radius: 12px; font-size: 14px; font-weight: 600;">発送済</span>
                     @elseif($order->status === \App\Models\Order::STATUS_COMPLETED)
-                        <span style="padding: 4px 12px; background: #d1fae5; color: #059669; border-radius: 12px; font-size: 14px; font-weight: 600;">完了</span>
+                        <span style="padding: 4px 12px; background: #f3f4f6; color: #6b7280; border-radius: 12px; font-size: 14px; font-weight: 600;">完了</span>
                     @elseif($order->status === \App\Models\Order::STATUS_CANCELLED)
                         <span style="padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 12px; font-size: 14px; font-weight: 600;">キャンセル</span>
                     @endif
@@ -115,7 +115,7 @@
                         background: #ffffff;
                         flex: 1;
                     ">
-                        <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>新規</option>
+                        <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>注文完了</option>
                         <option value="2" {{ $order->status == 2 ? 'selected' : '' }}>入金確認済</option>
                         <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>発送済</option>
                         <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>完了</option>
@@ -139,6 +139,139 @@
             </form>
         </div>
     </div>
+</div>
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-bottom: 24px; display: flex"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: grid; grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    div[style*="display: grid; grid-template-columns: 1fr 1fr"] > div {
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+    div[style*="display: grid; grid-template-columns: 1fr 1fr"] > div:last-child {
+        border-bottom: none;
+    }
+
+    table[style*="width: 100%"] {
+        display: none;
+    }
+
+    .order-items-cards {
+        display: block;
+    }
+
+    .order-item-card {
+        background: #f9fafb;
+        border: 1px solid #e8e8e8;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .order-item-card-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #5D535E;
+        margin-bottom: 12px;
+    }
+
+    .order-item-card-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        padding: 4px 0;
+    }
+
+    .order-item-card-label {
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .order-item-card-value {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    div[style*="display: flex; gap: 12px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] button,
+    div[style*="display: flex; gap: 12px"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+}
+
+.order-items-cards {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    .order-item-card {
+        padding: 12px;
+    }
+}
+</style>
+
+<!-- スマホ用カードレイアウト -->
+<div class="order-items-cards">
+    @foreach($order->orderItems as $item)
+    <div class="order-item-card">
+        <div class="order-item-card-name">{{ $item->product->name ?? '削除された商品' }}</div>
+        <div class="order-item-card-row">
+            <span class="order-item-card-label">単価</span>
+            <span class="order-item-card-value">¥{{ number_format($item->price) }}</span>
+        </div>
+        <div class="order-item-card-row">
+            <span class="order-item-card-label">数量</span>
+            <span class="order-item-card-value">{{ $item->quantity }}</span>
+        </div>
+        <div class="order-item-card-row" style="padding-top: 8px; border-top: 1px solid #e8e8e8; margin-top: 8px;">
+            <span class="order-item-card-label">小計</span>
+            <span class="order-item-card-value">¥{{ number_format($item->price * $item->quantity) }}</span>
+        </div>
+    </div>
+    @endforeach
 </div>
 @endsection
 

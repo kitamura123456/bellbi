@@ -63,5 +63,48 @@ class JobApplicationController extends Controller
 
         return redirect()->route('company.applications.show', $application)->with('status', 'ステータスを更新しました。');
     }
+
+    public function markAsViewed(Request $request, JobApplication $application)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company || $application->jobPost->company_id !== $company->id) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
+        $application->viewed_at = now();
+        $application->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function markMultipleAsViewed(Request $request)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'application_ids' => ['required', 'array'],
+            'application_ids.*' => ['integer', 'exists:job_applications,id'],
+        ]);
+
+        $applications = JobApplication::whereIn('id', $validated['application_ids'])
+            ->whereHas('jobPost', function($q) use ($company) {
+                $q->where('company_id', $company->id);
+            })
+            ->get();
+
+        foreach ($applications as $application) {
+            $application->viewed_at = now();
+            $application->save();
+        }
+
+        return response()->json(['success' => true, 'count' => $applications->count()]);
+    }
 }
 

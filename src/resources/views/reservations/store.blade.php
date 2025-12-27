@@ -128,7 +128,7 @@
         </table>
     </div>
 
-    <form action="{{ route('reservations.booking', $store) }}" method="POST" id="reservation-form">
+    <form action="{{ route('reservations.booking.post', $store) }}" method="POST" id="reservation-form">
         @csrf
 
         <div class="job-detail-card" style="background: #ffffff; border: none; padding: 0; margin-bottom: 32px;">

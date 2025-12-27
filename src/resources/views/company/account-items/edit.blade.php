@@ -139,6 +139,55 @@
     justify-content: flex-end;
     margin-top: 8px;
 }
+
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-bottom: 24px; display: flex"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] > div > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .form-container {
+        padding: 16px !important;
+    }
+
+    .form-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .form-control {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 12px !important;
+    }
+}
 </style>
 @endsection
 

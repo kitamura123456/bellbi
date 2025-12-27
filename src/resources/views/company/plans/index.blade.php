@@ -3,7 +3,7 @@
 @section('title', 'プラン・課金管理')
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; margin-top: 32px; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">プラン・課金管理</h1>
 </div>
 
@@ -207,5 +207,70 @@
         @endif
     </div>
 </div>
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 32px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-top: 32px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] a,
+    div[style*="display: flex; gap: 12px"] button {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="grid-template-columns: repeat"] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    div[style*="padding: 24px; background"] {
+        padding: 16px !important;
+    }
+
+    div[style*="padding: 24px; background"] h4 {
+        font-size: 16px !important;
+    }
+
+    div[style*="font-size: 28px"] {
+        font-size: 24px !important;
+    }
+
+    div[style*="display: block"] {
+        font-size: 13px !important;
+        padding: 10px 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    div[style*="font-size: 28px"] {
+        font-size: 20px !important;
+    }
+}
+</style>
 @endsection
 

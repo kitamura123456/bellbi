@@ -15,6 +15,7 @@ class JobApplication extends Model
         'status',
         'interview_date',
         'message',
+        'viewed_at',
         'delete_flg',
     ];
 
@@ -23,6 +24,7 @@ class JobApplication extends Model
         'user_id' => 'integer',
         'status' => 'integer',
         'interview_date' => 'date',
+        'viewed_at' => 'datetime',
         'delete_flg' => 'integer',
     ];
 
@@ -39,6 +41,14 @@ class JobApplication extends Model
     public function conversation()
     {
         return $this->hasOne(Conversation::class);
+    }
+
+    /**
+     * 未読かどうかを判定
+     */
+    public function isUnread(): bool
+    {
+        return is_null($this->viewed_at);
     }
 }
 

@@ -71,20 +71,49 @@ class PlanController extends Controller
             return redirect()->route('company.dashboard')->with('error', '会社情報が登録されていません。');
         }
 
+        // Stripe APIキーの確認
+        if (!config('services.stripe.secret')) {
+            \Log::error('Stripe secret key is not configured');
+            return redirect()->route('company.plans.show', $plan)
+                ->with('error', '決済システムの設定が正しくありません。管理者にお問い合わせください。');
+        }
+
         try {
             // Stripe Customerを作成または取得
             $stripeCustomerId = $company->stripe_customer_id;
             if (!$stripeCustomerId) {
-                $stripeCustomer = Customer::create([
-                    'email' => $user->email,
+                // emailが有効な場合のみemailを含める
+                $customerData = [
                     'name' => $company->name,
                     'metadata' => [
                         'company_id' => $company->id,
                     ],
-                ]);
+                ];
+
+                // emailが有効な場合のみ追加
+                if ($user->email && filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+                    $customerData['email'] = $user->email;
+                }
+
+                $stripeCustomer = Customer::create($customerData);
                 $stripeCustomerId = $stripeCustomer->id;
                 $company->stripe_customer_id = $stripeCustomerId;
                 $company->save();
+            } else {
+                // 既存のCustomerのemailを更新（emailが有効な場合）
+                if ($user->email && filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+                    try {
+                        $stripeCustomer = Customer::retrieve($stripeCustomerId);
+                        if (!$stripeCustomer->email || $stripeCustomer->email !== $user->email) {
+                            Customer::update($stripeCustomerId, [
+                                'email' => $user->email,
+                            ]);
+                        }
+                    } catch (\Exception $e) {
+                        // エラーは無視（既に更新されている可能性）
+                        \Log::warning('Failed to update Stripe customer email: ' . $e->getMessage());
+                    }
+                }
             }
 
             // Stripe Checkoutセッションを作成（サブスクリプション用）
@@ -121,8 +150,22 @@ class PlanController extends Controller
 
             return redirect($checkoutSession->url);
         } catch (ApiErrorException $e) {
+            \Log::error('Stripe API Error: ' . $e->getMessage(), [
+                'company_id' => $company->id,
+                'plan_id' => $plan->id,
+                'error' => $e->getMessage(),
+            ]);
             return redirect()->route('company.plans.show', $plan)
                 ->with('error', '決済セッションの作成に失敗しました: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            \Log::error('Stripe Subscription Session Creation Error: ' . $e->getMessage(), [
+                'company_id' => $company->id,
+                'plan_id' => $plan->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return redirect()->route('company.plans.show', $plan)
+                ->with('error', '決済処理中にエラーが発生しました。しばらく時間をおいて再度お試しください。');
         }
     }
 

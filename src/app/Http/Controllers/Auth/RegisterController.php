@@ -24,15 +24,23 @@ class RegisterController extends Controller
      */
     public function register(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        ];
+
+        // emailが提供された場合のみバリデーションを適用
+        if ($request->filled('email')) {
+            $rules['email'] = ['nullable', 'string', 'email', 'max:255', 'unique:users,email'];
+        } else {
+            $rules['email'] = ['nullable', 'string', 'email', 'max:255'];
+        }
+
+        $data = $request->validate($rules);
 
         $user = User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'password' => Hash::make($data['password']),
             'role' => User::ROLE_PERSONAL,
             'profile_completed_flg' => 0,

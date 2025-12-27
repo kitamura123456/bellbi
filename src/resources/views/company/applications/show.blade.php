@@ -275,5 +275,76 @@
         </div>
     </form>
 </div>
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-bottom: 24px; display: flex"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+        width: 100%;
+    }
+
+    div[style*="display: flex; gap: 12px"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: flex; justify-content: flex-end"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; justify-content: flex-end"] button {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    table[style*="width: 100%"] {
+        font-size: 13px;
+    }
+
+    table[style*="width: 100%"] th,
+    table[style*="width: 100%"] td {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    table[style*="width: 100%"] th,
+    table[style*="width: 100%"] td {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
 @endsection
 

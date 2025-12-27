@@ -514,5 +514,63 @@
         }
     });
 </script>
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-bottom: 24px; display: flex"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: flex; justify-content"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="max-width: 60%"] {
+        max-width: 100% !important;
+    }
+
+    input[type="text"],
+    textarea {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+}
+</style>
 @endsection
 

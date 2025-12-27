@@ -257,5 +257,143 @@
         </div>
     </form>
 </div>
+
+<style>
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5D535E;
+    font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+}
+
+.form-group .required {
+    color: #763626;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2A3132;
+    background: #fafafa;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #90AFC5;
+    background: #ffffff;
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.form-group .error {
+    display: block;
+    margin-top: 6px;
+    color: #763626;
+    font-size: 12px;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-bottom: 24px; display: flex"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-bottom: 24px; display: flex"] > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    form[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: grid; grid-template-columns: repeat(4, 1fr)"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] button,
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    form[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    div[style*="display: grid; grid-template-columns: repeat(4, 1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
 @endsection
 

@@ -60,7 +60,8 @@ Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'store'])
 // 予約
 Route::get('/reservations/search', [ReservationController::class, 'search'])->name('reservations.search');
 Route::get('/reservations/store/{store}', [ReservationController::class, 'store'])->name('reservations.store');
-Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking');
+Route::get('/reservations/store/{store}/booking', [ReservationController::class, 'showBooking'])->name('reservations.booking');
+Route::post('/reservations/store/{store}/booking', [ReservationController::class, 'booking'])->name('reservations.booking.post');
 Route::post('/reservations/store/{store}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
 
 // ECショップ（エンドユーザ向け）
@@ -125,6 +126,7 @@ Route::middleware('auth')->group(function () {
 
     // 事業者管理画面
     Route::get('/company', [CompanyDashboard::class, 'index'])->name('company.dashboard');
+    Route::get('/company/sidebar-stats', [CompanyDashboard::class, 'getSidebarStats'])->name('company.sidebar-stats');
     Route::get('/company/info', [CompanyInfo::class, 'show'])->name('company.info');
     Route::get('/company/info/edit', [CompanyInfo::class, 'edit'])->name('company.info.edit');
     Route::put('/company/info', [CompanyInfo::class, 'update'])->name('company.info.update');
@@ -146,6 +148,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/applications', [CompanyApplications::class, 'index'])->name('company.applications.index');
     Route::get('/company/applications/{application}', [CompanyApplications::class, 'show'])->name('company.applications.show');
     Route::put('/company/applications/{application}/status', [CompanyApplications::class, 'updateStatus'])->name('company.applications.update-status');
+    Route::post('/company/applications/{application}/viewed', [CompanyApplications::class, 'markAsViewed'])->name('company.applications.mark-viewed');
+    Route::post('/company/applications/mark-viewed', [CompanyApplications::class, 'markMultipleAsViewed'])->name('company.applications.mark-multiple-viewed');
 
     Route::get('/company/scouts/search', [CompanyScouts::class, 'search'])->name('company.scouts.search');
     Route::get('/company/scouts/create/{profile}', [CompanyScouts::class, 'create'])->name('company.scouts.create');
@@ -181,6 +185,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/reservations', [CompanyReservations::class, 'index'])->name('company.reservations.index');
     Route::get('/company/reservations/{reservation}', [CompanyReservations::class, 'show'])->name('company.reservations.show');
     Route::put('/company/reservations/{reservation}/status', [CompanyReservations::class, 'updateStatus'])->name('company.reservations.update-status');
+    Route::post('/company/reservations/{reservation}/viewed', [CompanyReservations::class, 'markAsViewed'])->name('company.reservations.mark-viewed');
+    Route::post('/company/reservations/mark-viewed', [CompanyReservations::class, 'markMultipleAsViewed'])->name('company.reservations.mark-multiple-viewed');
 
     // 経営現場改善機能（会計）
     Route::get('/company/account-items', [CompanyAccountItems::class, 'index'])->name('company.account-items.index');
@@ -231,6 +237,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/company/orders', [CompanyOrders::class, 'index'])->name('company.orders.index');
     Route::get('/company/orders/{order}', [CompanyOrders::class, 'show'])->name('company.orders.show');
     Route::put('/company/orders/{order}/status', [CompanyOrders::class, 'updateStatus'])->name('company.orders.update-status');
+    Route::post('/company/orders/{order}/viewed', [CompanyOrders::class, 'markAsViewed'])->name('company.orders.mark-viewed');
+    Route::post('/company/orders/mark-viewed', [CompanyOrders::class, 'markMultipleAsViewed'])->name('company.orders.mark-multiple-viewed');
 
     // 管理画面 - ダッシュボード
     Route::get('/admin', function () {

@@ -16,6 +16,7 @@ class Order extends Model
         'status',
         'stripe_payment_intent_id',
         'stripe_checkout_session_id',
+        'viewed_at',
         'delete_flg',
     ];
 
@@ -24,11 +25,12 @@ class Order extends Model
         'user_id' => 'integer',
         'total_amount' => 'integer',
         'status' => 'integer',
+        'viewed_at' => 'datetime',
         'delete_flg' => 'integer',
     ];
 
     // ステータス定数
-    public const STATUS_NEW = 1;           // 新規
+    public const STATUS_NEW = 1;           // 注文完了
     public const STATUS_PAID = 2;          // 入金確認済
     public const STATUS_SHIPPED = 3;       // 発送済
     public const STATUS_COMPLETED = 4;     // 完了
@@ -47,6 +49,14 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class)->where('delete_flg', 0);
+    }
+
+    /**
+     * 未読かどうかを判定
+     */
+    public function isUnread(): bool
+    {
+        return is_null($this->viewed_at);
     }
 }
 

@@ -3,7 +3,7 @@
 @section('title', '補助金情報')
 
 @section('content')
-<div style="margin-bottom: 24px;">
+<div style="margin-bottom: 24px; margin-top: 32px;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">補助金情報</h1>
     <p style="margin: 16px 0 0 0; font-size: 14px; color: #666666; line-height: 1.5;">事業者向けの補助金情報を検索・閲覧できます。</p>
 </div>
@@ -355,5 +355,93 @@
     </div>
 @endif
 
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 32px"] h1 {
+        font-size: 20px !important;
+    }
+
+    div[style*="margin-top: 32px"] p {
+        font-size: 13px !important;
+    }
+
+    div[style*="grid-template-columns: repeat"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    div[style*="grid-template-columns: repeat"] input,
+    div[style*="grid-template-columns: repeat"] select {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px"] button,
+    div[style*="display: flex; gap: 12px"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    div[style*="display: flex; justify-content: space-between"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    div[style*="display: flex; justify-content: space-between"] h3 {
+        font-size: 16px !important;
+    }
+
+    div[style*="display: flex; flex-wrap: wrap; gap: 12px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; margin-top: 20px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; margin-top: 20px"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: center"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: center"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    div[style*="display: flex; justify-content: space-between"] h3 {
+        font-size: 15px !important;
+    }
+}
+</style>
 @endsection
 

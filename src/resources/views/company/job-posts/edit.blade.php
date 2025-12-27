@@ -3,7 +3,7 @@
 @section('title', '求人編集')
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">求人編集</h1>
     <a href="{{ route('company.job-posts.index') }}" style="
         padding: 12px 24px;
@@ -394,7 +394,7 @@
                     <input type="radio" name="image_source" value="template" style="margin-right: 8px;"> テンプレート画像を選択
                 </label>
                 <div id="template-section" style="margin-left: 24px; display: none;">
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <div class="template-image-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
                         <label style="cursor: pointer;">
                             <input type="radio" name="template_image" value="templates/stores/store1.svg" style="display: none;">
                             <img src="{{ asset('images/templates/stores/store1.svg') }}" style="width: 100%; border: 2px solid transparent; border-radius: 8px; transition: border-color 0.2s;" onclick="this.style.borderColor='#90AFC5'">
@@ -429,7 +429,7 @@
                 color: #5D535E;
                 font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
             ">公開期間</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="publish-period-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div>
                     <label for="publish_start_at" style="
                         display: block;
@@ -551,5 +551,123 @@
     </form>
 </div>
 
+
+<style>
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 48px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        margin-top: 24px !important;
+    }
+
+    div[style*="margin-top: 48px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-top: 48px"] > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    div[style*="padding: 20px 24px"] {
+        padding: 16px !important;
+    }
+
+    form[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+
+    .publish-period-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .template-image-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] button,
+    div[style*="display: flex; gap: 12px; justify-content: flex-end"] a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    input[type="file"],
+    select,
+    textarea {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    label[style*="display: inline-flex"] {
+        font-size: 14px !important;
+        padding: 8px 14px !important;
+        margin-bottom: 8px;
+    }
+
+    label[style*="display: inline-flex"] input[type="checkbox"] {
+        width: 18px !important;
+        height: 18px !important;
+        margin-right: 8px !important;
+    }
+
+    div[style*="margin-left: 24px"] {
+        margin-left: 0 !important;
+        margin-top: 12px !important;
+    }
+
+    label[style*="display: block; margin-bottom: 8px; font-weight: 500"] {
+        font-size: 15px !important;
+        margin-bottom: 10px !important;
+    }
+
+    label[style*="display: block; margin-bottom: 8px; font-weight: 500"] input[type="radio"] {
+        width: 18px !important;
+        height: 18px !important;
+        margin-right: 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="margin-top: 48px"] {
+        margin-top: 24px !important;
+    }
+
+    form[style*="padding: 24px"] {
+        padding: 12px !important;
+    }
+
+    .template-image-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    div[style*="display: flex; flex-wrap: wrap; gap: 8px"] {
+        gap: 6px !important;
+    }
+
+    label[style*="display: inline-flex"] {
+        font-size: 13px !important;
+        padding: 6px 12px !important;
+    }
+}
+</style>
 @endsection
 

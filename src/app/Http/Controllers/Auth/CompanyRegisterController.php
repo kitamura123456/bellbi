@@ -28,19 +28,27 @@ class CompanyRegisterController extends Controller
      */
     public function register(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'company_name' => ['required', 'string', 'max:255'],
             'industry_type' => ['required', 'integer'],
             'business_category' => ['nullable', 'integer'],
-        ]);
+        ];
+
+        // emailが提供された場合のみバリデーションを適用
+        if ($request->filled('email')) {
+            $rules['email'] = ['nullable', 'string', 'email', 'max:255', 'unique:users,email'];
+        } else {
+            $rules['email'] = ['nullable', 'string', 'email', 'max:255'];
+        }
+
+        $data = $request->validate($rules);
 
         // 事業者用ユーザを作成
         $user = User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'password' => Hash::make($data['password']),
             'role' => User::ROLE_COMPANY,
             'profile_completed_flg' => 0,

@@ -86,5 +86,54 @@ class OrderController extends Controller
 
         return redirect()->route('company.orders.show', $order)->with('status', '注文ステータスを更新しました。');
     }
+
+    public function markAsViewed(Request $request, Order $order)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // 注文が自社のショップのものか確認
+        $shop = $company->shops()->find($order->shop_id);
+        if (!$shop) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
+        $order->viewed_at = now();
+        $order->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function markMultipleAsViewed(Request $request)
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'order_ids' => ['required', 'array'],
+            'order_ids.*' => ['integer', 'exists:orders,id'],
+        ]);
+
+        $orders = Order::whereIn('id', $validated['order_ids'])
+            ->whereHas('shop', function($q) use ($company) {
+                $q->where('company_id', $company->id)->where('delete_flg', 0);
+            })
+            ->get();
+
+        foreach ($orders as $order) {
+            $order->viewed_at = now();
+            $order->save();
+        }
+
+        return response()->json(['success' => true, 'count' => $orders->count()]);
+    }
 }
 

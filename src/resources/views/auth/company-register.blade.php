@@ -22,8 +22,9 @@
             </div>
 
             <div class="form-group">
-                <label for="email">メールアドレス</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required>
+                <label for="email">メールアドレス <span style="color: #999; font-size: 11px; font-weight: 400;">（任意）</span></label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}">
+                <small style="display: block; margin-top: 4px; color: #999; font-size: 11px;">メールアドレスは任意です。入力しない場合はユーザー名でログインできます。</small>
                 @error('email')
                     <div class="error">{{ $message }}</div>
                 @enderror

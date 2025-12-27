@@ -3,7 +3,7 @@
 @section('title', '月次レポート')
 
 @section('content')
-<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+<div style="margin-bottom: 24px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #5D535E; letter-spacing: 0.3px; font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;">月次レポート</h1>
     <div>
         <a href="{{ route('company.transactions.index') }}" style="
@@ -102,7 +102,7 @@
     
     @if ($revenueByItem->count() > 0)
         <div class="table-wrapper">
-            <table class="report-table">
+            <table class="report-table revenue-table">
                 <thead>
                     <tr>
                         <th class="col-name">科目名</th>
@@ -134,6 +134,52 @@
                 </tfoot>
             </table>
         </div>
+
+        <!-- スマホ用カードレイアウト -->
+        <div class="report-cards revenue-cards">
+            @foreach ($revenueByItem as $item)
+            <div class="report-card">
+                <div class="report-card-header">
+                    <div class="report-card-name">{{ $item->accountItem->name }}</div>
+                    <div class="report-card-ratio">{{ $totalRevenue > 0 ? number_format(($item->total_amount / $totalRevenue) * 100, 1) : 0 }}%</div>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-card-row">
+                        <span class="report-card-label">税抜金額</span>
+                        <span class="report-card-value">¥{{ number_format($item->total_amount) }}</span>
+                    </div>
+                    <div class="report-card-row">
+                        <span class="report-card-label">税額</span>
+                        <span class="report-card-value">¥{{ number_format($item->total_tax) }}</span>
+                    </div>
+                    <div class="report-card-row highlight">
+                        <span class="report-card-label">税込合計</span>
+                        <span class="report-card-value amount-highlight">¥{{ number_format($item->total_amount + $item->total_tax) }}</span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            <div class="report-card total-card">
+                <div class="report-card-header">
+                    <div class="report-card-name">合計</div>
+                    <div class="report-card-ratio">100.0%</div>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-card-row">
+                        <span class="report-card-label">税抜金額</span>
+                        <span class="report-card-value">¥{{ number_format($totalRevenue) }}</span>
+                    </div>
+                    <div class="report-card-row">
+                        <span class="report-card-label">税額</span>
+                        <span class="report-card-value">¥{{ number_format($totalRevenueTax) }}</span>
+                    </div>
+                    <div class="report-card-row highlight">
+                        <span class="report-card-label">税込合計</span>
+                        <span class="report-card-value amount-highlight">¥{{ number_format($totalRevenue + $totalRevenueTax) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     @else
         <p class="empty-message">売上データがありません。</p>
     @endif
@@ -145,7 +191,7 @@
     
     @if ($expenseByItem->count() > 0)
         <div class="table-wrapper">
-            <table class="report-table">
+            <table class="report-table expense-table">
                 <thead>
                     <tr>
                         <th class="col-name">科目名</th>
@@ -176,6 +222,52 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+
+        <!-- スマホ用カードレイアウト -->
+        <div class="report-cards expense-cards">
+            @foreach ($expenseByItem as $item)
+            <div class="report-card">
+                <div class="report-card-header">
+                    <div class="report-card-name">{{ $item->accountItem->name }}</div>
+                    <div class="report-card-ratio">{{ $totalExpense > 0 ? number_format(($item->total_amount / $totalExpense) * 100, 1) : 0 }}%</div>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-card-row">
+                        <span class="report-card-label">税抜金額</span>
+                        <span class="report-card-value">¥{{ number_format($item->total_amount) }}</span>
+                    </div>
+                    <div class="report-card-row">
+                        <span class="report-card-label">税額</span>
+                        <span class="report-card-value">¥{{ number_format($item->total_tax) }}</span>
+                    </div>
+                    <div class="report-card-row highlight">
+                        <span class="report-card-label">税込合計</span>
+                        <span class="report-card-value amount-highlight">¥{{ number_format($item->total_amount + $item->total_tax) }}</span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            <div class="report-card total-card">
+                <div class="report-card-header">
+                    <div class="report-card-name">合計</div>
+                    <div class="report-card-ratio">100.0%</div>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-card-row">
+                        <span class="report-card-label">税抜金額</span>
+                        <span class="report-card-value">¥{{ number_format($totalExpense) }}</span>
+                    </div>
+                    <div class="report-card-row">
+                        <span class="report-card-label">税額</span>
+                        <span class="report-card-value">¥{{ number_format($totalExpenseTax) }}</span>
+                    </div>
+                    <div class="report-card-row highlight">
+                        <span class="report-card-label">税込合計</span>
+                        <span class="report-card-value amount-highlight">¥{{ number_format($totalExpense + $totalExpenseTax) }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     @else
         <p class="empty-message">経費データがありません。</p>
@@ -377,6 +469,195 @@
     color: #6b7280;
     background: #f9fafb;
     border-radius: 4px;
+}
+
+/* スマホ用カードレイアウト（デフォルトは非表示） */
+.report-cards {
+    display: none;
+}
+
+.report-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.report-card.total-card {
+    background: #f9fafb;
+    border: 2px solid #d1d5db;
+    font-weight: 700;
+}
+
+.report-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.report-card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #5D535E;
+}
+
+.report-card-ratio {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 4px 12px;
+    background: #f3f4f6;
+    border-radius: 12px;
+}
+
+.report-card-body {
+    display: grid;
+    gap: 10px;
+}
+
+.report-card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+}
+
+.report-card-row.highlight {
+    padding-top: 8px;
+    border-top: 1px solid #e8e8e8;
+    margin-top: 4px;
+}
+
+.report-card-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.report-card-value {
+    color: #111827;
+    font-weight: 600;
+    text-align: right;
+    flex: 1;
+    margin-left: 12px;
+    font-family: 'Courier New', monospace;
+}
+
+/* スマホ用レスポンシブデザイン */
+@media (max-width: 768px) {
+    div[style*="margin-top: 48px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    div[style*="margin-top: 48px"] h1 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    div[style*="margin-top: 48px"] > div > a {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .filter-container {
+        padding: 16px !important;
+    }
+
+    .filter-row {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .filter-item {
+        width: 100%;
+    }
+
+    .filter-item .form-control {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .filter-item button {
+        width: 100%;
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .summary-container {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .summary-card {
+        padding: 20px !important;
+    }
+
+    .summary-amount {
+        font-size: 28px !important;
+    }
+
+    .summary-detail {
+        flex-direction: column !important;
+        gap: 4px !important;
+    }
+
+    .report-section {
+        padding: 16px !important;
+    }
+
+    .report-table {
+        display: none;
+    }
+
+    .report-cards {
+        display: block;
+    }
+
+    .report-card {
+        margin-bottom: 16px;
+    }
+
+    .report-card-name {
+        font-size: 20px;
+    }
+
+    .report-card-row {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="margin-top: 48px"] {
+        margin-top: 24px !important;
+    }
+
+    .summary-amount {
+        font-size: 24px !important;
+    }
+
+    .report-section {
+        padding: 12px !important;
+    }
+
+    .report-card {
+        padding: 12px;
+    }
+
+    .report-card-name {
+        font-size: 18px;
+    }
+
+    .report-card-row {
+        font-size: 14px;
+    }
 }
 </style>
 @endsection

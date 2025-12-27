@@ -21,6 +21,7 @@ class Reservation extends Model
         'status',
         'customer_note',
         'store_note',
+        'viewed_at',
         'delete_flg',
     ];
 
@@ -32,6 +33,7 @@ class Reservation extends Model
         'total_duration_minutes' => 'integer',
         'total_price' => 'integer',
         'status' => 'integer',
+        'viewed_at' => 'datetime',
         'delete_flg' => 'integer',
     ];
 
@@ -60,6 +62,14 @@ class Reservation extends Model
     public function reservationMenus()
     {
         return $this->hasMany(ReservationMenu::class);
+    }
+
+    /**
+     * 未読かどうかを判定
+     */
+    public function isUnread(): bool
+    {
+        return is_null($this->viewed_at);
     }
 }
 
