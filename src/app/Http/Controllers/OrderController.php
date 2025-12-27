@@ -69,7 +69,7 @@ class OrderController extends Controller
         }
 
         $user = Auth::user();
-        
+
         // メールアドレスが有効かチェック
         $hasValidEmail = !empty($user->email) && filter_var($user->email, FILTER_VALIDATE_EMAIL);
 
@@ -172,7 +172,8 @@ class OrderController extends Controller
                 if (!empty($customerEmail) && filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
                     $validEmail = true;
                 } else {
-                    Log::warning('Invalid email address for Stripe checkout', [
+                    // メールアドレスが無効でも決済を進める（Stripe Checkoutで入力可能）
+                    Log::info('No valid email address for Stripe checkout (will be collected on Stripe page)', [
                         'user_id' => Auth::id(),
                         'email' => $customerEmail,
                         'input_email' => $inputEmail,
@@ -246,18 +247,10 @@ class OrderController extends Controller
                 }
             }
             
-            // Stripe Checkoutセッションを作成
-            // 日本の決済方法をサポート: クレジットカード、コンビニ決済、銀行振込
-            // 決済方法のオプション設定（konbiniは常に有効）
-            $paymentMethodOptions = [
-                'konbini' => [
-                    'expires_after_days' => 5, // 5日以内に支払い
-                ],
-            ];
-            
-            // payment_method_typesの初期設定（両方の決済方法を含める）
-            // konbiniはcustomerパラメータが不要だが、customer_balanceはcustomerパラメータが必須
-            $paymentMethodTypes = ['card', 'konbini'];
+            // Stripe Checkoutセッションを作成（クレジットカード・銀行振込用）
+            // クレジットカードと銀行振込のみを含める（customerパラメータを設定するため）
+            $paymentMethodTypes = ['card'];
+            $paymentMethodOptions = [];
             
             // customer_balance（銀行振込）を使用する場合、customerパラメータが必須
             // customerが設定されている場合のみ、customer_balanceを追加
@@ -281,12 +274,14 @@ class OrderController extends Controller
                     'user_id' => Auth::id(),
                     'shop_items' => json_encode($shopItemsForMetadata), // セッションデータをmetadataに保存（Webhookで注文を作成するため）
                 ],
-                'payment_method_options' => $paymentMethodOptions,
             ];
             
+            // payment_method_optionsが空でない場合のみ設定
+            if (!empty($paymentMethodOptions)) {
+                $checkoutSessionParams['payment_method_options'] = $paymentMethodOptions;
+            }
+            
             // customer_balance（銀行振込）を使用する場合のみ、customerパラメータを設定
-            // customerパラメータを設定しても、konbiniが利用可能であることを期待
-            // もしkonbiniが除外される場合は、Stripeのアカウント設定を確認する必要がある
             if ($stripeCustomerId && in_array('customer_balance', $paymentMethodTypes)) {
                 $checkoutSessionParams['customer'] = $stripeCustomerId;
             }
@@ -323,15 +318,6 @@ class OrderController extends Controller
                 'payment_method_types_requested' => $checkoutSessionParams['payment_method_types'],
                 'url' => $checkoutSession->url,
             ]);
-            
-            // konbiniが除外されている場合、警告をログに記録
-            if (!in_array('konbini', $checkoutSession->payment_method_types ?? [])) {
-                Log::warning('konbini was excluded from payment_method_types', [
-                    'requested' => $checkoutSessionParams['payment_method_types'],
-                    'actual' => $checkoutSession->payment_method_types ?? [],
-                    'has_customer' => isset($checkoutSessionParams['customer']),
-                ]);
-            }
 
             return redirect($checkoutSession->url);
         } catch (ApiErrorException $e) {
@@ -344,6 +330,191 @@ class OrderController extends Controller
                 ->with('error', '決済セッションの作成に失敗しました: ' . $e->getMessage());
         } catch (\Exception $e) {
             Log::error('Unexpected Error in createStripeSession', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+            ]);
+            return redirect()->route('orders.checkout')
+                ->with('error', 'エラーが発生しました: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * コンビニ決済用のStripe Checkoutセッションを作成
+     */
+    public function createStripeKonbiniSession(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        // Stripe APIキーの確認
+        $stripeSecret = config('services.stripe.secret');
+        if (!$stripeSecret) {
+            return redirect()->route('orders.checkout')
+                ->with('error', 'Stripe APIキーが設定されていません。管理者にお問い合わせください。');
+        }
+
+        $cart = Session::get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'カートが空です。');
+        }
+
+        // カート内の商品をショップごとにグループ化
+        $shopItems = [];
+        $lineItems = [];
+
+        foreach ($cart as $productId => $quantity) {
+            $product = Product::with('shop')
+                ->where('id', $productId)
+                ->where('delete_flg', 0)
+                ->whereIn('status', [Product::STATUS_ON_SALE, Product::STATUS_OUT_OF_STOCK])
+                ->first();
+
+            if (!$product || !$product->shop || $product->shop->status !== Shop::STATUS_PUBLIC || $product->shop->delete_flg) {
+                continue;
+            }
+
+            $availableQuantity = min($quantity, $product->stock);
+            if ($availableQuantity <= 0) {
+                continue;
+            }
+
+            $shopId = $product->shop_id;
+            if (!isset($shopItems[$shopId])) {
+                $shopItems[$shopId] = [];
+            }
+
+            $subtotal = $product->price * $availableQuantity;
+            $shopItems[$shopId][] = [
+                'product' => $product,
+                'quantity' => $availableQuantity,
+                'subtotal' => $subtotal,
+            ];
+
+            // Stripe用のLineItemを作成
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'jpy',
+                    'product_data' => [
+                        'name' => $product->name,
+                    ],
+                    'unit_amount' => $product->price,
+                ],
+                'quantity' => $availableQuantity,
+            ];
+        }
+
+        if (empty($shopItems)) {
+            return redirect()->route('cart.index')->with('error', '注文できる商品がありません。');
+        }
+
+        try {
+            // 一時的に注文データをセッションに保存
+            Session::put('pending_orders', $shopItems);
+
+            // ユーザーのメールアドレスを取得
+            $user = Auth::user();
+            $customerEmail = null;
+            $validEmail = false;
+            
+            // まず、フォームから送信されたメールアドレスを優先的に取得
+            $inputEmail = $request->input('customer_email');
+            if (!empty($inputEmail) && filter_var($inputEmail, FILTER_VALIDATE_EMAIL)) {
+                $customerEmail = $inputEmail;
+                $validEmail = true;
+            } else {
+                // フォームからメールアドレスが送信されていない場合、ユーザーのメールアドレスを使用
+                $customerEmail = $user->email ?? null;
+                if (!empty($customerEmail) && filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+                    $validEmail = true;
+                } else {
+                    // メールアドレスが無効でも決済を進める（Stripe Checkoutで入力可能）
+                    Log::info('No valid email address for Stripe konbini checkout (will be collected on Stripe page)', [
+                        'user_id' => Auth::id(),
+                        'email' => $customerEmail,
+                        'input_email' => $inputEmail,
+                    ]);
+                }
+            }
+
+            // Webhookで注文を作成するため、shopItemsをシリアライズ可能な形式に変換
+            $shopItemsForMetadata = [];
+            $totalAmount = 0; // 合計金額を計算
+            foreach ($shopItems as $shopId => $shopItemList) {
+                $shopItemsForMetadata[$shopId] = [];
+                foreach ($shopItemList as $item) {
+                    $shopItemsForMetadata[$shopId][] = [
+                        'product_id' => $item['product']->id,
+                        'product_name' => $item['product']->name,
+                        'product_price' => $item['product']->price,
+                        'quantity' => $item['quantity'],
+                        'subtotal' => $item['subtotal'],
+                        'unit_price' => $item['product']->price,
+                    ];
+                    $totalAmount += $item['subtotal'];
+                }
+            }
+            
+            // コンビニ決済には最低金額（¥120）が必要
+            $konbiniMinimumAmount = 120;
+            if ($totalAmount < $konbiniMinimumAmount) {
+                return redirect()->route('orders.checkout')
+                    ->with('error', 'コンビニ決済は合計金額が¥' . number_format($konbiniMinimumAmount) . '以上の場合のみご利用いただけます。現在の合計金額は¥' . number_format($totalAmount) . 'です。');
+            }
+            
+            // Stripe Checkoutセッションを作成（コンビニ決済用）
+            // konbiniのみを含める（customerパラメータを設定しない）
+            // cardとkonbiniを同時に使用すると、konbiniが除外される可能性があるため、konbiniのみを含める
+            $checkoutSessionParams = [
+                'payment_method_types' => ['konbini'],
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => route('orders.stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('orders.checkout') . '?canceled=1',
+                'metadata' => [
+                    'user_id' => Auth::id(),
+                    'shop_items' => json_encode($shopItemsForMetadata), // セッションデータをmetadataに保存（Webhookで注文を作成するため）
+                ],
+                'payment_method_options' => [
+                    'konbini' => [
+                        'expires_after_days' => 5, // 5日以内に支払い
+                    ],
+                ],
+            ];
+            
+            // メールアドレスが有効な場合のみcustomer_emailを設定
+            if ($validEmail && $customerEmail) {
+                $checkoutSessionParams['customer_email'] = $customerEmail;
+            }
+            
+            // デバッグ用ログ
+            Log::info('Creating Stripe Konbini Checkout Session', [
+                'payment_method_types' => $checkoutSessionParams['payment_method_types'],
+                'has_customer' => false,
+                'currency' => 'jpy',
+            ]);
+            
+            $checkoutSession = StripeSession::create($checkoutSessionParams);
+            
+            // 作成されたセッションの情報をログに記録
+            Log::info('Stripe Konbini Checkout Session Created', [
+                'session_id' => $checkoutSession->id,
+                'payment_method_types' => $checkoutSession->payment_method_types ?? [],
+                'url' => $checkoutSession->url,
+            ]);
+
+            return redirect($checkoutSession->url);
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe Konbini Checkout Session Creation Failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+                'cart' => $cart,
+            ]);
+            return redirect()->route('orders.checkout')
+                ->with('error', '決済セッションの作成に失敗しました: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            Log::error('Unexpected Error in createStripeKonbiniSession', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'user_id' => Auth::id(),
@@ -638,7 +809,7 @@ class OrderController extends Controller
             ->with(['shop.company', 'orderItems.product'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        
+
         // デバッグ用ログ
         Log::info('Orders found', [
             'user_id' => $userId,

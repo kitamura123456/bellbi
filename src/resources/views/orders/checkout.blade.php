@@ -202,7 +202,7 @@
                     color: #666;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 ">
-                    Stripe決済（クレジットカード・コンビニ決済・銀行振込）またはオフライン決済（店頭支払い等）から選択できます。
+                    Stripe決済（クレジットカード・銀行振込）またはコンビニ決済、オフライン決済（店頭支払い等）から選択できます。
                 </p>
                 <p style="
                     margin: 0;
@@ -210,7 +210,7 @@
                     color: #999;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
                 ">
-                    ※コンビニ決済の場合、注文確定後3日以内にコンビニでお支払いください。<br>
+                    ※コンビニ決済の場合、注文確定後5日以内にコンビニでお支払いください。<br>
                     ※銀行振込の場合、Stripe Checkoutで振込先情報が表示されます。入金確認まで数日かかる場合があります。
                 </p>
             </div>
@@ -221,7 +221,6 @@
                     @csrf
                     @if(!$hasValidEmail)
                     <input type="hidden" name="customer_email" value="" id="customer_email_hidden">
-                    <input type="hidden" name="save_email_to_account" value="0" id="save_email_input">
                     @endif
                     <button type="submit" id="stripe-payment-button" style="
                         width: 100%;
@@ -237,47 +236,103 @@
                         transition: all 0.3s ease;
                         letter-spacing: 0.05em;
                     " onmouseover="this.style.backgroundColor='#5851EA'; this.style.borderColor='#5851EA';" onmouseout="this.style.backgroundColor='#635BFF'; this.style.borderColor='#635BFF';">
-                        Stripeで決済する
+                        Stripeで決済する（クレカ、銀行振り込み）
+                    </button>
+                </form>
+                
+                @php
+                    $konbiniMinimumAmount = 120;
+                    $canUseKonbini = $total >= $konbiniMinimumAmount;
+                @endphp
+                <form method="POST" action="{{ route('orders.stripe.konbini.session') }}" id="stripe-konbini-form">
+                    @csrf
+                    @if(!$hasValidEmail)
+                    <input type="hidden" name="customer_email" value="" id="customer_email_hidden_konbini">
+                    @endif
+                    @if(!$canUseKonbini)
+                    <div style="
+                        padding: 12px 16px;
+                        background: #fffbf0;
+                        border: 1px solid #fef3c7;
+                        border-radius: 4px;
+                        margin-bottom: 12px;
+                        font-size: 12px;
+                        color: #92400e;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                    ">
+                        コンビニ決済は合計金額が¥{{ number_format($konbiniMinimumAmount) }}以上の場合のみご利用いただけます。
+                    </div>
+                    @endif
+                    <button type="submit" id="stripe-konbini-button" @if(!$canUseKonbini) disabled @endif style="
+                        width: 100%;
+                        padding: 14px 24px;
+                        background: @if($canUseKonbini) #10b981 @else #d1d5db @endif;
+                        color: #ffffff;
+                        border: 1px solid @if($canUseKonbini) #10b981 @else #d1d5db @endif;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+                        cursor: @if($canUseKonbini) pointer @else not-allowed @endif;
+                        transition: all 0.3s ease;
+                        letter-spacing: 0.05em;
+                        opacity: @if($canUseKonbini) 1 @else 0.6 @endif;
+                    " @if($canUseKonbini) onmouseover="this.style.backgroundColor='#059669'; this.style.borderColor='#059669';" onmouseout="this.style.backgroundColor='#10b981'; this.style.borderColor='#10b981';" @endif>
+                        コンビニ決済
                     </button>
                 </form>
                 <script>
-                    @if(!$hasValidEmail)
-                    // チェックボックスの状態をhidden inputに反映
-                    document.getElementById('save_email_checkbox').addEventListener('change', function() {
-                        document.getElementById('save_email_input').value = this.checked ? '1' : '0';
-                    });
-                    @endif
                     (function() {
+                        // Stripe決済（クレカ、銀行振り込み）用のフォーム
                         var form = document.getElementById('stripe-payment-form');
                         var button = document.getElementById('stripe-payment-button');
                         
-                        if (!form || !button) {
-                            console.error('Stripe payment form or button not found');
-                            return;
+                        if (form && button) {
+                            form.addEventListener('submit', function(e) {
+                                @if(!$hasValidEmail)
+                                // メールアドレスが入力されている場合はhidden inputに設定（任意）
+                                var emailInput = document.getElementById('customer_email_input');
+                                var emailHidden = document.getElementById('customer_email_hidden');
+                                if (emailInput && emailInput.value && emailInput.validity.valid && emailHidden) {
+                                    emailHidden.value = emailInput.value;
+                                }
+                                @endif
+                                
+                                button.disabled = true;
+                                button.textContent = '処理中...';
+                                button.style.opacity = '0.6';
+                                button.style.cursor = 'not-allowed';
+                            });
                         }
                         
-                        form.addEventListener('submit', function(e) {
-                            @if(!$hasValidEmail)
-                            // メールアドレスの検証とhidden inputへの設定
-                            var emailInput = document.getElementById('customer_email_input');
-                            var emailHidden = document.getElementById('customer_email_hidden');
-                            if (!emailInput || !emailInput.value || !emailInput.validity.valid) {
+                        // コンビニ決済用のフォーム
+                        var konbiniForm = document.getElementById('stripe-konbini-form');
+                        var konbiniButton = document.getElementById('stripe-konbini-button');
+                        
+                        if (konbiniForm && konbiniButton) {
+                            konbiniForm.addEventListener('submit', function(e) {
+                                @if(!$canUseKonbini)
+                                // 金額が¥120未満の場合は送信を無効化
                                 e.preventDefault();
-                                alert('有効なメールアドレスを入力してください。');
-                                emailInput.focus();
+                                alert('コンビニ決済は合計金額が¥{{ number_format($konbiniMinimumAmount) }}以上の場合のみご利用いただけます。');
                                 return false;
-                            }
-                            // メールアドレスをhidden inputに設定
-                            if (emailHidden) {
-                                emailHidden.value = emailInput.value;
-                            }
-                            @endif
-                            
-                            button.disabled = true;
-                            button.textContent = '処理中...';
-                            button.style.opacity = '0.6';
-                            button.style.cursor = 'not-allowed';
-                        });
+                                @endif
+                                
+                                @if(!$hasValidEmail)
+                                // メールアドレスが入力されている場合はhidden inputに設定（任意）
+                                var emailInput = document.getElementById('customer_email_input');
+                                var emailHidden = document.getElementById('customer_email_hidden_konbini');
+                                if (emailInput && emailInput.value && emailInput.validity.valid && emailHidden) {
+                                    emailHidden.value = emailInput.value;
+                                }
+                                @endif
+                                
+                                konbiniButton.disabled = true;
+                                konbiniButton.textContent = '処理中...';
+                                konbiniButton.style.opacity = '0.6';
+                                konbiniButton.style.cursor = 'not-allowed';
+                            });
+                        }
                     })();
                 </script>
 
@@ -297,7 +352,7 @@
                         transition: all 0.3s ease;
                         letter-spacing: 0.05em;
                     " onmouseover="this.style.backgroundColor='#f5f5f5';" onmouseout="this.style.backgroundColor='transparent';">
-                        オフライン決済で注文を確定する
+                        店頭で支払う
                     </button>
                 </form>
 

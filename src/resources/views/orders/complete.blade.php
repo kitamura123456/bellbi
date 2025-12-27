@@ -192,7 +192,7 @@
                 line-height: 1.7;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
             ">
-                ショップから支払い方法についてご連絡いたします。お支払い完了後、商品を発送いたします。
+                店頭でお支払いの際は、注文番号「<strong>{{ $order->id }}</strong>」とお名前「<strong>{{ $order->user->name }}</strong>」をお伝えください。
             </p>
         </div>
 

@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function () {
     // 注文機能
     Route::get('/orders/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/orders/stripe/session', [OrderController::class, 'createStripeSession'])->name('orders.stripe.session');
+    Route::post('/orders/stripe/konbini/session', [OrderController::class, 'createStripeKonbiniSession'])->name('orders.stripe.konbini.session');
     Route::get('/orders/stripe/success', [OrderController::class, 'stripeSuccess'])->name('orders.stripe.success');
     Route::post('/orders/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
     Route::get('/orders/complete/{order}', [OrderController::class, 'complete'])->name('orders.complete');
