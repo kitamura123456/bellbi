@@ -139,21 +139,21 @@
         <table class="company-table">
             <tr>
                 <th style="width: 150px;">企業名</th>
-                <td>{{ $conversation->company->name }}</td>
+                <td>{{ $conversation->company->name ?? '不明' }}</td>
             </tr>
-            @if($conversation->jobApplication)
+            @if($conversation->jobApplication && $conversation->jobApplication->jobPost)
                 <tr>
                     <th>関連応募</th>
                     <td>
                         <a href="{{ route('jobs.show', $conversation->jobApplication->jobPost) }}" style="color: #1a1a1a; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
-                            {{ $conversation->jobApplication->jobPost->title }}
+                            {{ $conversation->jobApplication->jobPost->title ?? '応募情報' }}
                         </a>
                     </td>
                 </tr>
             @elseif($conversation->scoutMessage)
                 <tr>
                     <th>関連スカウト</th>
-                    <td>{{ $conversation->scoutMessage->subject }}</td>
+                    <td>{{ $conversation->scoutMessage->subject ?? 'スカウトメッセージ' }}</td>
                 </tr>
             @endif
         </table>
@@ -352,47 +352,115 @@
     </div>
 
     @vite(['resources/js/app.js'])
-    <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key', env('PUSHER_APP_KEY', '')) }}">
-    <meta name="pusher-cluster" content="{{ config('broadcasting.connections.pusher.options.cluster', env('PUSHER_APP_CLUSTER', 'mt1')) }}">
+    @php
+        // Pusher設定を安全に取得（本番環境でのエラーを防ぐ）
+        $pusherKey = '';
+        $pusherCluster = 'mt1';
+        try {
+            $pusherKey = config('broadcasting.connections.pusher.key', '');
+            if (empty($pusherKey)) {
+                $pusherKey = env('PUSHER_APP_KEY', '');
+            }
+        } catch (\Exception $e) {
+            $pusherKey = env('PUSHER_APP_KEY', '');
+        }
+        try {
+            $pusherCluster = config('broadcasting.connections.pusher.options.cluster', 'mt1');
+            if (empty($pusherCluster)) {
+                $pusherCluster = env('PUSHER_APP_CLUSTER', 'mt1');
+            }
+        } catch (\Exception $e) {
+            $pusherCluster = env('PUSHER_APP_CLUSTER', 'mt1');
+        }
+    @endphp
+    <meta name="pusher-key" content="{{ $pusherKey }}">
+    <meta name="pusher-cluster" content="{{ $pusherCluster }}">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const conversationId = {{ $conversation->id }};
-            const currentUserId = {{ Auth::id() }};
-            // ベースパスを取得（Laravelのassetヘルパーから）
-            const basePath = '{{ url("") }}'.replace(window.location.origin, '') || '';
-            // グローバルに設定（Echoの初期化でも使用）
-            window.BASE_PATH = basePath;
-            // 画像パスを設定
-            window.SPEAKER_IMAGE = '{{ asset("images/スピーカー.png") }}';
-            window.SPEAKER_OFF_IMAGE = '{{ asset("images/スピーカーオフ.png") }}';
-            window.CAMERA_IMAGE = '{{ asset("images/カメラ.png") }}';
-            
-            console.log('Initializing VideoCallManager:', { conversationId, currentUserId, basePath });
-            
-            // VideoCallManagerを初期化
             try {
-                const videoCallManager = new window.VideoCallManager(conversationId, currentUserId, basePath);
-            
-            // ビデオ通話開始ボタン
-            document.getElementById('startVideoCallBtn').addEventListener('click', function() {
-                videoCallManager.startCall();
-            });
-            
-            // コントロールボタン
-            document.getElementById('endCallBtn').addEventListener('click', function() {
-                videoCallManager.endCall();
-            });
-            
-            document.getElementById('toggleMuteBtn').addEventListener('click', function() {
-                videoCallManager.toggleMute();
-            });
-            
-            document.getElementById('toggleVideoBtn').addEventListener('click', function() {
-                videoCallManager.toggleVideo();
-            });
+                const conversationId = {{ $conversation->id ?? 0 }};
+                const currentUserId = {{ Auth::id() ?? 0 }};
+                
+                if (!conversationId || !currentUserId) {
+                    console.warn('VideoCallManager: Missing required IDs', { conversationId, currentUserId });
+                    return;
+                }
+                
+                // ベースパスを取得（Laravelのassetヘルパーから）
+                const basePath = '{{ url("") }}'.replace(window.location.origin, '') || '';
+                // グローバルに設定（Echoの初期化でも使用）
+                window.BASE_PATH = basePath;
+                // 画像パスを設定
+                window.SPEAKER_IMAGE = '{{ asset("images/スピーカー.png") }}';
+                window.SPEAKER_OFF_IMAGE = '{{ asset("images/スピーカーオフ.png") }}';
+                window.CAMERA_IMAGE = '{{ asset("images/カメラ.png") }}';
+                
+                console.log('Initializing VideoCallManager:', { conversationId, currentUserId, basePath });
+                
+                // VideoCallManagerが存在するか確認
+                if (typeof window.VideoCallManager === 'undefined') {
+                    console.warn('VideoCallManager is not available');
+                    return;
+                }
+                
+                // VideoCallManagerを初期化
+                try {
+                    const videoCallManager = new window.VideoCallManager(conversationId, currentUserId, basePath);
+                
+                    // ビデオ通話開始ボタン
+                    const startBtn = document.getElementById('startVideoCallBtn');
+                    if (startBtn) {
+                        startBtn.addEventListener('click', function() {
+                            try {
+                                videoCallManager.startCall();
+                            } catch (error) {
+                                console.error('Failed to start video call:', error);
+                            }
+                        });
+                    }
+                    
+                    // コントロールボタン
+                    const endBtn = document.getElementById('endCallBtn');
+                    if (endBtn) {
+                        endBtn.addEventListener('click', function() {
+                            try {
+                                videoCallManager.endCall();
+                            } catch (error) {
+                                console.error('Failed to end video call:', error);
+                            }
+                        });
+                    }
+                    
+                    const muteBtn = document.getElementById('toggleMuteBtn');
+                    if (muteBtn) {
+                        muteBtn.addEventListener('click', function() {
+                            try {
+                                videoCallManager.toggleMute();
+                            } catch (error) {
+                                console.error('Failed to toggle mute:', error);
+                            }
+                        });
+                    }
+                    
+                    const videoBtn = document.getElementById('toggleVideoBtn');
+                    if (videoBtn) {
+                        videoBtn.addEventListener('click', function() {
+                            try {
+                                videoCallManager.toggleVideo();
+                            } catch (error) {
+                                console.error('Failed to toggle video:', error);
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to initialize VideoCallManager:', error);
+                    // 本番環境ではアラートを表示しない（ログのみ）
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        alert('ビデオ通話機能の初期化に失敗しました。コンソールを確認してください。');
+                    }
+                }
             } catch (error) {
-                console.error('Failed to initialize VideoCallManager:', error);
-                alert('ビデオ通話機能の初期化に失敗しました。コンソールを確認してください。');
+                console.error('Error in VideoCallManager initialization script:', error);
             }
         });
     </script>

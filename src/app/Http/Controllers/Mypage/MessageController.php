@@ -56,31 +56,80 @@ class MessageController extends Controller
 
     public function show(Conversation $conversation)
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        if ($conversation->user_id !== $user->id) {
-            abort(403);
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'ログインが必要です');
+            }
+
+            if ($conversation->user_id !== $user->id) {
+                abort(403, 'この会話にアクセスする権限がありません');
+            }
+
+            // リレーションをEager Load（jobApplication.jobPost, scoutMessage を含める）
+            $conversation->load(['company', 'jobApplication.jobPost', 'scoutMessage']);
+
+            // メッセージを取得（添付のみEager Load）
+            try {
+                $messages = $conversation->messages()->with(['attachments'])->get();
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to load messages', [
+                    'conversation_id' => $conversation->id,
+                    'error' => $e->getMessage(),
+                ]);
+                $messages = collect([]);
+            }
+
+            // 未読メッセージを既読にする
+            try {
+                $messages->where('sender_type', 'company')
+                    ->where('read_flg', 0)
+                    ->each(function ($message) {
+                        try {
+                            $message->markAsRead();
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error('Failed to mark message as read', [
+                                'message_id' => $message->id ?? null,
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
+                    });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to mark messages as read', [
+                    'conversation_id' => $conversation->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            // 会話のタイトルを取得（null チェックを追加）
+            $title = '';
+            try {
+                if ($conversation->jobApplication && $conversation->jobApplication->jobPost) {
+                    $title = '応募: ' . $conversation->jobApplication->jobPost->title;
+                } elseif ($conversation->scoutMessage) {
+                    $title = 'スカウト: ' . ($conversation->scoutMessage->subject ?? 'スカウトメッセージ');
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to get conversation title', [
+                    'conversation_id' => $conversation->id,
+                    'error' => $e->getMessage(),
+                ]);
+                $title = 'メッセージ';
+            }
+
+            return view('mypage.messages.show', compact('conversation', 'messages', 'title'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Unexpected error in MessageController::show', [
+                'conversation_id' => $conversation->id ?? null,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return redirect()->route('mypage.messages.index')
+                ->with('error', 'メッセージの読み込み中にエラーが発生しました');
         }
-
-        // メッセージを取得（添付のみEager Load）
-        $messages = $conversation->messages()->with(['attachments'])->get();
-
-        // 未読メッセージを既読にする
-        $messages->where('sender_type', 'company')
-            ->where('read_flg', 0)
-            ->each(function ($message) {
-                $message->markAsRead();
-            });
-
-        // 会話のタイトルを取得
-        $title = '';
-        if ($conversation->jobApplication) {
-            $title = '応募: ' . $conversation->jobApplication->jobPost->title;
-        } elseif ($conversation->scoutMessage) {
-            $title = 'スカウト: ' . $conversation->scoutMessage->subject;
-        }
-
-        return view('mypage.messages.show', compact('conversation', 'messages', 'title'));
     }
 
     public function store(Request $request, Conversation $conversation)
