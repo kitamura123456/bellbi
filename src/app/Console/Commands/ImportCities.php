@@ -235,7 +235,8 @@ class ImportCities extends Command
         }
         
         // 既存のデータを削除（都道府県ごとに更新）
-        City::where('prefecture_code', $todofukenCode)->delete();
+        $prefCode = $todofukenCode;
+        City::where('todofuken_code', $prefCode)->delete();
         
         for ($i = $startIndex; $i < count($lines); $i++) {
             $line = trim($lines[$i]);
