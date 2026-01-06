@@ -139,21 +139,21 @@
         <table class="company-table">
             <tr>
                 <th style="width: 150px;">企業名</th>
-                <td>{{ $conversation->company->name }}</td>
+                <td>{{ $conversation->company->name ?? '不明' }}</td>
             </tr>
-            @if($conversation->jobApplication)
+            @if($conversation->jobApplication && $conversation->jobApplication->jobPost)
                 <tr>
                     <th>関連応募</th>
                     <td>
                         <a href="{{ route('jobs.show', $conversation->jobApplication->jobPost) }}" style="color: #1a1a1a; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;">
-                            {{ $conversation->jobApplication->jobPost->title }}
+                            {{ $conversation->jobApplication->jobPost->title ?? '応募情報' }}
                         </a>
                     </td>
                 </tr>
             @elseif($conversation->scoutMessage)
                 <tr>
                     <th>関連スカウト</th>
-                    <td>{{ $conversation->scoutMessage->subject }}</td>
+                    <td>{{ $conversation->scoutMessage->subject ?? 'スカウトメッセージ' }}</td>
                 </tr>
             @endif
         </table>
@@ -170,7 +170,7 @@
                         @if($message->sender_type === 'user')
                             {{ $conversation->user->name ?? 'あなた' }}
                         @else
-                            {{ $conversation->company->name }}
+                            {{ $conversation->company->name ?? '企業' }}
                         @endif
                         <span style="margin-left: 6px;">{{ $message->created_at->format('Y年m月d日 H:i') }}</span>
                     </div>
