@@ -51,8 +51,15 @@ class VideoCallController extends Controller
             'status' => 'pending',
         ]);
 
-        // WebSocketイベントを送信
-        broadcast(new VideoCallInitiated($videoCall))->toOthers();
+        // WebSocketイベントを送信（エラーが発生しても処理を続行）
+        try {
+            broadcast(new VideoCallInitiated($videoCall))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast VideoCallInitiated event', [
+                'video_call_id' => $videoCall->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'ビデオ通話を開始しました',
@@ -83,8 +90,15 @@ class VideoCallController extends Controller
 
         $videoCall->start();
 
-        // WebSocketイベントを送信
-        broadcast(new VideoCallAccepted($videoCall))->toOthers();
+        // WebSocketイベントを送信（エラーが発生しても処理を続行）
+        try {
+            broadcast(new VideoCallAccepted($videoCall))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast VideoCallAccepted event', [
+                'video_call_id' => $videoCall->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'ビデオ通話を開始しました',
@@ -114,8 +128,15 @@ class VideoCallController extends Controller
 
         $videoCall->decline();
 
-        // WebSocketイベントを送信
-        broadcast(new VideoCallDeclined($videoCall))->toOthers();
+        // WebSocketイベントを送信（エラーが発生しても処理を続行）
+        try {
+            broadcast(new VideoCallDeclined($videoCall))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast VideoCallDeclined event', [
+                'video_call_id' => $videoCall->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'ビデオ通話を拒否しました',
@@ -146,8 +167,15 @@ class VideoCallController extends Controller
 
         $videoCall->end();
 
-        // WebSocketイベントを送信
-        broadcast(new VideoCallEnded($videoCall))->toOthers();
+        // WebSocketイベントを送信（エラーが発生しても処理を続行）
+        try {
+            broadcast(new VideoCallEnded($videoCall))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast VideoCallEnded event', [
+                'video_call_id' => $videoCall->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'ビデオ通話を終了しました',
@@ -175,8 +203,15 @@ class VideoCallController extends Controller
             'signal' => ['required'],
         ]);
 
-        // WebSocketイベントを送信（送信者自身には送らない）
-        broadcast(new VideoCallSignal($videoCall, $user->id, $validated['signal']))->toOthers();
+        // WebSocketイベントを送信（送信者自身には送らない、エラーが発生しても処理を続行）
+        try {
+            broadcast(new VideoCallSignal($videoCall, $user->id, $validated['signal']))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast VideoCallSignal event', [
+                'video_call_id' => $videoCall->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'シグナルを送信しました',

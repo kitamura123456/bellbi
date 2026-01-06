@@ -52,15 +52,42 @@ return [
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
+                // クラスター設定（クライアント側の WebSocket 接続に使用）
+                // サーバー側は HTTP API を使用するため、この設定はクライアント側のみに影響
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-                'port' => env('PUSHER_PORT', 443),
-                'scheme' => env('PUSHER_SCHEME', 'https'),
+                
+                // 【重要】HTTP API エンドポイントに固定
+                // Cloudflare 経由かつ外向き通信が HTTP プロキシ必須の環境では、
+                // WebSocket 接続が失敗するため、サーバー側は HTTP API 経由で送信する必要がある
+                // 'host' を 'api.pusherapp.com' に固定することで、WebSocket 接続を試みず、
+                // 確実に HTTP API 経由でイベントを送信する
+                'host' => 'api.pusherapp.com',
+                
+                // HTTPS の標準ポート（HTTP API は常に HTTPS を使用）
+                'port' => 443,
+                
+                // HTTPS プロトコルを使用（HTTP API は常に HTTPS）
+                'scheme' => 'https',
+                
+                // 暗号化を有効化
                 'encrypted' => true,
-                'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
+                
+                // TLS を使用
+                'useTLS' => true,
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Guzzle HTTP クライアントのオプション設定
+                // Laravel の Pusher ドライバーは内部的に Guzzle を使用して HTTP API 経由で送信する
+                // https://docs.guzzlephp.org/en/stable/request-options.html
+                
+                // 【重要】HTTP プロキシ経由で Pusher API に接続
+                // Cloudflare 経由かつ外向き通信が HTTP プロキシ必須の環境では、
+                // プロキシ経由で Pusher API に接続する必要がある
+                // HTTP_PROXY 環境変数が設定されている場合のみプロキシを使用
+                'proxy' => env('HTTP_PROXY'),
+                
+                // 注意: Guzzle は内部的に curl を使用する場合があるが、
+                // プロキシ設定は 'proxy' オプションで行う（curl の CURLOPT_PROXY に相当）
             ],
         ],
 
