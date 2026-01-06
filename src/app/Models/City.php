@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class City extends Model
 {
     protected $fillable = [
-        'prefecture_code',
+        'todofuken_code',
+        'todofuken_name',
         'city_code',
-        'name',
-        'name_kana',
+        'city_name',
+        'city_kana',
     ];
 
     /**
@@ -18,7 +19,7 @@ class City extends Model
      */
     public static function getByTodofukenCode(int $todofukenCode)
     {
-        return static::where('prefecture_code', $todofukenCode)->orderBy('name')->get();
+        return static::where('todofuken_code', $todofukenCode)->orderBy('city_name')->get();
     }
 
     /**
@@ -26,10 +27,10 @@ class City extends Model
      */
     public static function searchByName(string $name)
     {
-        return static::where('name', 'like', "%{$name}%")
-            ->orWhere('name_kana', 'like', "%{$name}%")
-            ->orderBy('prefecture_code')
-            ->orderBy('name')
+        return static::where('city_name', 'like', "%{$name}%")
+            ->orWhere('city_kana', 'like', "%{$name}%")
+            ->orderBy('todofuken_code')
+            ->orderBy('city_name')
             ->get();
     }
 }

@@ -236,7 +236,10 @@ class ImportCities extends Command
         
         // 既存のデータを削除（都道府県ごとに更新）
         $prefCode = $todofukenCode;
-        City::where('todofuken_code', $prefCode)->delete();
+        $deletedCount = City::where('prefecture_code', $prefCode)->delete();
+        if ($this->option('debug')) {
+            $this->line("既存データ削除: {$deletedCount}件");
+        }
         
         for ($i = $startIndex; $i < count($lines); $i++) {
             $line = trim($lines[$i]);
@@ -302,26 +305,38 @@ class ImportCities extends Command
             
             // 市区町村名が都道府県名と同じ場合はスキップ（ヘッダー行の可能性）
             if ($cityName === $prefName || $cityName === '都道府県名' || $cityName === '市区町村名' || $cityName === 'city') {
+                if ($this->option('debug')) {
+                    $this->line("スキップ: 市区町村名が都道府県名と同じまたはヘッダー行 ({$cityName})");
+                }
                 continue;
+            }
+            
+            // デバッグ情報
+            if ($this->option('debug') && $imported < 5) {
+                $this->line("処理中: lgCode={$lgCode}, cityName={$cityName}, cityKana={$cityKana}, cityCode={$cityCode}");
             }
             
             try {
                 City::updateOrCreate(
                     [
-                        'prefecture_code' => $todofukenCode,
+                        'todofuken_code' => $todofukenCode,
                         'city_code' => $cityCode,
                     ],
                     [
-                        'name' => $cityName,
-                        'name_kana' => $cityKana,
+                        'todofuken_name' => $todofukenName,
+                        'city_name' => $cityName,
+                        'city_kana' => $cityKana,
                     ]
                 );
                 $imported++;
             } catch (\Exception $e) {
+                if ($this->option('debug')) {
+                    $this->error("保存エラー: " . $e->getMessage());
+                }
                 Log::warning("市区町村データの保存に失敗", [
-                    'prefecture_code' => $todofukenCode,
+                    'todofuken_code' => $todofukenCode,
                     'city_code' => $cityCode,
-                    'name' => $cityName,
+                    'city_name' => $cityName,
                     'error' => $e->getMessage(),
                 ]);
             }

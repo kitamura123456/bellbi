@@ -99,20 +99,20 @@ class CityController extends Controller
                 $prefectureName = '不明';
             }
 
-            return response()->json([
-                'success' => true,
-                'prefecture_code' => $prefectureCode,
-                'prefecture_name' => $prefectureName,
-                'cities' => $cities->map(function($city) use ($cityCounts) {
-                    return [
-                        'id' => $city->id,
-                        'city_code' => $city->city_code,
-                        'name' => $city->name,
-                        'name_kana' => $city->name_kana,
-                        'count' => $cityCounts[$city->city_code] ?? 0,
-                    ];
-                })->values(),
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'prefecture_code' => $prefectureCode,
+                    'prefecture_name' => $prefectureName,
+                    'cities' => $cities->map(function($city) use ($cityCounts) {
+                        return [
+                            'id' => $city->id,
+                            'city_code' => $city->city_code,
+                            'name' => $city->city_name,
+                            'name_kana' => $city->city_kana,
+                            'count' => $cityCounts[$city->city_code] ?? 0,
+                        ];
+                    })->values(),
+                ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -251,8 +251,8 @@ class CityController extends Controller
 
             // 市区町村を取得
             try {
-                $cities = City::where('prefecture_code', $prefectureCode)
-                    ->orderBy('name')
+                $cities = City::where('todofuken_code', $prefectureCode)
+                    ->orderBy('city_name')
                     ->get();
             } catch (\Illuminate\Database\QueryException $e) {
                 Log::error('Database query error in getCitiesByLocation', [
@@ -282,8 +282,8 @@ class CityController extends Controller
             try {
                 if ($cityName && $cities->isNotEmpty()) {
                     $filteredCities = $cities->filter(function($city) use ($cityName) {
-                        return strpos($city->name, $cityName) !== false || 
-                               strpos($city->name_kana ?? '', $cityName) !== false;
+                        return strpos($city->city_name, $cityName) !== false || 
+                               strpos($city->city_kana ?? '', $cityName) !== false;
                     });
                     
                     if ($filteredCities->isNotEmpty()) {
@@ -298,50 +298,39 @@ class CityController extends Controller
                 // フィルタリングに失敗しても処理は続行
             }
 
-                // 都道府県名を安全に取得
-                $prefectureName = '';
-                try {
-                    $todofuken = Todofuken::from($prefectureCode);
-                    $prefectureName = $todofuken->label();
-                } catch (\ValueError $e) {
-                    Log::warning('Invalid prefecture code', [
-                        'prefecture_code' => $prefectureCode,
-                        'error' => $e->getMessage(),
-                    ]);
-                    $prefectureName = '不明';
-                } catch (\Exception $e) {
-                    Log::error('Failed to get prefecture name', [
-                        'prefecture_code' => $prefectureCode,
-                        'error' => $e->getMessage(),
-                    ]);
-                    $prefectureName = '不明';
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'prefecture_code' => $prefectureCode,
-                    'prefecture_name' => $prefectureName,
-                    'city_name' => $cityName,
-                    'cities' => $cities->map(function($city) {
-                        return [
-                            'id' => $city->id,
-                            'city_code' => $city->city_code,
-                            'name' => $city->name,
-                            'name_kana' => $city->name_kana,
-                        ];
-                    })->values(),
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Failed to get cities', [
+            // 都道府県名を安全に取得
+            $prefectureName = '';
+            try {
+                $todofuken = Todofuken::from($prefectureCode);
+                $prefectureName = $todofuken->label();
+            } catch (\ValueError $e) {
+                Log::warning('Invalid prefecture code', [
                     'prefecture_code' => $prefectureCode,
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
                 ]);
-                return response()->json([
-                    'success' => false,
-                    'message' => '市区町村データの取得中にエラーが発生しました。',
-                ], 500);
+                $prefectureName = '不明';
+            } catch (\Exception $e) {
+                Log::error('Failed to get prefecture name', [
+                    'prefecture_code' => $prefectureCode,
+                    'error' => $e->getMessage(),
+                ]);
+                $prefectureName = '不明';
             }
+
+            return response()->json([
+                'success' => true,
+                'prefecture_code' => $prefectureCode,
+                'prefecture_name' => $prefectureName,
+                'city_name' => $cityName,
+                'cities' => $cities->map(function($city) {
+                    return [
+                        'id' => $city->id,
+                        'city_code' => $city->city_code,
+                        'name' => $city->city_name,
+                        'name_kana' => $city->city_kana,
+                    ];
+                })->values(),
+            ]);
         } catch (\Exception $e) {
             Log::error('Unexpected error in getCitiesByLocation', [
                 'error' => $e->getMessage(),
