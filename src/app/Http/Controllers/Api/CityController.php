@@ -66,32 +66,50 @@ class CityController extends Controller
      */
     public function getCitiesByLocation(Request $request)
     {
-        $request->validate([
-            'prefecture' => 'nullable|string',
-            'city' => 'nullable|string',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-        ]);
+        try {
+            $request->validate([
+                'prefecture' => 'nullable|string',
+                'city' => 'nullable|string',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+            ]);
 
-        $prefectureName = $request->input('prefecture');
-        $cityName = $request->input('city');
-        $latitude = $request->input('latitude');
-        $longitude = $request->input('longitude');
-        
-        // 緯度経度が提供されているが都道府県名がない場合、逆ジオコーディングを実行
-        if (!$prefectureName && $latitude && $longitude) {
-            $geocodeResult = $this->reverseGeocode($latitude, $longitude);
-            if ($geocodeResult && isset($geocodeResult['prefecture'])) {
-                $prefectureName = $geocodeResult['prefecture'];
-                $cityName = $geocodeResult['city'] ?? $cityName;
-            } else {
-                // 逆ジオコーディングに失敗した場合のエラーメッセージ
-                return response()->json([
-                    'success' => false,
-                    'message' => '住所情報を取得できませんでした。位置情報が正しく取得できていない可能性があります。',
-                ]);
+            $prefectureName = $request->input('prefecture');
+            $cityName = $request->input('city');
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+            
+            // 緯度経度が提供されているが都道府県名がない場合、逆ジオコーディングを実行
+            if (!$prefectureName && $latitude && $longitude) {
+                try {
+                    $geocodeResult = $this->reverseGeocode($latitude, $longitude);
+                    if ($geocodeResult && isset($geocodeResult['prefecture'])) {
+                        $prefectureName = $geocodeResult['prefecture'];
+                        $cityName = $geocodeResult['city'] ?? $cityName;
+                    } else {
+                        // 逆ジオコーディングに失敗した場合のエラーメッセージ
+                        Log::warning('Reverse geocoding failed', [
+                            'latitude' => $latitude,
+                            'longitude' => $longitude,
+                        ]);
+                        return response()->json([
+                            'success' => false,
+                            'message' => '住所情報を取得できませんでした。位置情報が正しく取得できていない可能性があります。',
+                        ], 400);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Reverse geocoding error in getCitiesByLocation', [
+                        'latitude' => $latitude,
+                        'longitude' => $longitude,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => '住所情報の取得中にエラーが発生しました。',
+                    ], 500);
+                }
             }
-        }
 
         $prefectureCode = null;
         
@@ -149,48 +167,76 @@ class CityController extends Controller
             }
         }
 
-        if (!$prefectureCode) {
+            if (!$prefectureCode) {
+                Log::warning('Prefecture not found', [
+                    'prefecture_name' => $prefectureName,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => '都道府県が見つかりませんでした。',
+                ], 400);
+            }
+
+            // 市区町村を取得
+            try {
+                $cities = City::where('prefecture_code', $prefectureCode)
+                    ->orderBy('name')
+                    ->get();
+
+                // 市区町村名で絞り込み（部分一致）
+                if ($cityName && $cities->isNotEmpty()) {
+                    $filteredCities = $cities->filter(function($city) use ($cityName) {
+                        return strpos($city->name, $cityName) !== false || 
+                               strpos($city->name_kana ?? '', $cityName) !== false;
+                    });
+                    
+                    if ($filteredCities->isNotEmpty()) {
+                        $cities = $filteredCities;
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'prefecture_code' => $prefectureCode,
+                    'prefecture_name' => Todofuken::from($prefectureCode)->label(),
+                    'city_name' => $cityName,
+                    'cities' => $cities->map(function($city) {
+                        return [
+                            'id' => $city->id,
+                            'city_code' => $city->city_code,
+                            'name' => $city->name,
+                            'name_kana' => $city->name_kana,
+                        ];
+                    })->values(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Failed to get cities', [
+                    'prefecture_code' => $prefectureCode,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => '市区町村データの取得中にエラーが発生しました。',
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in getCitiesByLocation', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => '都道府県が見つかりませんでした。',
-            ]);
+                'message' => '予期しないエラーが発生しました。',
+            ], 500);
         }
-
-        // 市区町村を取得
-        $cities = City::where('prefecture_code', $prefectureCode)
-            ->orderBy('name')
-            ->get();
-
-        // 市区町村名で絞り込み（部分一致）
-        if ($cityName && $cities->isNotEmpty()) {
-            $filteredCities = $cities->filter(function($city) use ($cityName) {
-                return strpos($city->name, $cityName) !== false || 
-                       strpos($city->name_kana ?? '', $cityName) !== false;
-            });
-            
-            if ($filteredCities->isNotEmpty()) {
-                $cities = $filteredCities;
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'prefecture_code' => $prefectureCode,
-            'prefecture_name' => Todofuken::from($prefectureCode)->label(),
-            'city_name' => $cityName,
-            'cities' => $cities->map(function($city) {
-                return [
-                    'id' => $city->id,
-                    'city_code' => $city->city_code,
-                    'name' => $city->name,
-                    'name_kana' => $city->name_kana,
-                ];
-            })->values(),
-        ]);
     }
     
     /**
      * 逆ジオコーディング（サーバー側で実行）
+     * 本番環境ではプロキシ経由でアクセスする必要がある場合がある
      */
     private function reverseGeocode($latitude, $longitude)
     {
@@ -203,18 +249,46 @@ class CityController extends Controller
             curl_setopt($ch, CURLOPT_USERAGENT, 'BellbiJobSearch/1.0');
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            
+            // プロキシ設定（本番環境でプロキシ経由が必要な場合）
+            $proxy = env('HTTP_PROXY');
+            if ($proxy) {
+                curl_setopt($ch, CURLOPT_PROXY, $proxy);
+                Log::info('Using proxy for reverse geocoding', ['proxy' => $proxy]);
+            }
             
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
             curl_close($ch);
             
+            if ($curlError) {
+                Log::error('CURL error in reverse geocoding', [
+                    'error' => $curlError,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                ]);
+                return null;
+            }
+            
             if ($httpCode !== 200 || !$response) {
+                Log::warning('Reverse geocoding API returned non-200 status', [
+                    'http_code' => $httpCode,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                ]);
                 return null;
             }
             
             $data = json_decode($response, true);
             
             if (!$data || !isset($data['address'])) {
+                Log::warning('Invalid response from reverse geocoding API', [
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'response' => substr($response, 0, 200),
+                ]);
                 return null;
             }
             
@@ -248,7 +322,12 @@ class CityController extends Controller
                 'full_address' => $data['display_name'] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('逆ジオコーディングエラー: ' . $e->getMessage());
+            Log::error('Reverse geocoding exception', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+            ]);
             return null;
         }
     }
