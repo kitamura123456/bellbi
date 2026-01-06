@@ -1,27 +1,26 @@
-- [ ] サーバにもstripeSDK入れる　
-```
-composer require stripe/stripe-php
-```
-npm install simple-peer
-composer require pusher/pusher-php-server
-npm install laravel-echo pusher-js
+# サーバの方だけの問題
+- [ ] 市区町村更新をサーバーでー自動更新設定
+- [ ] stripeの決済までは進めるが、決済情報が作成できない
+- [ ] 画像が表示されない
+- [ ] 位置情報取得で500エラー
 
-.envファイルに以下を追加:
-BROADCAST_DRIVER=pusherPUSHER_APP_ID=your-app-idPUSHER_APP_KEY=your-app-keyPUSHER_APP_SECRET=your-app-secretPUSHER_APP_CLUSTER=mt1
+# 共通の問題
+- [ ] カメラオフイメージを作る
+- [ ] 管理者・事業者画面の絵文字をやめる
 
-- [ ] コード確認してgithubに上げる
+- [x] コード確認してgithubに上げる
+- [x] サーバにもstripeSDK入れる　
 - [x] 利用者の支払いページを追加
-- [ ] 市区町村更新をサーバーで
 - [x] ビデオ通話機能を追加
 - [x] エリア検索は市区町村まで絞れるように
 
-# 利用者
+## 利用者
 スマホ版
 - [ ] /mypageのメニューを固定
 
-# TODO - 事業者
+## TODO - 事業者
 
-- [ ] ECモール支払い方法未実装
+- [x] ECモール支払い方法未実装
 
 - [x] ECモール機能（会員制EC）
     完全に未実装
@@ -42,7 +41,7 @@ BROADCAST_DRIVER=pusherPUSHER_APP_ID=your-app-idPUSHER_APP_KEY=your-app-keyPUSHE
     事業者がプランを選択・契約・変更する機能がない
 
 
-# TODO - 求人
+## TODO - 求人
 
 - [x] 店舗情報編集画面に画像表示する(予約一覧画面が参考になるかも)
 
