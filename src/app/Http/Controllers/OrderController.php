@@ -24,6 +24,139 @@ class OrderController extends Controller
     }
 
     /**
+     * Stripe Checkout Session の metadata から注文を作成（Webhook/Successリダイレクトのフォールバック）
+     * - Stripe側で Checkout が完了している（status=complete）こと
+     * - metadata.user_id がログインユーザーと一致すること
+     */
+    private function createOrdersFromStripeCheckoutSessionMetadata($checkoutSession): void
+    {
+        $userId = $checkoutSession->metadata->user_id ?? null;
+        $shopItemsJson = $checkoutSession->metadata->shop_items ?? null;
+
+        if (!$userId || (int) $userId !== (int) Auth::id()) {
+            Log::warning('Skip creating order from Stripe metadata (user mismatch)', [
+                'auth_user_id' => Auth::id(),
+                'metadata_user_id' => $userId,
+                'session_id' => $checkoutSession->id ?? null,
+            ]);
+            return;
+        }
+
+        if (!$shopItemsJson) {
+            Log::warning('Skip creating order from Stripe metadata (missing shop_items)', [
+                'user_id' => $userId,
+                'session_id' => $checkoutSession->id ?? null,
+            ]);
+            return;
+        }
+
+        $shopItems = json_decode($shopItemsJson, true);
+        if (!$shopItems || !is_array($shopItems)) {
+            Log::warning('Skip creating order from Stripe metadata (invalid shop_items)', [
+                'user_id' => $userId,
+                'session_id' => $checkoutSession->id ?? null,
+            ]);
+            return;
+        }
+
+        // 非同期決済（コンビニ・銀行振込）は payment_status=unpaid でも入金待ちで注文作成
+        $orderStatus = ($checkoutSession->payment_status === 'paid')
+            ? Order::STATUS_PAID
+            : Order::STATUS_NEW;
+
+        DB::beginTransaction();
+        try {
+            $orders = [];
+
+            foreach ($shopItems as $shopId => $shopItemList) {
+                $shopTotal = array_sum(array_column($shopItemList, 'subtotal'));
+
+                $order = Order::create([
+                    'shop_id' => $shopId,
+                    'user_id' => (int) $userId,
+                    'total_amount' => $shopTotal,
+                    'status' => $orderStatus,
+                    'stripe_checkout_session_id' => $checkoutSession->id,
+                    'stripe_payment_intent_id' => $checkoutSession->payment_intent,
+                    'delete_flg' => 0,
+                ]);
+
+                foreach ($shopItemList as $item) {
+                    $productId = $item['product_id'] ?? null;
+                    $quantity = (int) ($item['quantity'] ?? 1);
+                    $unitPrice = (int) ($item['unit_price'] ?? $item['product_price'] ?? 0);
+
+                    if (!$productId) {
+                        Log::warning('Product ID not found in shop item (Stripe metadata)', [
+                            'session_id' => $checkoutSession->id,
+                            'item' => $item,
+                        ]);
+                        continue;
+                    }
+
+                    // Stripe metadataを信用しすぎない（在庫ロックして減算）
+                    $product = Product::lockForUpdate()->find($productId);
+                    if (!$product) {
+                        Log::warning('Product not found (Stripe metadata)', [
+                            'session_id' => $checkoutSession->id,
+                            'product_id' => $productId,
+                        ]);
+                        continue;
+                    }
+
+                    if ($product->stock < $quantity) {
+                        // ここで例外にすると「Stripe上は完了」なのに注文が作れない事故になるため、
+                        // まずは作成を優先し、警告ログを残す（運用で在庫調整/返金対応できるようにする）
+                        Log::warning('Insufficient stock while creating order from Stripe metadata', [
+                            'session_id' => $checkoutSession->id,
+                            'product_id' => $productId,
+                            'required' => $quantity,
+                            'available' => $product->stock,
+                        ]);
+                    }
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $productId,
+                        'quantity' => $quantity,
+                        'unit_price' => $unitPrice > 0 ? $unitPrice : (int) ($item['subtotal'] / max($quantity, 1)),
+                        'delete_flg' => 0,
+                    ]);
+
+                    $product->stock -= $quantity;
+                    if ($product->stock <= 0) {
+                        $product->status = Product::STATUS_OUT_OF_STOCK;
+                    }
+                    $product->save();
+                }
+
+                $orders[] = $order;
+            }
+
+            DB::commit();
+
+            // 完了済みCheckoutを復旧して注文作成したので、カート/一時データはクリア
+            Session::forget('cart');
+            Session::forget('pending_orders');
+            Session::forget('last_stripe_checkout_session_id');
+
+            Log::info('Order created from Stripe metadata fallback', [
+                'session_id' => $checkoutSession->id,
+                'user_id' => $userId,
+                'order_ids' => array_map(fn ($o) => $o->id, $orders),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to create order from Stripe metadata fallback', [
+                'session_id' => $checkoutSession->id ?? null,
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * 注文確認画面
      */
     public function checkout()
@@ -321,6 +454,9 @@ class OrderController extends Controller
                 'url' => $checkoutSession->url,
             ]);
 
+            // Stripe画面から戻らずにタブを閉じられた場合でも復旧できるよう、直近のSession IDを保持
+            Session::put('last_stripe_checkout_session_id', $checkoutSession->id);
+
             return redirect($checkoutSession->url);
         } catch (ApiErrorException $e) {
             Log::error('Stripe Checkout Session Creation Failed', [
@@ -505,6 +641,9 @@ class OrderController extends Controller
                 'payment_method_types' => $checkoutSession->payment_method_types ?? [],
                 'url' => $checkoutSession->url,
             ]);
+
+            // Stripe画面から戻らずにタブを閉じられた場合でも復旧できるよう、直近のSession IDを保持
+            Session::put('last_stripe_checkout_session_id', $checkoutSession->id);
 
             return redirect($checkoutSession->url);
         } catch (ApiErrorException $e) {
@@ -802,6 +941,29 @@ class OrderController extends Controller
         }
 
         $userId = Auth::id();
+
+        // フォールバック：Stripe Checkoutを完了したのに success_url / webhook で注文が作られなかった場合に、
+        // metadata から復元して注文を作成する（銀行振込/コンビニで発生しがち）
+        $lastSessionId = Session::get('last_stripe_checkout_session_id');
+        if ($lastSessionId && !Order::where('stripe_checkout_session_id', $lastSessionId)->exists()) {
+            try {
+                $checkoutSession = StripeSession::retrieve($lastSessionId);
+                if (($checkoutSession->status ?? null) === 'complete') {
+                    $this->createOrdersFromStripeCheckoutSessionMetadata($checkoutSession);
+                } else {
+                    Log::info('Skip Stripe metadata fallback (session not complete)', [
+                        'session_id' => $lastSessionId,
+                        'status' => $checkoutSession->status ?? null,
+                        'payment_status' => $checkoutSession->payment_status ?? null,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed to run Stripe metadata fallback', [
+                    'session_id' => $lastSessionId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
         
         // デバッグ用ログ
         Log::info('Fetching orders for user', ['user_id' => $userId]);
