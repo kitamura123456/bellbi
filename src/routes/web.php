@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\JobPostController as AdminJobPosts;
 use App\Http\Controllers\Admin\PlanController as AdminPlans;
 use App\Http\Controllers\Admin\SubsidyController as AdminSubsidies;
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettings;
+use App\Http\Controllers\Admin\LogController as AdminLogs;
 use App\Http\Controllers\Company\DashboardController as CompanyDashboard;
 use App\Http\Controllers\Company\CompanyController as CompanyInfo;
 use App\Http\Controllers\Company\StoreController as CompanyStores;
@@ -310,4 +311,10 @@ Route::middleware('auth')->group(function () {
     // 管理画面 - システム設定
     Route::get('/admin/system-settings', [AdminSystemSettings::class, 'index'])->name('admin.system-settings.index');
     Route::put('/admin/system-settings', [AdminSystemSettings::class, 'update'])->name('admin.system-settings.update');
+
+    // 管理画面 - ログ管理
+    Route::get('/admin/logs', [AdminLogs::class, 'index'])->name('admin.logs.index');
+    Route::get('/admin/logs/download/{filename}', [AdminLogs::class, 'download'])->name('admin.logs.download');
+    Route::delete('/admin/logs/{filename}', [AdminLogs::class, 'delete'])->name('admin.logs.delete');
+    Route::get('/admin/logs/stats', [AdminLogs::class, 'stats'])->name('admin.logs.stats');
 });

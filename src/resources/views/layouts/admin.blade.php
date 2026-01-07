@@ -629,6 +629,13 @@
                                     <span>補助金情報管理</span>
                                 </a>
                             </li>
+
+                            <li class="wp-sidebar-menu-item">
+                                <a href="{{ route('admin.logs.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.logs*') ? 'active' : '' }}">
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/プログラムアイコン.svg') }}" alt="ログ管理"></span>
+                                    <span>ログ管理</span>
+                                </a>
+                            </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.system-settings.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.system-settings*') ? 'active' : '' }}">
@@ -636,6 +643,7 @@
                                     <span>システム設定</span>
                                 </a>
                             </li>
+                            
                         </ul>
                     </li>
                 </ul>
