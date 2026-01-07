@@ -207,6 +207,13 @@
             font-size: 16px;
         }
         
+        .wp-sidebar-menu-link-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        
         .wp-sidebar-menu-separator {
             height: 1px;
             background: #32373c;
@@ -578,7 +585,7 @@
                 <ul class="wp-sidebar-menu">
                     <li class="wp-sidebar-menu-item">
                         <a href="{{ route('company.dashboard') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.dashboard') ? 'active' : '' }}">
-                            <span class="wp-sidebar-menu-link-icon">📊</span>
+                            <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/ダッシュボード.svg') }}" alt="ダッシュボード"></span>
                             <span>ダッシュボード</span>
                         </a>
                     </li>
@@ -592,28 +599,28 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.transactions.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.transactions*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💰</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/売上経費.svg') }}" alt="売上・経費"></span>
                                     <span>売上・経費</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.transactions.report') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.transactions.report') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📈</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/月次レポート.svg') }}" alt="月次レポート"></span>
                                     <span>月次レポート</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.account-items.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.account-items*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📋</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/科目マスタ.svg') }}" alt="科目マスタ"></span>
                                     <span>科目マスタ</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.orders.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.orders*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📦</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/受注管理.svg') }}" alt="受注管理"></span>
                                     <span>受注管理</span>
                                     <span id="sidebar-orders-badge" class="wp-badge" style="display: {{ isset($sidebarStats) && $sidebarStats['newOrdersCount'] > 0 ? 'inline-block' : 'none' }};">
                                         {{ isset($sidebarStats) ? $sidebarStats['newOrdersCount'] : 0 }}
@@ -623,14 +630,14 @@
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.shops.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.shops*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">🛒</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/店舗管理.svg') }}" alt="ECショップ管理"></span>
                                     <span>ECショップ管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.products.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.products*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📦</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/商品管理.svg') }}" alt="商品管理"></span>
                                     <span>商品管理</span>
                                 </a>
                             </li>
@@ -646,14 +653,14 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.job-posts.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.job-posts*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💼</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/求人管理.svg') }}" alt="求人管理"></span>
                                     <span>求人管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.applications.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.applications*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📝</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/応募管理.svg') }}" alt="応募管理"></span>
                                     <span>応募管理</span>
                                     <span id="sidebar-applications-badge" class="wp-badge" style="display: {{ isset($sidebarStats) && $sidebarStats['newApplicationsCount'] > 0 ? 'inline-block' : 'none' }};">
                                         {{ isset($sidebarStats) ? $sidebarStats['newApplicationsCount'] : 0 }}
@@ -663,14 +670,14 @@
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.scouts.search') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.scouts*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">🔍</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/スカウト.svg') }}" alt="スカウト"></span>
                                     <span>スカウト</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.messages.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.messages*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💬</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/メッセージ.svg') }}" alt="メッセージ"></span>
                                     <span>メッセージ</span>
                                 </a>
                             </li>
@@ -686,35 +693,35 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.stores.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.stores*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">🏪</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/店舗管理.svg') }}" alt="店舗管理"></span>
                                     <span>店舗管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.staffs.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.staffs*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">👥</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/スタッフ管理.svg') }}" alt="スタッフ管理"></span>
                                     <span>スタッフ管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.menus.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.menus*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📋</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/メニュー管理.svg') }}" alt="メニュー管理"></span>
                                     <span>メニュー管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.schedules.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.schedules*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📅</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/営業スケジュール.svg') }}" alt="営業スケジュール"></span>
                                     <span>営業スケジュール</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.reservations.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.reservations*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">📌</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/予約管理.svg') }}" alt="予約管理"></span>
                                     <span>予約管理</span>
                                     <span id="sidebar-reservations-badge" class="wp-badge" style="display: {{ isset($sidebarStats) && $sidebarStats['upcomingReservationsCount'] > 0 ? 'inline-block' : 'none' }};">
                                         {{ isset($sidebarStats) ? $sidebarStats['upcomingReservationsCount'] : 0 }}
@@ -733,21 +740,21 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.info') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.info*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">🏢</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/会社情報.svg') }}" alt="会社情報"></span>
                                     <span>会社情報</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.plans.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.plans*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💳</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/プラン管理.svg') }}" alt="プラン管理"></span>
                                     <span>プラン管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('company.subsidies.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('company.subsidies*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💵</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/補助金情報.svg') }}" alt="補助金情報"></span>
                                     <span>補助金情報</span>
                                 </a>
                             </li>

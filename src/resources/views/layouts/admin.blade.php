@@ -207,6 +207,13 @@
             font-size: 16px;
         }
         
+        .wp-sidebar-menu-link-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        
         .wp-sidebar-menu-separator {
             height: 1px;
             background: #32373c;
@@ -558,7 +565,7 @@
                 <ul class="wp-sidebar-menu">
                     <li class="wp-sidebar-menu-item">
                         <a href="{{ route('admin.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.index') ? 'active' : '' }}">
-                            <span class="wp-sidebar-menu-link-icon">📊</span>
+                            <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/ダッシュボード.svg') }}" alt="ダッシュボード"></span>
                             <span>ダッシュボード</span>
                         </a>
                     </li>
@@ -572,14 +579,14 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.users.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">👥</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/スタッフ管理.svg') }}" alt="ユーザー管理"></span>
                                     <span>ユーザー管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.companies.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.companies*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">🏢</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/会社情報.svg') }}" alt="事業者管理"></span>
                                     <span>事業者管理</span>
                                 </a>
                             </li>
@@ -595,7 +602,7 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.job-posts.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.job-posts*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💼</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/求人管理.svg') }}" alt="求人管理"></span>
                                     <span>求人管理</span>
                                 </a>
                             </li>
@@ -611,21 +618,21 @@
                         <ul class="wp-sidebar-menu-group">
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.plans.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.plans*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💳</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/プラン管理.svg') }}" alt="プラン管理"></span>
                                     <span>プラン管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.subsidies.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.subsidies*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">💵</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/補助金情報.svg') }}" alt="補助金情報管理"></span>
                                     <span>補助金情報管理</span>
                                 </a>
                             </li>
                             
                             <li class="wp-sidebar-menu-item">
                                 <a href="{{ route('admin.system-settings.index') }}" class="wp-sidebar-menu-link {{ request()->routeIs('admin.system-settings*') ? 'active' : '' }}">
-                                    <span class="wp-sidebar-menu-link-icon">⚙️</span>
+                                    <span class="wp-sidebar-menu-link-icon"><img src="{{ asset('images/logos/システム設定.svg') }}" alt="システム設定"></span>
                                     <span>システム設定</span>
                                 </a>
                             </li>

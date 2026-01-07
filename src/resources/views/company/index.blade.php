@@ -187,6 +187,13 @@
             transition: color 0.3s ease;
         }
         
+        .dashboard-menu-card-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
         .number-format {
             font-variant-numeric: tabular-nums;
         }
@@ -297,31 +304,37 @@
         <h2 class="dashboard-section-title">売上・注文</h2>
         <div class="dashboard-menu-grid">
             <a href="{{ route('company.transactions.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/売上経費.svg') }}" alt="売上・経費" class="dashboard-menu-card-icon">
                 <h3>売上・経費</h3>
                 <p>日々の売上・経費を記録・集計</p>
             </a>
 
             <a href="{{ route('company.transactions.report') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/月次レポート.svg') }}" alt="月次レポート" class="dashboard-menu-card-icon">
                 <h3>月次レポート</h3>
                 <p>売上・経費の月次集計</p>
             </a>
 
             <a href="{{ route('company.account-items.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/科目マスタ.svg') }}" alt="科目マスタ" class="dashboard-menu-card-icon">
                 <h3>科目マスタ</h3>
                 <p>売上・経費の科目設定</p>
             </a>
 
             <a href="{{ route('company.orders.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/受注管理.svg') }}" alt="受注管理" class="dashboard-menu-card-icon">
                 <h3>受注管理</h3>
                 <p>注文一覧・ステータス管理</p>
             </a>
 
             <a href="{{ route('company.shops.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/店舗管理.svg') }}" alt="ECショップ管理" class="dashboard-menu-card-icon">
                 <h3>ECショップ管理</h3>
                 <p>ショップの開設・編集・削除</p>
             </a>
 
             <a href="{{ route('company.products.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/商品管理.svg') }}" alt="商品管理" class="dashboard-menu-card-icon">
                 <h3>商品管理</h3>
                 <p>商品の登録・編集・削除</p>
             </a>
@@ -333,21 +346,25 @@
         <h2 class="dashboard-section-title">求人・応募</h2>
         <div class="dashboard-menu-grid">
             <a href="{{ route('company.job-posts.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/求人管理.svg') }}" alt="求人管理" class="dashboard-menu-card-icon">
                 <h3>求人管理</h3>
                 <p>求人の作成・編集・応募管理</p>
             </a>
 
             <a href="{{ route('company.applications.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/応募管理.svg') }}" alt="応募管理" class="dashboard-menu-card-icon">
                 <h3>応募管理</h3>
                 <p>応募者の確認・管理</p>
             </a>
 
             <a href="{{ route('company.scouts.search') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/スカウト.svg') }}" alt="スカウト" class="dashboard-menu-card-icon">
                 <h3>スカウト</h3>
                 <p>候補者検索・スカウト送信</p>
             </a>
 
             <a href="{{ route('company.messages.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/メッセージ.svg') }}" alt="メッセージ" class="dashboard-menu-card-icon">
                 <h3>メッセージ</h3>
                 <p>応募者・スカウト送信先とのやりとり</p>
             </a>
@@ -359,26 +376,31 @@
         <h2 class="dashboard-section-title">店舗・予約</h2>
         <div class="dashboard-menu-grid">
             <a href="{{ route('company.stores.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/店舗管理.svg') }}" alt="店舗管理" class="dashboard-menu-card-icon">
                 <h3>店舗管理</h3>
                 <p>店舗の登録・編集・削除</p>
             </a>
 
             <a href="{{ route('company.staffs.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/スタッフ管理.svg') }}" alt="スタッフ管理" class="dashboard-menu-card-icon">
                 <h3>スタッフ管理</h3>
                 <p>スタッフ登録・編集</p>
             </a>
 
             <a href="{{ route('company.menus.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/メニュー管理.svg') }}" alt="メニュー管理" class="dashboard-menu-card-icon">
                 <h3>メニュー管理</h3>
                 <p>施術メニュー登録・編集</p>
             </a>
 
             <a href="{{ route('company.schedules.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/営業スケジュール.svg') }}" alt="営業スケジュール" class="dashboard-menu-card-icon">
                 <h3>営業スケジュール</h3>
                 <p>営業時間・定休日設定</p>
             </a>
 
             <a href="{{ route('company.reservations.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/予約管理.svg') }}" alt="予約管理" class="dashboard-menu-card-icon">
                 <h3>予約管理</h3>
                 <p>予約一覧・ステータス変更</p>
             </a>
@@ -390,16 +412,19 @@
         <h2 class="dashboard-section-title">その他</h2>
         <div class="dashboard-menu-grid">
             <a href="{{ route('company.info') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/会社情報.svg') }}" alt="会社情報" class="dashboard-menu-card-icon">
                 <h3>会社情報</h3>
                 <p>会社情報の確認・編集</p>
             </a>
 
             <a href="{{ route('company.plans.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/プラン管理.svg') }}" alt="プラン管理" class="dashboard-menu-card-icon">
                 <h3>プラン管理</h3>
                 <p>プランの選択・契約・変更</p>
             </a>
 
             <a href="{{ route('company.subsidies.index') }}" class="dashboard-menu-card">
+                <img src="{{ asset('images/logos/補助金情報.svg') }}" alt="補助金情報" class="dashboard-menu-card-icon">
                 <h3>補助金情報</h3>
                 <p>補助金情報の閲覧・検索</p>
             </a>
