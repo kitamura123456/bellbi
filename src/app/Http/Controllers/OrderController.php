@@ -286,18 +286,20 @@ class OrderController extends Controller
                 $checkoutSessionParams['customer'] = $stripeCustomerId;
             }
             
-            // メールアドレスが有効な場合のみcustomer_emailを設定
+            // customerパラメータが設定されていない場合のみ、customer_emailを設定
+            // Stripeではcustomerとcustomer_emailの両方を同時に指定することはできない
             // 無効な場合は設定しないことで、Stripe Checkoutでユーザーが入力できるようになる
-            // 既存のCustomerがある場合は、Customerのメールアドレスを使用
-            $emailForCheckout = null;
-            if ($validEmail && $customerEmail) {
-                $emailForCheckout = $customerEmail;
-            } elseif ($stripeCustomer && !empty($stripeCustomer->email)) {
-                $emailForCheckout = $stripeCustomer->email;
-            }
-            
-            if ($emailForCheckout) {
-                $checkoutSessionParams['customer_email'] = $emailForCheckout;
+            if (!isset($checkoutSessionParams['customer'])) {
+                $emailForCheckout = null;
+                if ($validEmail && $customerEmail) {
+                    $emailForCheckout = $customerEmail;
+                } elseif ($stripeCustomer && !empty($stripeCustomer->email)) {
+                    $emailForCheckout = $stripeCustomer->email;
+                }
+                
+                if ($emailForCheckout) {
+                    $checkoutSessionParams['customer_email'] = $emailForCheckout;
+                }
             }
             
             // デバッグ用ログ
