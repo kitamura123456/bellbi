@@ -104,11 +104,12 @@ class CityController extends Controller
                     'prefecture_code' => $prefectureCode,
                     'prefecture_name' => $prefectureName,
                     'cities' => $cities->map(function($city) use ($cityCounts) {
+                        // 実際のテーブル構造に合わせてnameとname_kanaを使用
                         return [
                             'id' => $city->id,
                             'city_code' => $city->city_code,
-                            'name' => $city->city_name,
-                            'name_kana' => $city->city_kana,
+                            'name' => $city->name ?? $city->city_name ?? '',
+                            'name_kana' => $city->name_kana ?? $city->city_kana ?? '',
                             'count' => $cityCounts[$city->city_code] ?? 0,
                         ];
                     })->values(),
@@ -140,8 +141,8 @@ class CityController extends Controller
             $request->validate([
                 'prefecture' => 'nullable|string',
                 'city' => 'nullable|string',
-                'latitude' => 'nullable|numeric',
-                'longitude' => 'nullable|numeric',
+                'latitude' => 'nullable|numeric|between:-90,90',
+                'longitude' => 'nullable|numeric|between:-180,180',
             ]);
 
             $prefectureName = $request->input('prefecture');
@@ -153,14 +154,15 @@ class CityController extends Controller
             if (!$prefectureName && $latitude && $longitude) {
                 try {
                     $geocodeResult = $this->reverseGeocode($latitude, $longitude);
-                    if ($geocodeResult && isset($geocodeResult['prefecture'])) {
+                    if ($geocodeResult && isset($geocodeResult['prefecture']) && !empty($geocodeResult['prefecture'])) {
                         $prefectureName = $geocodeResult['prefecture'];
                         $cityName = $geocodeResult['city'] ?? $cityName;
                     } else {
                         // 逆ジオコーディングに失敗した場合のエラーメッセージ
-                        Log::warning('Reverse geocoding failed', [
+                        Log::warning('Reverse geocoding failed - no prefecture found', [
                             'latitude' => $latitude,
                             'longitude' => $longitude,
+                            'result' => $geocodeResult,
                         ]);
                         return response()->json([
                             'success' => false,
@@ -249,10 +251,10 @@ class CityController extends Controller
                 ], 400);
             }
 
-            // 市区町村を取得
+            // 市区町村を取得（実際のテーブル構造に合わせてprefecture_codeを使用）
             try {
-                $cities = City::where('todofuken_code', $prefectureCode)
-                    ->orderBy('city_name')
+                $cities = City::where('prefecture_code', $prefectureCode)
+                    ->orderBy('name')
                     ->get();
             } catch (\Illuminate\Database\QueryException $e) {
                 Log::error('Database query error in getCitiesByLocation', [
@@ -282,8 +284,11 @@ class CityController extends Controller
             try {
                 if ($cityName && $cities->isNotEmpty()) {
                     $filteredCities = $cities->filter(function($city) use ($cityName) {
-                        return strpos($city->city_name, $cityName) !== false || 
-                               strpos($city->city_kana ?? '', $cityName) !== false;
+                        // 実際のテーブル構造に合わせてnameとname_kanaを使用
+                        $cityNameValue = $city->name ?? $city->city_name ?? '';
+                        $cityKanaValue = $city->name_kana ?? $city->city_kana ?? '';
+                        return strpos($cityNameValue, $cityName) !== false || 
+                               strpos($cityKanaValue, $cityName) !== false;
                     });
                     
                     if ($filteredCities->isNotEmpty()) {
@@ -323,18 +328,26 @@ class CityController extends Controller
                 'prefecture_name' => $prefectureName,
                 'city_name' => $cityName,
                 'cities' => $cities->map(function($city) {
+                    // 実際のテーブル構造に合わせてnameとname_kanaを使用
                     return [
                         'id' => $city->id,
                         'city_code' => $city->city_code,
-                        'name' => $city->city_name,
-                        'name_kana' => $city->city_kana,
+                        'name' => $city->name ?? $city->city_name ?? '',
+                        'name_kana' => $city->name_kana ?? $city->city_kana ?? '',
                     ];
                 })->values(),
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'バリデーションエラー: ' . $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Unexpected error in getCitiesByLocation', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
             ]);
             return response()->json([
                 'success' => false,
